@@ -139,9 +139,9 @@ public class BoardController {
         }
     }
 
-    @GetMapping("ci/test")
+    @GetMapping("ci/test22")
     public ResponseEntity<String> cicdTest(){
-        return ResponseEntity.status(HttpStatus.OK).body("cicd 적용되었나요??");
+        return ResponseEntity.status(HttpStatus.OK).body("cicd22 적용되었나요??");
     }
 
 }
