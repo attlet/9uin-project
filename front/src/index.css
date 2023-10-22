@@ -11,3 +11,33 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.swiper-button-next {
+  background: url(../public/icons/prev.png) no-repeat;
+  transform: rotate(180deg);
+  background-position: center;
+  width: 30px;
+  height: 30px;
+  transition: all ease-in 0.3s;
+  background-color: rgb(228, 226, 255);
+  border-radius: 50%;
+}
+.swiper-button-prev {
+  background: url('../public/icons/prev.png') no-repeat;
+  background-position: center;
+  width: 30px;
+  height: 30px;
+  transition: all ease-in 0.3s;
+  background-color: rgb(228, 226, 255);
+  border-radius: 50%;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  display: none;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background-color: rgb(176, 172, 255);
+}
