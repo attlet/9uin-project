@@ -60,6 +60,7 @@ export default function LoginView() {
       localStorage.setItem('refreshToken', refreshToken);
       navigate('/');
     } catch (error) {
+      alert('아이디 또는 비밀번호를 확인해주세요.');
       console.error('로그인 실패', error);
     }
   };
@@ -75,6 +76,7 @@ export default function LoginView() {
               type="text"
               onChange={handleUsernameChange}
               placeholder="내용을 입력해 주세요."
+              value={username}
             />
             <p className="input__text">비밀번호</p>
             <input
@@ -82,6 +84,7 @@ export default function LoginView() {
               type="password"
               onChange={handlePasswordChange}
               placeholder="내용을 입력해 주세요."
+              value={password}
             />
             <LoginBtnContainer>
               <LoginBtn>로그인</LoginBtn>

@@ -22,6 +22,8 @@ export default function MyPage() {
 
   },[token, refreshToken])
 
+  console.log(data)
+
   const getProfile = async() => {
     try {
       setIsLoading(true);

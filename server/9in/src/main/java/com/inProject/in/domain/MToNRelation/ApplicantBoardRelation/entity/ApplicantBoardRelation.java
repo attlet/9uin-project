@@ -27,4 +27,8 @@ public class ApplicantBoardRelation extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User board_applicant;
 
+
+    //1은 지원했을때 2는 수락
+    @Column
+    private int status;
 }

@@ -74,11 +74,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         log.info("지원여부 : " + isExist);
 
+
+        //지원 로직 start. -> application Check repo로 넘겨서 저장후 거기서 또 관리 . 또는 컬럼 하나 만들어서 상태를 보관.
+
         if(isExist == false) {  //이미 지원한 게시글에는 지원 불가
 
             ApplicantBoardRelation applicantBoardRelation = ApplicantBoardRelation.builder()
                     .board_applicant(user)
                     .board(board)
+                    .status(1)
                     .build();
 
             ApplicantRoleRelation applicantRoleRelation = ApplicantRoleRelation.builder()
@@ -104,6 +108,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             ApplicantBoardRelation createApplicantBoardRelation = applicantBoardRelationRepository.save(applicantBoardRelation);
             ApplicantRoleRelation createApplicantRoleRelation = applicantRoleRelationRepository.save(applicantRoleRelation);
+
 
             log.info("Insert application ==> user - post relation_id : " + createApplicantBoardRelation.getId() +
                     " user - role relation_id : " + createApplicantRoleRelation.getId());
@@ -168,5 +173,41 @@ public class ApplicationServiceImpl implements ApplicationService {
         else {
             throw new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.BAD_REQUEST, "지원 기록이 없음.");
         }
+    }
+
+
+    public ApplicantBoardRelation rejectApplication(RequestApplicationDto requestApplicationDto){
+
+        //return sseemiiter으로 바꿀 예정
+        Long board_id = requestApplicationDto.getBoard_id();
+        Long role_id = requestApplicationDto.getRole_id();
+        Long user_id = requestApplicationDto.getUser_id();
+
+        User user = userRepository.findById(requestApplicationDto.getUser_id())
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, user_id + "는 applyToBoard 에서 유효하지 않은 user id"));
+
+        Board board = boardRepository.findById(board_id)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, board_id + "는 applyToBoard 에서 유효하지 않은 board id"));
+
+        ApplicantBoardRelation applicantBoardRelation = applicantBoardRelationRepository.findApplicantBoard(user, board).get();
+        //applicantBoardRelation.setStatus(3);
+        //delete()
+        return applicantBoardRelation;
+    }
+    public ApplicantBoardRelation acceptApplication(RequestApplicationDto requestApplicationDto){
+
+        Long board_id = requestApplicationDto.getBoard_id();
+        Long role_id = requestApplicationDto.getRole_id();
+        Long user_id = requestApplicationDto.getUser_id();
+
+        User user = userRepository.findById(requestApplicationDto.getUser_id())
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, user_id + "는 applyToBoard 에서 유효하지 않은 user id"));
+
+        Board board = boardRepository.findById(board_id)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, board_id + "는 applyToBoard 에서 유효하지 않은 board id"));
+
+        ApplicantBoardRelation applicantBoardRelation = applicantBoardRelationRepository.findApplicantBoard(user, board).get();
+        applicantBoardRelation.setStatus(0);
+        return applicantBoardRelation;
     }
 }

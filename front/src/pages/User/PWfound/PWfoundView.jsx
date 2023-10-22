@@ -169,7 +169,6 @@ const CheckBtn = styled.button`
 
   &:hover {
     cursor: pointer;
-    margin: auto;
   }
 `;
 

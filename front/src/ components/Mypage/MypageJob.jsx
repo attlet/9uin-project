@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components';
 import MypageModal from './MypageModal'
 import axios from 'axios';
+import { getNewTokens } from '../../api/refreshToken';
 
 const MypageJob = ({token}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,14 +21,14 @@ const MypageJob = ({token}) => {
   
       const promises = jobFields.map(async (job) => {
         const data = {
-          name: job.jobname,
-          startDate: job.startDate,
-          endDate: job.endDate,
-          description: job.description,
-          stack: job.stack
+          company_name: job.jobname,
+          join_date: job.startDate,
+          leave_date: job.endDate,
+          job_explanation: job.description,
+          skill_in_job: job.stack
         };
   
-        const response = await axios.post('http://1.246.104.170:8080/profile/직업', data, {
+        const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
           headers: {
             'X-AUTH-TOKEN': token
           }
@@ -39,6 +40,28 @@ const MypageJob = ({token}) => {
       await Promise.all(promises);
     } catch (error) {
       console.error(error);
+      if (error.response && error.response.status === 401) {
+        const { accessToken, refreshToken } = await getNewTokens();
+
+        const promises = jobFields.map(async (field) => {
+          const data = {
+            certificate_name: field.name,
+            acquisition_date: field.startDate,
+            expire: field.endDate,
+            explanation: field.description,
+          };
+    
+          const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
+            headers: {
+              'X-AUTH-TOKEN': refreshToken
+            }
+          });
+    
+          console.log(response.data);
+        });
+
+        await Promise.all(promises);
+      }
     } finally {
       setIsLoading(false);
     }
