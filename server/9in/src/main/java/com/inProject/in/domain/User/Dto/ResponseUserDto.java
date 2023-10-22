@@ -17,13 +17,13 @@ import java.util.List;
 @Builder
 public class ResponseUserDto {
 
-    private Long id;
+    private Long user_id;
     private String username;
     private String mail;
 
 
     public ResponseUserDto(User user){
-        this.id = user.getId();
+        this.user_id = user.getId();
         this.username = user.getUsername();
         this.mail = user.getMail();
     }

@@ -36,13 +36,14 @@ public class ApplicationController {
                             @Content(mediaType = "application/json", schema =
                             @Schema(implementation = ResponseApplicationDto.class))
                     })
-    })
+            })
     @Parameter(name = "X-AUTH-TOKEN", description = "토큰을 전송합니다.", in = ParameterIn.HEADER)
-    public ResponseEntity<ResponseApplicationDto> createApplication(@RequestBody RequestApplicationDto applicationDto){
+    public ResponseEntity<ResponseApplicationDto> createApplication(@RequestBody RequestApplicationDto requestApplicationDto){
+
         try{
-            ResponseApplicationDto responseApplicationDto = applicationService.createApplication(applicationDto);
+            ResponseApplicationDto responseApplicationDto = applicationService.createApplication(requestApplicationDto);
             //sseEvent 게시자의 id 로 바꿔야됨.
-            sseService.subscribe(String.valueOf(applicationDto.getUser_id()),applicationDto);
+            sseService.subscribe(String.valueOf(requestApplicationDto.getUser_id()),requestApplicationDto);
             return ResponseEntity.status(HttpStatus.OK).body(responseApplicationDto);
         }catch (CustomException e){
             throw e;
@@ -52,11 +53,33 @@ public class ApplicationController {
     @DeleteMapping()
     @Operation(summary = "지원 취소", description = "게시글에 지원한 걸 취소합니다.")
     @Parameter(name = "X-AUTH-TOKEN", description = "토큰을 전송합니다.", in = ParameterIn.HEADER)
-    public ResponseEntity<String> deleteApplication(RequestApplicationDto applicationDto){
+    public ResponseEntity<String> deleteApplication(RequestApplicationDto requestApplicationDto){
         try{
-            applicationService.deleteApplication(applicationDto);
+            applicationService.deleteApplication(requestApplicationDto);
 
             return ResponseEntity.status(HttpStatus.OK).body("삭제 완료");
+        }catch (CustomException e){
+            throw e;
+        }
+    }
+
+    @PostMapping("reject")
+    @Operation(summary = "지원 거절", description = "게시글에 지원한 걸 거절합니다.")
+    public ResponseEntity<String> rejectApplication(RequestApplicationDto requestApplicationDto){
+        try{
+            applicationService.rejectApplication(requestApplicationDto);
+            return ResponseEntity.status(HttpStatus.OK).body("거절완료");
+        }catch (CustomException e){
+            throw e;
+        }
+    }
+
+    @PostMapping("accept")
+    @Operation(summary = "지원 거절", description = "게시글에 지원한 걸 거절합니다.")
+    public ResponseEntity<String> acceptApplication(RequestApplicationDto requestApplicationDto){
+        try{
+            applicationService.acceptApplication(requestApplicationDto);
+            return ResponseEntity.status(HttpStatus.OK).body("수락완료");
         }catch (CustomException e){
             throw e;
         }

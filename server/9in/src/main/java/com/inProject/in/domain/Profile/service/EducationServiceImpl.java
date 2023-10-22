@@ -17,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class EducationServiceImpl {
     private UserRepository userRepository;
@@ -32,13 +35,17 @@ public class EducationServiceImpl {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public ResponseEducationDto getEducation(Long user_id){
-        Education education = educationRepository.findEducationByUserId(user_id)
-                .orElseThrow(() -> new IllegalArgumentException("EducationService getEducation 에서 유효하지 않은 user id : " + user_id));
+    public List<ResponseEducationDto> getEducation(Long user_id){
+        List<Education> educationList = educationRepository.findEducationByUserId(user_id)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.NOT_FOUND, "EducationService getEducation 에서 유효하지 않은 user id : " + user_id));
 
-        ResponseEducationDto responseEducationDto = new ResponseEducationDto(education);
+        List<ResponseEducationDto> responseEducationDto = new ArrayList<>();
 
-        log.info("EducationService getEducation ==> user id : " + user_id + " education : " + education.toString());
+        for(Education education : educationList){
+            responseEducationDto.add(new ResponseEducationDto(education));
+            log.info("EducationService getEducation ==> user id : " + user_id + " education : " + education.toString());
+        }
+
         return responseEducationDto;
     }
     @Transactional
@@ -47,7 +54,7 @@ public class EducationServiceImpl {
 
         Education education = requestEducationDto.toEntity(user);
         Education savedEducation = educationRepository.save(education);
-        user.setEducation(savedEducation);
+        user.getEducationList().add(savedEducation);
 
         ResponseEducationDto responseEducationDto = new ResponseEducationDto(savedEducation);
 
@@ -55,10 +62,10 @@ public class EducationServiceImpl {
         return responseEducationDto;
     }
     @Transactional
-    public ResponseEducationDto updateEducation(RequestEducationDto requestEducationDto, HttpServletRequest request){
+    public ResponseEducationDto updateEducation(Long education_id, RequestEducationDto requestEducationDto, HttpServletRequest request){
         User user = getUserFromRequest(request);
 
-        Education education = educationRepository.findEducationByUserId(user.getId())
+        Education education = educationRepository.findById(education_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.BAD_REQUEST, user.getId() + "는 education을 생성하지 않음"));
 
         if(!education.getUser().getId().equals(user.getId())){
@@ -74,17 +81,17 @@ public class EducationServiceImpl {
         return responseEducationDto;
     }
     @Transactional
-    public void deleteEducation(HttpServletRequest request){
+    public void deleteEducation(Long education_id, HttpServletRequest request){
         User user = getUserFromRequest(request);
 
-        Education education = educationRepository.findEducationByUserId(user.getId())
+        Education education = educationRepository.findById(education_id)
                         .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.BAD_REQUEST, user.getId() + "는 education을 생성하지 않음"));
 
         if(!education.getUser().getId().equals(user.getId())){
             throw new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.UNAUTHORIZED, user.getId() + "은 프로필 작성자가 아닙니다.");
         }
 
-        educationRepository.deleteById(user.getEducation().getId());
+        educationRepository.deleteById(education_id);
         log.info("EducationService deleteEducation ==> 삭제 완료");
     }
 

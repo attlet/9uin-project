@@ -23,6 +23,7 @@ public class RequestProject_skillDto {
     private String github_link;
     private String skill_in_project;
     private String performance;
+    private String role;
 
     public Project_skill toEntity(User user){
         return Project_skill.builder()
@@ -33,6 +34,7 @@ public class RequestProject_skillDto {
                 .github_link(github_link)
                 .skill_in_project(skill_in_project)
                 .performance(performance)
+                .role(role)
                 .user(user)
                 .build();
     }

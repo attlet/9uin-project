@@ -5,17 +5,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CustomClipRepositoryImplTest {
-
-    @AfterEach
-    void tearDown() {
-    }
-
-    @Test
-    void isExistClipedPost() {
-    }
-
-    @Test
-    void findClipedPost() {
-    }
-}
+//class CustomClipRepositoryImplTest {
+//
+//    @AfterEach
+//    void tearDown() {
+//    }
+//
+//    @Test
+//    void isExistClipedPost() {
+//    }
+//
+//    @Test
+//    void findClipedPost() {
+//    }
+//}

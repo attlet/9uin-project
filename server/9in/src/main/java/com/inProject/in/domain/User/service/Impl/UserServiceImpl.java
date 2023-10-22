@@ -30,9 +30,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         this.userRepository = userRepository;
     }
     @Override
-    public ResponseUserDto getUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("getUser에서 유효하지 않은 id " + id));
+    public ResponseUserDto getUser(String username) {
+        User user = userRepository.getByUsername(username)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.USER, HttpStatus.NOT_FOUND, "getUser에서 유효하지 않은 아이디" + username));
+
         ResponseUserDto responseUserDto = new ResponseUserDto(user);
 
         return responseUserDto;

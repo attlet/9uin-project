@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../../../ components/context/AuthContext';
+// import { useAuth } from '../../../ components/context/AuthContext';
+import { useDispatch } from 'react-redux';
+import { login } from '../../../modules/auth';
 
 export default function LoginView() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const { login } = useAuth();
+  // const { login } = useAuth();
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -50,12 +53,14 @@ export default function LoginView() {
       const token = response.data.token;
       const refreshToken = response.data.refreshToken;
       const user_id = response.data.user_id;
-      login(token, refreshToken, user_id);
+      // login(token, refreshToken, user_id);
+      dispatch(login(token, refreshToken, user_id));
 
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
       navigate('/');
     } catch (error) {
+      alert('아이디 또는 비밀번호를 확인해주세요.');
       console.error('로그인 실패', error);
     }
   };
@@ -71,6 +76,7 @@ export default function LoginView() {
               type="text"
               onChange={handleUsernameChange}
               placeholder="내용을 입력해 주세요."
+              value={username}
             />
             <p className="input__text">비밀번호</p>
             <input
@@ -78,6 +84,7 @@ export default function LoginView() {
               type="password"
               onChange={handlePasswordChange}
               placeholder="내용을 입력해 주세요."
+              value={password}
             />
             <LoginBtnContainer>
               <LoginBtn>로그인</LoginBtn>

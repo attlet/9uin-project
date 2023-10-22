@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import MypageUser from '../../../ components/Mypage/MypageUser';
 import MypageSchool from '../../../ components/Mypage/MypageSchool';
@@ -6,23 +6,54 @@ import MypageEtc from '../../../ components/Mypage/MypageEtc';
 import MypageLicese from '../../../ components/Mypage/MypageLicese';
 import MypageJob from '../../../ components/Mypage/MypageJob';
 import MypageProject from '../../../ components/Mypage/MypageProject';
-import useAxios from '../../../ components/hooks/useAxios';
+import { getNewTokens } from '../../../api/refreshToken';
+import { createAxiosInstance } from '../../../api/instance';
 
 export default function MyPage() {
-  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY5NTcwOTc1NSwiZXhwIjoxNjk1NzEwMDU1fQ.UXnHoLfmfeAEUQT9zeXUhywIHgTD1WKnmYqDth3BfXA'
-  const refreshToken = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0Iiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTY5NTcwOTc1NSwiZXhwIjoxNjk1NzE2OTU1fQ.0B7LwJSODTldg2blPwe-uy3Co3cX8KH4Hbik7GaXfHo'
-  const user_id = 7 // user_id
-  
-  const { response, error, loading } = useAxios({
-    method: 'GET',
-    url: `/profile/${user_id}`,
-  });
+  const [token, setToken] = useState('');
+  const [refreshToken, setRefreshToken] = useState('');
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const user_id = 1234; // user_id
+
+  useEffect(() => {
+    setToken(localStorage.getItem("token"));
+    setRefreshToken(localStorage.getItem("refresh_token"));
+
+  },[token, refreshToken])
+
+  console.log(data)
+
+  const getProfile = async() => {
+    try {
+      setIsLoading(true);
+      const axiosInstance = createAxiosInstance(token);
+      const response = await axiosInstance.get(`/profile/${user_id}`);
+      setData(response.data)
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.status === 401) {
+        const { accessToken, refreshToken } = await getNewTokens();
+
+        const axiosInstance = createAxiosInstance(refreshToken);
+        const response = await axiosInstance.get(`/profile/${user_id}`);
+        setData(response.data)
+      }
+    } finally { 
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getProfile()
+  },[])
 
   return (
     <Mypage>
       <Section1>
         <MypageUser 
           token={refreshToken}
+          myinfoData={data.myInfoDto}
         />
         <div className='section1_flex'>
           <MypageSchool 

@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
 import axios from 'axios';
+import { getNewTokens } from '../../api/refreshToken';
+import { createAxiosInstance } from '../../api/instance';
 
-const MypageSchool = ({token, user_id}) => {
+const MypageSchool = ({token}) => {
   const [contact, setContact] = useState('');
   const [email, setEmail] = useState('');
   const [school, setSchool] = useState('');
@@ -10,28 +12,36 @@ const MypageSchool = ({token, user_id}) => {
   const [graduationStatus, setGraduationStatus] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  const data = {
+    phone_num: contact,
+    mail: email,
+    school, 
+    major,
+    isGraduated: graduationStatus,
+  };
+
   const handlePost = async () => {
+    if (!contact || !email || !school || !major || !graduationStatus) {
+      return alert('빈칸을 채워주세요');
+    }
     try {
       setIsLoading(true); 
+      let currentToken = token;
 
-      const data = {
-        school,
-        major,
-        grades: 0,
-        max_grades: 0,
-        admission: "2023-09-26T06:15:03.843Z",
-        graduated: "2023-09-26T06:15:03.843Z"
-      };
+      const axiosInstance = createAxiosInstance(currentToken);
 
-      const response = await axios.post('http://1.246.104.170:8080/profile/education', data, {
-        headers: {
-          'X-AUTH-TOKEN': token 
-      }});
-
+      const response = await axiosInstance.post('/education', data);
       console.log(response.data);
 
     } catch (error) {
       console.error(error);
+      if (error.response && error.response.status === 401) {
+        const { accessToken, refreshToken } = await getNewTokens();
+
+        const axiosInstance = createAxiosInstance(refreshToken);
+        const response = await axiosInstance.post('/education', data);
+        console.log(response.data);
+      }
     } finally {
       setIsLoading(false); 
     }

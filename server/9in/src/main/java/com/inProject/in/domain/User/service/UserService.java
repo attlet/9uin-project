@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 public interface UserService {
-    ResponseUserDto getUser(Long id);
+    ResponseUserDto getUser(String username);
     ResponseUserDto createUser(RequestUserDto userdto);
     ResponseUserDto updateUser(Long id, UpdateUserDto updateUserdto);
     void deleteUser(Long id);

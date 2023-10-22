@@ -17,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class Project_skillServiceImpl {
     private UserRepository userRepository;
@@ -32,13 +35,18 @@ public class Project_skillServiceImpl {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public ResponseProject_skillDto getProject_skill(HttpServletRequest request){
+    public List<ResponseProject_skillDto> getProject_skill(HttpServletRequest request){
         User user = getUserFromRequest(request);
 
-        Project_skill project_skill = project_skillRepository.findProject_skillByUserId(user.getId())
+        List<Project_skill> project_skill = project_skillRepository.findProject_skillByUserId(user.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Project_skillService getProject_skill 에서 유효하지 않은 user id : " + user.getId()));
 
-        ResponseProject_skillDto responseProject_skillDto = new ResponseProject_skillDto(project_skill);
+        List<ResponseProject_skillDto> responseProject_skillDto = new ArrayList<>();
+
+        for(Project_skill projectSkill : project_skill){
+            responseProject_skillDto.add(new ResponseProject_skillDto(projectSkill));
+        }
+
         return responseProject_skillDto;
     }
     @Transactional
@@ -46,17 +54,17 @@ public class Project_skillServiceImpl {
         User user = getUserFromRequest(request);
         Project_skill project_skill = requestProject_skillDto.toEntity(user);
         Project_skill savedProject_skill = project_skillRepository.save(project_skill);
-        user.setProjectSkill(project_skill);
+        user.getProjectSkillList().add(savedProject_skill);
 
         ResponseProject_skillDto responseProject_skillDto = new ResponseProject_skillDto(savedProject_skill);
 
         return responseProject_skillDto;
     }
     @Transactional
-    public ResponseProject_skillDto updateProject_skill(RequestProject_skillDto requestProject_skillDto, HttpServletRequest request){
+    public ResponseProject_skillDto updateProject_skill(Long projectSkill_id, RequestProject_skillDto requestProject_skillDto, HttpServletRequest request){
         User user = getUserFromRequest(request);
 
-        Project_skill project_skill = project_skillRepository.findProject_skillByUserId(user.getId())
+        Project_skill project_skill = project_skillRepository.findById(projectSkill_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.BAD_REQUEST, user.getId() + "는 유효하지 않은 id값입니다."));
 
         if(!project_skill.getUser().getId().equals(user.getId())){
@@ -69,17 +77,18 @@ public class Project_skillServiceImpl {
         return responseProject_skillDto;
     }
     @Transactional
-    public void deleteProject_skill(HttpServletRequest request){
+    public void deleteProject_skill(Long projectSkill_id, HttpServletRequest request){
         User user = getUserFromRequest(request);
 
-        Project_skill project_skill = project_skillRepository.findProject_skillByUserId(user.getId())
+        Project_skill project_skill = project_skillRepository.findById(projectSkill_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.BAD_REQUEST, user.getId() + "는 유효하지 않은 id값입니다."));
 
         if(!project_skill.getUser().getId().equals(user.getId())){
             throw new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.UNAUTHORIZED, user.getId() + "은 프로필 작성자가 아닙니다.");
         }
 
-        project_skillRepository.deleteById(user.getProjectSkill().getId());
+        project_skillRepository.deleteById(projectSkill_id);
+        log.info("ProjectSkillService deleteProjectSkill ==> 삭제 성공");
     }
 
     private User getUserFromRequest(HttpServletRequest request){

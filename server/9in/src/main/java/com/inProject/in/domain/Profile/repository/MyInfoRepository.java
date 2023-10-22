@@ -8,10 +8,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface MyInfoRepository extends JpaRepository<MyInfo, Long> {
     @Query(value = "SELECT s FROM MyInfo AS s WHERE s.user.id = :user_id")
-    Optional<MyInfo> findMyInfoByUserId(@Param("user_id") Long user_id);
+    Optional<MyInfo>findMyInfoByUserId(@Param("user_id") Long user_id);
 }

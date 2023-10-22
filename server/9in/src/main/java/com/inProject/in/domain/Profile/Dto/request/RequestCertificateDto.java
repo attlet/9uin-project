@@ -19,14 +19,14 @@ public class RequestCertificateDto {
 
     private String certificate_name;  //자격증 이름
     private LocalDate acquisition_date; //딴 날짜
-    private String link;
+    private String expire;
     private String explanation;
 
     public Certificate toEntity(User user){
         return Certificate.builder()
                 .certificate_name(certificate_name)
                 .acquisition_date(acquisition_date)
-                .link(link)
+                .expire(expire)
                 .explanation(explanation)
                 .user(user)
                 .build();

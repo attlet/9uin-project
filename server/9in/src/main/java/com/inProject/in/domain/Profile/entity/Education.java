@@ -34,7 +34,13 @@ public class Education extends BaseEntity {
     private LocalDateTime admission; //입학일
     @Column
     private LocalDateTime graduated; //졸업일
-    @OneToOne(fetch = FetchType.LAZY)
+    @Column
+    private String phone_num;  //연락처
+    @Column
+    private String mail; //메일
+    @Column
+    private String isGraduated; //졸업 여부
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
     private User user;
@@ -46,5 +52,7 @@ public class Education extends BaseEntity {
         this.max_grades = requestEducationDto.getMax_grades();
         this.admission = requestEducationDto.getAdmission();
         this.graduated = requestEducationDto.getGraduated();
+        this.phone_num = requestEducationDto.getMajor();
+        this.mail = requestEducationDto.getMajor();
     }
 }

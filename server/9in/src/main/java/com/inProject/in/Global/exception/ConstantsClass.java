@@ -10,7 +10,8 @@ public class ConstantsClass{
         SIGN("Sign"),
         FIND("Find"),
         CHANGE("Change"),
-        Clip("Clip");
+        CLIP("Clip"),
+        SSE("Sse");
 
         private String exceptionClass;
 

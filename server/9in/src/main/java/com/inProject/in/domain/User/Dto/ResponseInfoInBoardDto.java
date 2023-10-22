@@ -13,7 +13,7 @@ public class ResponseInfoInBoardDto {
     private String nickname;
     private String role;
     private String career;
-    private String team_spot;  //팀 내 직위
+    private boolean isAuthor;   //작성자인지 확인.
     public ResponseInfoInBoardDto(ApplicantBoardRelation applicantBoardRelation){
         if(applicantBoardRelation.getBoard_applicant().getMyInfo() == null){
             this.nickname = applicantBoardRelation.getBoard_applicant().getUsername();       //닉네임을 생성하지 않음.

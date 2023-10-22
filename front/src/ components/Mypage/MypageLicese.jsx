@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import styled from 'styled-components';
 import MypageModal from './MypageModal'
 import axios from 'axios';
+import { getNewTokens } from '../../api/refreshToken';
+import { createAxiosInstance } from '../../api/instance';
 
 const MypageLicese = ({token}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,7 +38,7 @@ const MypageLicese = ({token}) => {
           description: field.description,
         };
   
-        const response = await axios.post('http://1.246.104.170:8080/profile/자격증', data, {
+        const response = await axios.post('http://1.246.104.170:8080/certificate', data, {
           headers: {
             'X-AUTH-TOKEN': token
           }
@@ -48,6 +50,28 @@ const MypageLicese = ({token}) => {
       await Promise.all(promises);
     } catch (error) {
       console.error(error);
+      if (error.response && error.response.status === 401) {
+        const { accessToken, refreshToken } = await getNewTokens();
+
+        const promises = licenseFields.map(async (field) => {
+          const data = {
+            name: field.name,
+            startDate: field.startDate,
+            endDate: field.endDate,
+            description: field.description,
+          };
+    
+          const response = await axios.post('http://1.246.104.170:8080/certificate', data, {
+            headers: {
+              'X-AUTH-TOKEN': refreshToken
+            }
+          });
+    
+          console.log(response.data);
+        });
+
+        await Promise.all(promises);
+      }
     } finally {
       setIsLoading(false);
     }

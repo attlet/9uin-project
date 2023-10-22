@@ -1,6 +1,8 @@
 //sseServiceimple
 package com.inProject.in.domain.CommonLogic.Sse.service.impl;
 
+import com.inProject.in.Global.exception.ConstantsClass;
+import com.inProject.in.Global.exception.CustomException;
 import com.inProject.in.config.security.CustomAccessDeniedHandler;
 import com.inProject.in.config.security.JwtTokenProvider;
 import com.inProject.in.domain.CommonLogic.Application.Dto.RequestApplicationDto;
@@ -13,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -89,10 +92,10 @@ public class SseServiceImpl implements SseService {
         if(token != null && jwtTokenProvider.validateToken(token)){
             String username = jwtTokenProvider.getUsername(token);
             user = userRepository.getByUsername(username)
-                    .orElseThrow(() -> new IllegalArgumentException("sseCreate user를 찾지 못함"));
+                    .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.SSE, HttpStatus.NOT_FOUND, "sseCreate user를 찾지 못함"));
         }
         else{
-            throw new IllegalArgumentException("token이 없거나, 권한이 유효하지 않습니다.");
+            throw new CustomException(ConstantsClass.ExceptionClass.SSE, HttpStatus.UNAUTHORIZED, "token이 없거나, 권한이 유효하지 않습니다.");
         }
 
         String id =  user.getUsername();

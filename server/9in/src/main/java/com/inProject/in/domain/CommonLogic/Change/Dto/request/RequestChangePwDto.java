@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 public class RequestChangePwDto {
     private String username;
+    private String curPw;
     private String newPw;
     private String checkPw;
 }

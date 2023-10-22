@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Role from './Role';
 import styles from './Post.module.css';
 import axios from 'axios';
-import { useAuth } from './context/AuthContext';
+import { useSelector } from 'react-redux';
 
 export default function Post({
   board_id,
@@ -17,7 +17,7 @@ export default function Post({
   view_cnt,
   createAt,
 }) {
-  const { user_id } = useAuth();
+  const user_id = useSelector((state) => state.auth.user_id);
 
   const [isClip, setIsClip] = useState(false);
   const currentDate = new Date();

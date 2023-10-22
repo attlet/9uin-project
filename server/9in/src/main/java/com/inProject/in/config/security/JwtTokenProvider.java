@@ -34,11 +34,11 @@ public class JwtTokenProvider {
     private String secretKey = "secretKey-for-authorization-jwtToken";
     private final long tokenValidMilliSecond = 1000L * 60 * 60;
     private final long refreshValidMilliSecond = tokenValidMilliSecond * 24;
-    @PostConstruct        //해당 객체가 주입된 이후 수행되는 메서드 지정d
+    @PostConstruct        //해당 객체가 주입된 이후 수행되는 메서드 지정
     protected void init(){
-        log.info("JwtToken init ==> secret 키 초기화 시작");
+        log.info("init ==> secret 키 초기화 시작");
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes(StandardCharsets.UTF_8));  //secret key를 base64형식으로 인코딩한다.
-        log.info("JwtToken init ==> secret 키 초기화 완료");
+        log.info("init ==> secret 키 초기화 완료");
     }
 
 

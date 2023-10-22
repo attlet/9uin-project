@@ -44,15 +44,17 @@
 
 .part {
   display: flex;
+  align-items: center;
 }
 
 .partIcon {
   background: url('../../../public/icons/part.png');
   background-size: cover;
-  width: 0.8rem;
-  height: 0.8rem;
+  width: 0.9rem;
+  height: 0.9rem;
   margin: 0.5rem;
   margin-right: 0.8rem;
+  margin-left: 1rem;
 }
 
 .partList {
@@ -61,7 +63,7 @@
 
 .part__content {
   margin: 0.3rem 0.5rem;
-  font-size: 0.3rem;
+  font-size: 0.7rem;
 }
 
 .sort__container {

@@ -10,5 +10,9 @@ import java.util.List;
 
 public interface CustomBoardRepository {
     Page<Board> findBoards(Pageable pageable, String user_id, String title, String type, List<String> tags);
-    Page<Board> searchPostsByCliped(Pageable pageable, User user);
+    Page<Board> searchBoardsByCliped(Pageable pageable, User user);
+    Page<Board> searchBoardsByUserInfo(Pageable pageable, User user, String type);
+    Long CountsClipedBoards(User user);
+    Long CountsUserBoards(User userm, String type);
+
 }

@@ -28,11 +28,11 @@ public class Certificate extends BaseEntity {
     @Column
     private LocalDate acquisition_date; //딴 날짜
     @Column
-    private String link;
+    private String expire;   //유효 기간
     @Column
     private String explanation;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
     private User user;
@@ -40,7 +40,7 @@ public class Certificate extends BaseEntity {
     public void updateCertificate(RequestCertificateDto requestCertificateDto){
         this.certificate_name = requestCertificateDto.getCertificate_name();
         this.acquisition_date = requestCertificateDto.getAcquisition_date();
-        this.link = requestCertificateDto.getLink();
+        this.expire = requestCertificateDto.getExpire();
         this.explanation = requestCertificateDto.getExplanation();
     }
 }

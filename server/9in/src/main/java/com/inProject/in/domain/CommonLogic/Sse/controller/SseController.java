@@ -1,17 +1,21 @@
 package com.inProject.in.domain.CommonLogic.Sse.controller;
 
+
+
+
 import com.inProject.in.domain.CommonLogic.Application.Dto.RequestApplicationDto;
 import com.inProject.in.domain.CommonLogic.Sse.service.SseService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController("/sse")
 public class SseController {
 
-    private SseService sseService;
+    private final SseService sseService;
     private SseController(SseService sseService){
         this.sseService = sseService;
     }

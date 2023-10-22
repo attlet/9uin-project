@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import useFetchData from '../ components/hooks/getPostList';
-import { useAuth } from '../ components/context/AuthContext';
+import { useSelector } from 'react-redux';
 
 export default function PostDetail() {
   const { board_id } = useParams();
-  const { user_id } = useAuth();
+  const user_id = useSelector((state) => state.auth.user_id);
 
   const { data, loading, error } = useFetchData('/boards/' + board_id);
 

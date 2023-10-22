@@ -17,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class CertificateServiceImpl {
     private UserRepository userRepository;
@@ -32,15 +35,19 @@ public class CertificateServiceImpl {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public ResponseCertificateDto getCertificate(Long user_id){
+    public List<ResponseCertificateDto> getCertificate(Long user_id){
 
-        Certificate certificate = certificateRepository.findCertificateByUserId(user_id)
-                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.BAD_REQUEST, user_id + "는 certificate를 생성하지 않았음."));
+        List<Certificate> certificateList = certificateRepository.findCertificateByUserId(user_id)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.NOT_FOUND, user_id + "는 certificate를 생성하지 않았음."));
 
-        ResponseCertificateDto responseCertificateDto = new ResponseCertificateDto(certificate);
+        List<ResponseCertificateDto> responseCertificateDtoList = new ArrayList<>();
 
-        log.info("CertificateService getCertificate ==> user id : " + user_id + " 자격증 정보 : " + certificate.getCertificate_name());
-        return responseCertificateDto;
+        for(Certificate certificate : certificateList){
+            responseCertificateDtoList.add(new ResponseCertificateDto(certificate));
+            log.info("CertificateService getCertificate ==> user id : " + user_id + " 자격증 정보 : " + certificate);
+        }
+
+        return responseCertificateDtoList;
     }
     @Transactional
     public ResponseCertificateDto createCertificate(RequestCertificateDto requestCertificateDto, HttpServletRequest request){
@@ -48,7 +55,7 @@ public class CertificateServiceImpl {
 
         Certificate certificate = requestCertificateDto.toEntity(user);
         Certificate savedCertificate = certificateRepository.save(certificate);
-        user.setCertificate(savedCertificate);
+        user.getCertificateList().add(savedCertificate);
 
         ResponseCertificateDto responseCertificateDto = new ResponseCertificateDto(savedCertificate);
 
@@ -57,12 +64,12 @@ public class CertificateServiceImpl {
     }
 
     @Transactional
-    public ResponseCertificateDto updateCertificate(RequestCertificateDto requestCertificateDto, HttpServletRequest request){
+    public ResponseCertificateDto updateCertificate(Long certificate_id, RequestCertificateDto requestCertificateDto, HttpServletRequest request){
         User user = getUserFromRequest(request);
 
-        Certificate certificate = certificateRepository.findCertificateByUserId(user.getId())
-                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.BAD_REQUEST, user.getId() + "는 certificate를 생성하지 않았음." ));
-
+        Certificate certificate = certificateRepository.findById(certificate_id)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.NOT_FOUND, certificate_id + "를 찾지 못함" ));
+        
         if(!certificate.getUser().getId().equals(user.getId())){
             throw new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.UNAUTHORIZED, user.getId() + "은 프로필 작성자가 아닙니다.");
         }
@@ -75,17 +82,17 @@ public class CertificateServiceImpl {
         return responseCertificateDto;
     }
     @Transactional
-    public void deleteCertificate(HttpServletRequest request){
+    public void deleteCertificate(Long certificate_id, HttpServletRequest request){
         User user = getUserFromRequest(request);
 
-        Certificate certificate = certificateRepository.findCertificateByUserId(user.getId())
-                        .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.BAD_REQUEST, user.getId() + "는 certificate를 생성하지 않았음." ));
+        Certificate certificate = certificateRepository.findById(certificate_id)
+                        .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.NOT_FOUND, certificate_id + "를 찾지 못함" ));
 
         if(!certificate.getUser().getId().equals(user.getId())){
             throw new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.UNAUTHORIZED, user.getId() + "은 프로필 작성자가 아닙니다.");
         }
 
-        certificateRepository.deleteById(user.getCertificate().getId());
+        certificateRepository.deleteById(certificate_id);
         log.info("CertificateService deleteCertificate ==> 삭제 완료");
     }
 
@@ -97,12 +104,10 @@ public class CertificateServiceImpl {
             String username = jwtTokenProvider.getUsername(token);
 
             return user = userRepository.getByUsername(username)
-                    .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.BAD_REQUEST, "BoardService ==> request로부터 user를 찾지 못함"));
+                    .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.NOT_FOUND, "request로부터 user를 찾지 못함"));
         }
         else{
             throw new CustomException(ConstantsClass.ExceptionClass.USER, HttpStatus.UNAUTHORIZED, "token이 없거나, 권한이 유효하지 않습니다.");
         }
-
-
     }
 }

@@ -61,14 +61,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @PreAuthorize("hasRole('USER')")
+//    @PreAuthorize("hasRole('USER')")
     public ResponseCommentDto createComment(RequestCommentDto requestCommentDto, HttpServletRequest request) {
 
         Long board_id = requestCommentDto.getBoard_id();
-
-//        User user = userRepository.findById(user_id)
-//                .orElseThrow(() -> new IllegalArgumentException("createComment에서 유효하지 않은 user id : " + user_id));
-
         User user = getUserFromRequest(request);
 
         Board board = boardRepository.findById(board_id)
@@ -103,7 +99,7 @@ public class CommentServiceImpl implements CommentService {
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.COMMENT, HttpStatus.NOT_FOUND, id + "는 updateComment에서 유효하지 않은 id값 입니다."));
 
         if(!user.getUsername().equals(comment.getUser().getUsername())){
-            throw new CustomException(ConstantsClass.ExceptionClass.COMMENT, HttpStatus.UNAUTHORIZED, "작성자만 댓글을 수정할 수 있습니다. 권한이 없습니다.");
+            throw new CustomException(ConstantsClass.ExceptionClass.COMMENT, HttpStatus.UNAUTHORIZED, "권한이 없습니다.");
         }
 
         comment.updateComment(updateCommentDto);

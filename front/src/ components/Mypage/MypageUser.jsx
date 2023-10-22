@@ -1,44 +1,70 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import styles from '../../pages/User/MyPage/MyPage.module.css'
-import axios from 'axios'
+import { getNewTokens } from '../../api/refreshToken';
+import { createAxiosInstance } from '../../api/instance';
 
-const MypageUser = ({token, user_id}) => {
-  const [nickname, setNickname] = useState('');
+const MypageUser = ({token, myinfoData}) => {
+  const [nickname, setNickname] = useState("");
   const [selectedStack, setSelectedStack] = useState('');
   const [skills, setSkills] = useState([]);
-  const [selectedRole, setSelectedRole] = useState('');
-  const [experience, setExperience] = useState('');
+  const [selectedRole, setSelectedRole] = useState("");
+  const [experience, setExperience] = useState(myinfoData?.career || "");
   const [isLoading, setIsLoading] = useState(false);
+   
+  useEffect(() => {
+    if (myinfoData) {
+      setNickname(myinfoData.nickname);
+      setSelectedRole(myinfoData.role);
+      setExperience(myinfoData.career);
+    }
+  }, [myinfoData]);
+
+  const data = {
+    nickname,
+    role: selectedRole,
+    career: experience,
+    // stack 배열
+  };
+
 
   const handlePost = async () => {
-    if(!nickname || !selectedRole || !experience || skills.length < 1) {
-      return alert("빈칸을 채워주세요")
+    if (!nickname || !selectedRole || !experience || skills.length < 1) {
+      return alert('빈칸을 채워주세요');
     }
-    
+  
     try {
-      setIsLoading(true); 
+      setIsLoading(true);
+      let currentToken = token;
+  
+      const axiosInstance = createAxiosInstance(currentToken);
 
-      const data = {
-        nickname,
-        role: selectedRole,
-        career: experience,
-        // stack 배열
-      };
-
-      const response = await axios.post('http://1.246.104.170:8080/profile/myinfo', data, {
-        headers: {
-          'X-AUTH-TOKEN': token 
-      }});
-
-      console.log(response.data);
-
+      if (myinfoData) {
+        const response = await axiosInstance.put('/myinfo', data);
+      } else {
+        const response = await axiosInstance.post('/myinfo', data);
+      }
+  
     } catch (error) {
       console.error(error);
+  
+      if (error.response && error.response.status === 401) {
+        const { accessToken, refreshToken } = await getNewTokens();
+
+        const axiosInstance = createAxiosInstance(refreshToken);
+        if (myinfoData) {
+          const response = await axiosInstance.put('/myinfo', data);
+        } else {
+          const response = await axiosInstance.post('/myinfo', data);
+        }
+        
+      }
     } finally {
-      setIsLoading(false); 
+      setIsLoading(false);
+      alert(myinfoData ? "수정하기 완료" : "등록하기 완료")
     }
   };
+  
 
   const skillImage = {
     react: 'React.png',
@@ -138,7 +164,7 @@ const MypageUser = ({token, user_id}) => {
         </div>
       </div>
       <button onClick={handlePost} className="section1_fix_btn" >
-        수정하기
+        {myinfoData ? "수정하기" : "등록하기"}
       </button>
     </UserEdit>
   );

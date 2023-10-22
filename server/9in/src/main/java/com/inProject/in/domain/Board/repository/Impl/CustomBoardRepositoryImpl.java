@@ -28,12 +28,9 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
     private final JPAQueryFactory jpaQueryFactory;
     QBoard qBoard = QBoard.board;
     QSkillTag qSkillTag = QSkillTag.skillTag;
-
     QTagBoardRelation qTagBoardRelation = QTagBoardRelation.tagBoardRelation;
-
     QClipBoardRelation qClipBoardRelation = QClipBoardRelation.clipBoardRelation;
     QUser qUser = QUser.user;
-
 
     @Autowired
     public CustomBoardRepositoryImpl(JPAQueryFactory jpaQueryFactory){
@@ -63,7 +60,7 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
     }
 
     @Override
-    public Page<Board> searchPostsByCliped(Pageable pageable, User user) {
+    public Page<Board> searchBoardsByCliped(Pageable pageable, User user) {
 //        List<Post> content = jpaQueryFactory
 //                .selectFrom(qPost)
 //                .where(ClipedEq(user))
@@ -86,6 +83,39 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
 
     }
 
+    @Override
+    public Page<Board> searchBoardsByUserInfo(Pageable pageable, User user, String type) {
+        List<Board> content = jpaQueryFactory
+                .selectFrom(qBoard)
+                .where(qBoard.author.eq(user), qBoard.type.eq(type))
+                .orderBy(qBoard.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        JPAQuery<Long> count = getCount();
+
+        return PageableExecutionUtils.getPage(content, pageable, () -> count.fetchOne());
+    }
+
+    @Override
+    public Long CountsClipedBoards(User user) {
+       Long count = jpaQueryFactory
+                .select(qClipBoardRelation.count())
+                .from(qClipBoardRelation)
+                .where(qClipBoardRelation.clipUser.id.eq(user.getId()))
+                .fetchOne();
+        return count;
+    }
+
+    @Override
+    public Long CountsUserBoards(User user, String type) {
+        Long count = jpaQueryFactory
+                .select(qBoard.count())
+                .from(qBoard)
+                .where(qBoard.author.eq(user), qBoard.type.eq(type))
+                .fetchOne();
+        return count;
+    }
 
     private BooleanExpression UserIdEq(String username){ return username.isBlank() != true ? qBoard.author.username.eq(username) : null; }
 

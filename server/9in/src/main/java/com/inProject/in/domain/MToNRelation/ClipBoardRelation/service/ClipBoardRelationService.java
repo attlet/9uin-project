@@ -1,6 +1,6 @@
 package com.inProject.in.domain.MToNRelation.ClipBoardRelation.service;
 
-import com.inProject.in.domain.Board.Dto.ResponseBoardListDto;
+import com.inProject.in.domain.Board.Dto.response.ResponseBoardListDto;
 import com.inProject.in.domain.MToNRelation.ClipBoardRelation.Dto.ResponseClipBoardRelationDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Pageable;

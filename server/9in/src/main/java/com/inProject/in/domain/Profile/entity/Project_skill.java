@@ -30,14 +30,16 @@ public class Project_skill extends BaseEntity {
     @Column
     private LocalDateTime end_date;
     @Column
-    private String brief_text;
+    private String brief_text;       //간단하게 설정
     @Column
     private String github_link;
     @Column
-    private String skill_in_project;
+    private String skill_in_project;   //사용한 기술
     @Column
     private String performance;
-    @OneToOne(fetch = FetchType.LAZY)
+    @Column
+    private String role;   //그 프로젝트에서 맡은 역할
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
     private User user;

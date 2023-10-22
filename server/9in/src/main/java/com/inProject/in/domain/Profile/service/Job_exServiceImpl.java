@@ -17,6 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class Job_exServiceImpl {
     private UserRepository userRepository;
@@ -32,11 +35,16 @@ public class Job_exServiceImpl {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public ResponseJob_exDto getJob_ex(Long user_id){
-        Job_ex job_ex = job_exRepository.findJob_exByUserId(user_id)
+    public List<ResponseJob_exDto> getJob_ex(Long user_id){
+        List<Job_ex> job_ex = job_exRepository.findJob_exByUserId(user_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.BAD_REQUEST, user_id + "는 jobex를 생성하지 않음"));
 
-        ResponseJob_exDto responseJob_exDto = new ResponseJob_exDto(job_ex);
+        List<ResponseJob_exDto> responseJob_exDto = new ArrayList<>();
+
+        for(Job_ex jobEx : job_ex){
+            responseJob_exDto.add(new ResponseJob_exDto(jobEx));
+            log.info("jobex getjobex ==> user id : " + user_id + " job_ex : " + jobEx.toString());
+        }
         return responseJob_exDto;
     }
     @Transactional
@@ -44,17 +52,17 @@ public class Job_exServiceImpl {
         User user = getUserFromRequest(request);
         Job_ex job_ex = requestJob_exDto.toEntity(user);
         Job_ex savedJob_ex = job_exRepository.save(job_ex);
-        user.setJobEx(job_ex);
+        user.getJobExList().add(savedJob_ex);
 
         ResponseJob_exDto responseJob_exDto = new ResponseJob_exDto(savedJob_ex);
         log.info("JobexService createJobex ==> username : " + user.getUsername() + " jobEx : " + job_ex.toString());
         return responseJob_exDto;
     }
     @Transactional
-    public ResponseJob_exDto updateJob_ex(RequestJob_exDto requestJob_exDto, HttpServletRequest request){
+    public ResponseJob_exDto updateJob_ex(Long jobEx_id, RequestJob_exDto requestJob_exDto, HttpServletRequest request){
         User user = getUserFromRequest(request);
 
-        Job_ex jobEx = job_exRepository.findJob_exByUserId(user.getId())
+        Job_ex jobEx = job_exRepository.findById(jobEx_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.BAD_REQUEST, user.getId() + "는 jobex를 생성하지 않음"));
 
         if(!jobEx.getUser().getId().equals(user.getId())){
@@ -69,17 +77,17 @@ public class Job_exServiceImpl {
         return responseJob_exDto;
     }
     @Transactional
-    public void deleteJob_ex(HttpServletRequest request){
+    public void deleteJob_ex(Long jobEx_id, HttpServletRequest request){
         User user = getUserFromRequest(request);
 
-        Job_ex jobEx = job_exRepository.findJob_exByUserId(user.getId())
+        Job_ex jobEx = job_exRepository.findById(jobEx_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.BAD_REQUEST, user.getId() + "는 jobex를 생성하지 않음"));
 
         if(!jobEx.getUser().getId().equals(user.getId())){
             throw new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.UNAUTHORIZED, user.getId() + "은 프로필 작성자가 아닙니다.");
         }
 
-        job_exRepository.deleteById(user.getJobEx().getId());
+        job_exRepository.deleteById(jobEx_id);
         log.info("JobExService deleteJobex ==> 삭제 성공");
     }
 

@@ -396,7 +396,7 @@ export default function AddPost() {
 const Section = styled.section`
   margin: auto;
   width: 100%;
-  max-width: 850px;
+  max-width: 800px;
   margin-top: 70px;
   display: flex;
   flex-direction: column;
@@ -405,6 +405,10 @@ const Section = styled.section`
     display: inline-block;
     width: 90px;
     margin-right: 10px;
+  }
+
+  @media only screen and (max-width: 1325px) {
+    width: 600px;
   }
 `;
 
@@ -441,7 +445,7 @@ const Recruitment = styled.div`
 const DateContainer = styled.div`
   display: flex;
   align-items: center;
-  padding-bottom: 40px;
+  padding-bottom: 30px;
   input {
     width: 130px;
     height: 22px;
@@ -449,13 +453,14 @@ const DateContainer = styled.div`
     border: 1px solid #d2e2ec;
     background: var(--bs-white, #fff);
     box-shadow: 0px 0px 0px 0px #cbdafc;
+    padding: 0.5rem;
   }
 `;
 
 const Title = styled.div`
   display: flex;
   align-items: center;
-  padding-bottom: 40px;
+  padding-bottom: 30px;
   input {
     width: 700px;
     height: 21px;
@@ -463,12 +468,13 @@ const Title = styled.div`
     border: 1px solid #d2e2ec;
     background: var(--bs-white, #fff);
     box-shadow: 0px 0px 0px 0px #cbdafc;
+    padding: 1rem;
   }
 `;
 const Playing = styled.div`
   display: flex;
   align-items: center;
-  padding-bottom: 40px;
+  padding-bottom: 30px;
 
   div {
     width: 700px;
@@ -504,7 +510,7 @@ const Playing = styled.div`
 const Skill = styled.div`
   display: flex;
   align-items: center;
-  padding-bottom: 40px;
+  padding-bottom: 30px;
   select {
     width: 160px;
     height: 42px;
@@ -523,7 +529,7 @@ const Skill = styled.div`
 
 const People = styled.div`
   display: flex;
-  padding-bottom: 40px;
+  padding-bottom: 30px;
   .people_section {
     display: flex;
     margin-bottom: 10px;
@@ -563,7 +569,7 @@ const PlusBtn = styled.div`
 
 const TextArea = styled.div`
   display: flex;
-  padding-bottom: 40px;
+  padding-bottom: 30px;
 
   textarea {
     width: 710px;
@@ -571,6 +577,7 @@ const TextArea = styled.div`
     border: 1px solid #d2e2ec;
     background: var(--bs-white, #fff);
     box-shadow: 0px 0px 0px 0px #cbdafc;
+    padding: 0.5rem;
   }
 `;
 

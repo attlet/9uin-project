@@ -21,6 +21,11 @@ import PostDetailView from './pages/PostDetailView';
 import LoginView from './pages/User/Login/LoginView';
 import RecruitStatusView from './pages/User/RecruitStatusView';
 import ModifyPostView from './pages/ModifyPostView';
+import { applyMiddleware, createStore } from 'redux';
+import { Provider } from 'react-redux';
+import rootReducer from './modules';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import thunk from 'redux-thunk';
 
 const router = createBrowserRouter([
   {
@@ -49,10 +54,17 @@ const router = createBrowserRouter([
   },
 ]);
 
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(thunk))
+);
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   </React.StrictMode>
 );
 

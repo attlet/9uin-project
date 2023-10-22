@@ -33,16 +33,23 @@ public class ChangeService {
     @Transactional
     public ResponseChangeDto changePw(RequestChangePwDto requestChangePwDto){
         String username = requestChangePwDto.getUsername();
+        String curPw = requestChangePwDto.getCurPw();
         String newPw = requestChangePwDto.getNewPw();
         String checkPw = requestChangePwDto.getCheckPw();
+
         log.info("ChangeService changePw ==> username : " + username + " 비밀번호 변경 시작");
 
         if(!newPw.equals(checkPw)){
-            throw new CustomException(ConstantsClass.ExceptionClass.CHANGE, HttpStatus.UNAUTHORIZED, "새 비밀번호와 확인 비밀번호가 다름");
+            throw new CustomException(ConstantsClass.ExceptionClass.CHANGE, HttpStatus.BAD_REQUEST, "새 비밀번호와 확인 비밀번호가 다름");
         }
 
         User user = userRepository.getByUsername(username)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.CHANGE, HttpStatus.NOT_FOUND, username + "은 없는 유저입니다."));
+
+        if(!passwordEncoder.matches(curPw, user.getPassword())){
+            throw new CustomException(ConstantsClass.ExceptionClass.CHANGE, HttpStatus.CONFLICT, "기존 비밀번호 틀림");
+        }
+
         log.info("changePw ==> DB에 유저 확인");
 
         user.setPassword(passwordEncoder.encode(newPw));
@@ -52,7 +59,8 @@ public class ChangeService {
     }
     @Transactional
     public ResponseCheckIdDto checkId(RequestCheckIdDto requestCheckIdDto){
-        User user = userRepository.getByUsername(requestCheckIdDto.getUsername()).get();
+        User user = userRepository.getByUsername(requestCheckIdDto.getUsername())
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.FIND, HttpStatus.NOT_FOUND,"존재하지 않는 유저"));
         boolean success = false;
 
         if(user != null){

@@ -34,7 +34,7 @@ public class CustomApplicantRoleRepositoryImpl implements CustomApplicantRoleRep
         ApplicantRoleRelation query = jpaQueryFactory.selectFrom(qApplicantRoleRelation)
                 .where(qApplicantRoleRelation.role_applicant.eq(user),
                         qApplicantRoleRelation.roleNeeded.eq(roleNeeded))
-                .fetchOne();
+                .fetchFirst();
 
         return Optional.of(query);
     }

@@ -1,12 +1,15 @@
 import React, { Fragment } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../modules/auth';
 
 const Header = (props) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const { token, login, logout } = useAuth();
+  const token = useSelector((state) => state.auth.token);
+  console.log(token);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -14,7 +17,7 @@ const Header = (props) => {
 
   const handleLogin = () => {
     if (token) {
-      logout();
+      dispatch(logout());
     } else {
       navigate('/user/login');
     }

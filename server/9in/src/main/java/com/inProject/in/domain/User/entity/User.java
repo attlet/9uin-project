@@ -72,17 +72,17 @@ public class User extends BaseEntity implements UserDetails{
     @ToString.Exclude
     private List<Comment> commentList;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Job_ex jobEx;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Job_ex> jobExList;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Education education;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Education> educationList;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private Project_skill projectSkill;
+    @OneToMany(mappedBy = "user",  cascade = CascadeType.REMOVE)
+    private List<Project_skill> projectSkillList;
 
-    @OneToOne(mappedBy = "user",fetch = FetchType.LAZY,  cascade = CascadeType.REMOVE)
-    private Certificate certificate;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Certificate> certificateList;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private MyInfo myInfo;
