@@ -9,31 +9,9 @@ export default function PWChangeView() {
 
   const [id, setId] = useState('');
   const [isId, setIsId] = useState(false);
-  const [isNotId, setIsNotId] = useState(false);
 
   const [newPw, setNewPw] = useState('');
   const [checkPw, setCheckPw] = useState('');
-
-  const handleChangePw = () => {
-    const userInfo = {
-      username: id,
-      newPw,
-      checkPw,
-    };
-
-    try {
-      const response = axios.post(
-        'http://1.246.104.170:8080/change/password',
-        userInfo
-      );
-
-      // 아이디와 기존 비밀번호 검사 로직 후 결과처리
-      alert('비밀번호가 변경되었습니다.');
-      navigate('/user/login');
-    } catch (error) {
-      console.error('비밀번호 변경 실패', error);
-    }
-  };
 
   const handleChangeId = (e) => {
     setId(e.target.value);
@@ -61,24 +39,49 @@ export default function PWChangeView() {
 
       if (response.data.message === '유저 존재') {
         setIsId(true);
-
-        setTimeout(() => {
-          setIsId(false);
-        }, 3000);
       }
     } catch (error) {
       console.log('아이디 체크 실패', error);
+      setIsId(false);
       if (
         error.response.data.message ===
         'Find Exception. find - checkId에서 username이 존재하지 않음 확인'
       ) {
+        alert('아이디가 존재하지 않습니다.');
         console.log('들어옴');
-        setIsNotId(true);
-
-        setTimeout(() => {
-          setIsNotId(false);
-        }, 3000);
       }
+    }
+  };
+
+  const handleChangePw = () => {
+    if (!isId) {
+      alert('아이디 인증을 해주세요.');
+    }
+
+    // Todo 기존 비밀번호 인증처리
+
+    if (newPw !== checkPw) {
+      alert('새 비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
+    const userInfo = {
+      username: id,
+      newPw,
+      checkPw,
+    };
+
+    try {
+      const response = axios.post(
+        'http://1.246.104.170:8080/change/password',
+        userInfo
+      );
+
+      // 아이디와 기존 비밀번호 검사 로직 후 결과처리
+      alert('비밀번호가 변경되었습니다.');
+      navigate('/user/login');
+    } catch (error) {
+      console.error('비밀번호 변경 실패', error);
     }
   };
 
@@ -94,10 +97,8 @@ export default function PWChangeView() {
             type="text"
             placeholder="내용을 입력해 주세요."
           />
-          <CheckBtn onClick={checkId}>확인</CheckBtn>
+          <CheckBtn onClick={checkId}>{isId ? '확인완료' : '확인'}</CheckBtn>
         </InputBox>
-        {isId && <IsId>아이디를 확인했습니다</IsId>}
-        {isNotId && <IsNotId>아이디가 존재하지 않습니다.</IsNotId>}
         <SubTitle>기존 비밀번호</SubTitle>
         <InputBox>
           <StyledInput type="text" placeholder="내용을 입력해 주세요." />
@@ -111,7 +112,6 @@ export default function PWChangeView() {
             type="password"
             placeholder="내용을 입력해 주세요."
           />
-          <CheckBtn>인증 요청</CheckBtn>
         </InputBox>
         <SubTitle>비밀번호 확인</SubTitle>
         <InputBox>
@@ -121,7 +121,6 @@ export default function PWChangeView() {
             value={checkPw}
             onChange={handleChangeCheckPw}
           />
-          <CheckBtn>인증 확인</CheckBtn>
         </InputBox>
         <ChangeBtn onClick={handleChangePw}>변경하기</ChangeBtn>
       </ContainerBox>
@@ -139,6 +138,7 @@ const Container = styled.section`
 const Title = styled.p`
   margin-top: 5rem;
   font-weight: 900;
+  margin-bottom: 0.7rem;
 `;
 
 const SubTitle = styled.p`
@@ -198,6 +198,7 @@ const ChangeBtn = styled.div`
   margin: auto;
   text-align: center;
   padding: 0.3rem;
+  margin-top: 2.6rem;
 
   &:hover {
     cursor: pointer;

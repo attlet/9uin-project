@@ -1,18 +1,29 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import config from '../../common/config';
 
-function useFetchData(path, header = {}) {
+function useFetchData(path, header = {}, page = 0) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const baseURL = 'http://1.246.104.170:8080';
+  const baseURL =
+    process.env.REACT_APP_NODE_ENV === 'development'
+      ? config.development.apiUrl
+      : process.env.REACT_APP_NODE_ENV === 'local'
+      ? config.local.apiUrl
+      : '';
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(baseURL + path, {
-          'X-AUTH-TOKEN': header,
+          headers: {
+            'X-AUTH-TOKEN': header,
+          },
+          params: {
+            page,
+          },
         });
         setData(response.data);
         setLoading(false);

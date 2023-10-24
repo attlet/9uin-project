@@ -18,7 +18,7 @@ const TagIcon = styled.div`
 `;
 
 const TagName = styled.div`
-  font-size: 0.5rem;
+  font-size: 0.7rem;
   font-weight: 600;
   color: #1f7ceb;
   padding: 0.2rem;

@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux';
 import { createAxiosInstance } from '../api/instance';
 import { getNewTokens } from '../api/refreshToken';
 import { updateTokens } from './auth';
@@ -12,34 +11,33 @@ export const getClipList = (clipList) => ({
   payload: { clipList },
 });
 
-// 비동기 액션 생성자
-// TODO 추후 개선
-// export const fetchClipListAsync = () => async (dispatch) => {
-//   try {
-//     const token = useSelector((state) => state.token);
-//     const axiosInstance = createAxiosInstance(token);
-//     const response = await axiosInstance.get('cliped');
+// 비동기 액션 생성자 (Thunk)
+export const fetchClipList = () => async (dispatch, getState) => {
+  try {
+    const token = getState().auth.token;
+    const axiosInstance = createAxiosInstance(token);
+    const response = await axiosInstance.get('cliped');
 
-//     dispatch(getClipList(response.data));
-//   } catch (error) {
-//     console.error(error);
+    dispatch(getClipList(response.data));
+  } catch (error) {
+    console.error(error);
 
-//     if (error.response && error.response.status === 401) {
-//       try {
-//         const { newAccessToken, newRefreshToken } = await getNewTokens();
+    if (error.response && error.response.status === 401) {
+      try {
+        const { newAccessToken, newRefreshToken } = await getNewTokens();
 
-//         dispatch(updateTokens(newAccessToken, newRefreshToken));
+        dispatch(updateTokens(newAccessToken, newRefreshToken));
 
-//         const axiosInstance = createAxiosInstance(newRefreshToken);
-//         const response = await axiosInstance.get('cliped');
+        const axiosInstance = createAxiosInstance(newRefreshToken);
+        const response = await axiosInstance.get('cliped');
 
-//         dispatch(getClipList(response.data));
-//       } catch (error) {
-//         console.error('토큰 갱신 또는 클립 목록 가져오기 실패', error);
-//       }
-//     }
-//   }
-// };
+        dispatch(getClipList(response.data));
+      } catch (error) {
+        console.error('토큰 갱신 또는 클립 목록 가져오기 실패', error);
+      }
+    }
+  }
+};
 
 // Initial State
 const initialState = {
