@@ -32,8 +32,6 @@ export default function ProjectView() {
     fetchData();
   }, [page]);
 
-  console.log(projectList.filter((project) => project.type === '프로젝트'));
-
   if (error) return <p>{error}</p>;
 
   return (
@@ -92,6 +90,7 @@ export default function ProjectView() {
         {loading ? (
           <p>Loading...</p>
         ) : (
+          projectList.length > 0 &&
           projectList
             .filter((post) => post.type === '프로젝트')
             .map((post) => (
@@ -112,10 +111,10 @@ export default function ProjectView() {
             ))
         )}
       </ProjectGrid>
-      <ul>
-        <li onClick={() => setPage(0)}>1</li>
-        <li onClick={() => setPage(1)}>2</li>
-      </ul>
+      <PageBox>
+        <PageIndex onClick={() => setPage(0)}>1</PageIndex>
+        <PageIndex onClick={() => setPage(1)}>2</PageIndex>
+      </PageBox>
     </section>
   );
 }
@@ -266,6 +265,30 @@ const ToggleBtn = styled.input`
   &:focus-visible {
     outline-offset: max(2px, 0.1em);
     outline: max(2px, 0.1em) solid tomato;
+  }
+`;
+
+const PageBox = styled.ul`
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const PageIndex = styled.li`
+  list-style: none;
+  border: 1px solid #7cb2f3;
+  border-radius: 20px;
+  margin: 0.2em;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.9rem;
+
+  &:hover {
+    background-color: tomato;
+    color: white;
+    border: none;
+    transform: scale(1.2);
+    transition: all 100ms ease-in-out;
   }
 `;
 
