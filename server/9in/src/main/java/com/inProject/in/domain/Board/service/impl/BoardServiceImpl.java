@@ -7,6 +7,7 @@ import com.inProject.in.domain.Board.Dto.request.RequestCreateBoardDto;
 import com.inProject.in.domain.Board.Dto.request.RequestSearchBoardDto;
 import com.inProject.in.domain.Board.Dto.request.RequestUpdateBoardDto;
 import com.inProject.in.domain.Board.Dto.response.ResponseBoardListDto;
+import com.inProject.in.domain.Board.Dto.response.ResponsePagingBoardDto;
 import com.inProject.in.domain.Board.entity.Board;
 import com.inProject.in.domain.Board.repository.ViewCountRepository;
 import com.inProject.in.domain.Comment.Dto.ResponseCommentDto;
@@ -310,7 +311,7 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Override
-    public List<ResponseBoardListDto> getBoardList(Pageable pageable, RequestSearchBoardDto requestSearchBoardDto)  {  //Pageable pageable, String user_id, String title, String type, List<String> tags
+    public ResponsePagingBoardDto getBoardList(Pageable pageable, RequestSearchBoardDto requestSearchBoardDto)  {  //Pageable pageable, String user_id, String title, String type, List<String> tags
 
         String username = requestSearchBoardDto.getUsername();
         String title = requestSearchBoardDto.getTitle();
@@ -323,7 +324,7 @@ public class BoardServiceImpl implements BoardService {
         log.info("BoardService getBoardList ==> filtering by username : " + username + " title : " + title + " type : " + type );
         log.info("Tag filtering : " + tags.toString());
 
-        for (Board board : boardList) {
+        for (Board board : boardList) {              //board들 돌면서 반환할 리스트 생성
             ResponseBoardListDto responseBoardListDto = new ResponseBoardListDto(board);
 
             for(TagBoardRelation tagBoardRelation : board.getTagBoardRelationList()){
@@ -337,7 +338,17 @@ public class BoardServiceImpl implements BoardService {
             responseBoardDtoList.add(responseBoardListDto);
         }
 
-        return responseBoardDtoList;
+        Long totalCount = boardPage.getTotalElements();    //전체 데이터 개수
+        int totalPage = boardPage.getTotalPages();     //전체 페이지 개수
+
+
+        ResponsePagingBoardDto responsePagingBoardDto = ResponsePagingBoardDto.builder()
+                .content(responseBoardDtoList)
+                .totalCount(totalCount)
+                .totalPage(totalPage)
+                .build();
+
+        return responsePagingBoardDto;
     }
 
     @Override

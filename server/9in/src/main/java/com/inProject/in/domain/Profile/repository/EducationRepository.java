@@ -11,5 +11,5 @@ import java.util.Optional;
 
 public interface EducationRepository extends JpaRepository<Education, Long> {
     @Query(value = "SELECT s FROM Education AS s WHERE s.user.id = :user_id")
-    Optional<List<Education>> findEducationByUserId(@Param("user_id") Long user_id);
+    Optional<Education> findEducationByUserId(@Param("user_id") Long user_id);
 }

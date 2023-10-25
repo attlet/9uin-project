@@ -90,7 +90,7 @@ public class MyInfoServiceImpl {
 
         MyInfo savedMyInfo = myInfoRepository.save(myInfo);
 
-        ResponseMyInfoDto responseMyInfoDto = new ResponseMyInfoDto(myInfo);
+        ResponseMyInfoDto responseMyInfoDto = new ResponseMyInfoDto(savedMyInfo);
 
         for(TagMyInfoRelation tagMyInfoRelation : tagMyInfoRelationList){
             ResponseSkillTagDto responseSkillTagDto = new ResponseSkillTagDto(tagMyInfoRelation.getSkillTag());

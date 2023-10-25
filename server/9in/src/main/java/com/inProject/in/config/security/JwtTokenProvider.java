@@ -65,7 +65,7 @@ public class JwtTokenProvider {
 //        claims.put("roles" ,roles);
 
         Date now = new Date();
-        String refreshToken = Jwts.builder()              //refresh 토큰에는 사용자 관련 정보를 넣지 않는 것도 생각해볼것.
+        String refreshToken = Jwts.builder()              //refresh 토큰에는 사용자 이름은 들어가지만 권한은 들어가지 않았음.
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshValidMilliSecond))

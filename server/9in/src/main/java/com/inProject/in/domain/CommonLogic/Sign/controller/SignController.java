@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.*;
 public class SignController {
     private final Logger log = LoggerFactory.getLogger(SignController.class);
     private final SignService signService;
-    private final FindService findService;
     private final MailService mailService;
 
     @PostMapping("/sign-in")

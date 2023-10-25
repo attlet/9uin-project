@@ -5,6 +5,7 @@ import com.inProject.in.domain.Board.Dto.request.RequestSearchBoardDto;
 import com.inProject.in.domain.Board.Dto.request.RequestUpdateBoardDto;
 import com.inProject.in.domain.Board.Dto.response.ResponseBoardDto;
 import com.inProject.in.domain.Board.Dto.response.ResponseBoardListDto;
+import com.inProject.in.domain.Board.Dto.response.ResponsePagingBoardDto;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -17,6 +18,6 @@ public interface BoardService {
                                  HttpServletRequest request);
     ResponseBoardDto updateBoard(Long id, RequestUpdateBoardDto requestUpdateBoardDto, HttpServletRequest request);
     void deleteBoard(Long id, HttpServletRequest request);
-    List<ResponseBoardListDto> getBoardList(Pageable pageable, RequestSearchBoardDto requestSearchBoardDto);
+    ResponsePagingBoardDto getBoardList(Pageable pageable, RequestSearchBoardDto requestSearchBoardDto);
     List<ResponseBoardListDto> getBoardListForUserInfo(Pageable pageable, String username, String type);
 }
