@@ -20,7 +20,9 @@ const Footer = () => {
 export default Footer;
 
 const Bottom = styled.div`
+  max-width: 1300px;
   width: 100%;
+  margin: auto;
   height: 10rem;
 `;
 
