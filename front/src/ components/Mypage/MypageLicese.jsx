@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import MypageModal from './MypageModal'
 import axios from 'axios';
 import { getNewTokens } from '../../api/refreshToken';
-import { createAxiosInstance } from '../../api/instance';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 
-const MypageLicese = ({token}) => {
+const MypageLicese = ({token, licese}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [licenseFields, setLicenseFields] = useState([
     { id: 1, name: '', startDate: '', endDate: '', description: '' },
@@ -140,14 +141,35 @@ const MypageLicese = ({token}) => {
       <div className="section2_title">
         자격증 현 <p className="title_length">1</p>
       </div>
-      <div className="section2_container">
-        <div className="section2_content">
-          <div>토익</div>
-          <div>880</div>
-          <div>2022.02.22 ~ 2024.02.21</div>
-        </div>
-        <div onClick={openModal} className="section2_plus">+</div>
-      </div>
+      <Swiper
+        modules={[Navigation]}
+        spaceBetween={10}
+        navigation
+        className='siwper'
+        breakpoints={{
+          1325: {
+            slidesPerView: 5,
+            spaceBetween: 30
+          },
+          77: {
+            slidesPerView: 3,
+            spaceBetween: 20
+          },
+        }}
+      >
+        {licese?.map((a) => {
+          return (
+            <SwiperSlide key={a.id} className="section2_container">
+              <div className="section2_content">
+                <div>토익</div>
+                <div>880</div>
+                <div>2022.02.22 ~ 2024.02.21</div>
+              </div>
+            </SwiperSlide>
+          )
+        })}
+      </Swiper>
+      <div onClick={openModal} className="section2_plus">+</div>
       <MypageModal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -160,6 +182,7 @@ const MypageLicese = ({token}) => {
 
 const Licese = styled.div`
   margin-top: 100px;
+
   .section2_title {
     color: #000;
     font-size: 16px;
@@ -182,7 +205,7 @@ const Licese = styled.div`
   .section2_container {
     display: flex;
     align-items: center;
-    gap: 50px;
+    gap: 10px;
   }
 
   .section2_content {

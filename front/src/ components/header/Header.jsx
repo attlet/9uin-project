@@ -65,27 +65,34 @@ const Header = (props) => {
 const Headers = styled.header`
   position: fixed;
   top: 0;
-  left: 0;
+  left: 50%;
   width: 100%;
+  transform: translate(-50%,0%);
   height: 80px;
   color: black;
-  background-color: white;
   z-index: 99;
+  background-color: aqua;
 `;
 
 const Container = styled.div`
-  width: 1200px;
+  width: 100%;
+  max-width: 1260px;
+  padding-left: 20px;
+  padding-right: 20px;
   margin: auto;
-  background-color: 'red';
   display: flex;
   position: relative;
+
+  @media only screen and (min-width: 768px) and (max-width: 1325px) {
+    max-width: 768px;
+  }
 `;
 
 const Logo = styled.img`
   cursor: pointer;
   position: absolute;
   top: 15px;
-  left: 0;
+  left: 10px;
   border-radius: 8px;
   height: 50px;
 `;

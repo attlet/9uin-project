@@ -3,8 +3,10 @@ import styled from 'styled-components';
 import MypageModal from './MypageModal'
 import axios from 'axios';
 import { getNewTokens } from '../../api/refreshToken';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 
-const MypageJob = ({token}) => {
+const MypageJob = ({ token, Jobs }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobFields, setJobFields] = useState([
     { id: 1, jobname: '', startDate: '', endDate: '', stack: [], description: '' },
@@ -14,11 +16,11 @@ const MypageJob = ({token}) => {
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  
+
   const handlePost = async () => {
     try {
       setIsLoading(true);
-  
+
       const promises = jobFields.map(async (job) => {
         const data = {
           company_name: job.jobname,
@@ -27,16 +29,16 @@ const MypageJob = ({token}) => {
           job_explanation: job.description,
           skill_in_job: job.stack
         };
-  
+
         const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
           headers: {
             'X-AUTH-TOKEN': token
           }
         });
-  
+
         console.log(response.data);
       });
-  
+
       await Promise.all(promises);
     } catch (error) {
       console.error(error);
@@ -50,13 +52,13 @@ const MypageJob = ({token}) => {
             expire: field.endDate,
             explanation: field.description,
           };
-    
+
           const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
             headers: {
               'X-AUTH-TOKEN': refreshToken
             }
           });
-    
+
           console.log(response.data);
         });
 
@@ -72,41 +74,41 @@ const MypageJob = ({token}) => {
     Spring: 'Spring.png',
     javascript: 'JS.png',
   };
-  
+
   const handleFieldChange = (index, field, value) => {
     const updatedFields = [...jobFields];
     updatedFields[index][field] = value;
     setJobFields(updatedFields);
   };
-  
+
   const addJobField = () => {
     const newField = { id: Date.now(), jobname: '', startDate: '', endDate: '', stack: [], description: '' };
     setJobFields([...jobFields, newField]);
   };
-  
+
   const handleAddStack = (index, selectedStack) => {
     const updatedFields = [...jobFields];
     const stackToAdd = selectedStack.trim();
-  
+
     if (stackToAdd && !updatedFields[index].stack.includes(stackToAdd)) {
       updatedFields[index].stack.push(stackToAdd);
       setJobFields(updatedFields);
     } else {
       alert("이미 추가한 스택입니다.");
-    } 
+    }
   };
 
 
   const handleRemoveSkill = (jobIndex, skillIndex) => {
     const shouldRemoveSkill = window.confirm(`사용한 기술 스택을 삭제하시겠습니까?`);
-  
+
     if (shouldRemoveSkill) {
       const updatedFields = [...jobFields];
       updatedFields[jobIndex].stack.splice(skillIndex, 1);
       setJobFields(updatedFields);
     }
   };
-  
+
 
   const titleContent = (
     <TitleContentStyled>
@@ -115,7 +117,7 @@ const MypageJob = ({token}) => {
       <p></p>
     </TitleContentStyled>
   );
-  
+
   const bodyContent = (
     <BodyContentStyled>
       {jobFields.map((field, index) => (
@@ -149,11 +151,11 @@ const MypageJob = ({token}) => {
           <div className='section2'>
             <span>사용한 기술 스택</span>
             <div className='section2_select'>
-              <select 
-              name='stack' 
-              id=''
-              value={selectedStack} 
-              onChange={(e) => setSelectedStack(e.target.value)}
+              <select
+                name='stack'
+                id=''
+                value={selectedStack}
+                onChange={(e) => setSelectedStack(e.target.value)}
               >
                 <option value=''>선택</option>
                 <option value='react'>react</option>
@@ -161,12 +163,12 @@ const MypageJob = ({token}) => {
                 <option value='javascript'>javascript</option>
               </select>
               <button>
-                <img src='/icons/plus.png' alt='' onClick={() => handleAddStack(index, selectedStack)}/>
+                <img src='/icons/plus.png' alt='' onClick={() => handleAddStack(index, selectedStack)} />
               </button>
             </div>
           </div>
           <div className="skill_stack">
-            {field.stack.map((skill,index) => (
+            {field.stack.map((skill, index) => (
               <div key={skill} onClick={() => handleRemoveSkill(index, index)}>
                 {skillImage[skill] && (
                   <img className='skill_image' src={`/stack/${skillImage[skill]}`} alt={skill} />
@@ -199,61 +201,72 @@ const MypageJob = ({token}) => {
       <div className="section3_title">
         직무 경험 <p className="title_length">2</p>
       </div>
-      <div className="section3_flex">
-        <div className="section3_container">
-          <div className="section3_container_left">
-            <div className="section3_container_leftright_flex">
-              <span>회사 이름</span>
-              <p>모나미</p>
-            </div>
-            <div className="section3_container_leftright_flex">
-              <span>사용한 기술 스택</span>
-              <p>
-                <img
-                  src="stack/JS.png"
-                  width="24"
-                  height="24"
-                  alt="js icon"
-                />
-              </p>
-            </div>
-            <div className="section3_container_leftright_flex">
-              <span>직무 설명</span>
-              <p></p>
-            </div>
-          </div>
-          <div className="section3_container_right">
-            <div className="section3_container_leftright_flex">
-              <span>재직 기간</span>
-              <p>
-                <div>2015.06</div>
-                <div>~</div>
-                <div>2018.03</div>
-              </p>
-            </div>
-          </div>
+      <Swiper
+        modules={[Navigation]}
+        navigation
+        className='siwper'
+        slidesPerView={1}
+      >
+        {Jobs?.map((a) => {
+          return (
+            <SwiperSlide key={a.id} className="section3_flex">
+              <div className="section3_container">
+                <div className="section3_container_left">
+                  <div className="section3_container_leftright_flex">
+                    <span>회사 이름</span>
+                    <p>모나미</p>
+                  </div>
+                  <div className="section3_container_leftright_flex">
+                    <span>사용한 기술 스택</span>
+                    <p>
+                      <img
+                        src="stack/JS.png"
+                        width="24"
+                        height="24"
+                        alt="js icon"
+                      />
+                    </p>
+                  </div>
+                  <div className="section3_container_leftright_flex">
+                    <span>직무 설명</span>
+                    <p></p>
+                  </div>
+                </div>
+                <div className="section3_container_right">
+                  <div className="section3_container_leftright_flex">
+                    <span>재직 기간</span>
+                    <p>
+                      <div>2015.06</div>
+                      <div>~</div>
+                      <div>2018.03</div>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {/* <div className="section3_next">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                >
+                  <path
+                    d="M13.477 9.16591H3.33366V10.8326H13.477L9.00699 15.3026L10.1853 16.4809L16.667 9.99924L10.1853 3.51758L9.00699 4.69591L13.477 9.16591Z"
+                    fill="#1F7CEB"
+                  />
+                </svg>
+              </div> */}
+            </SwiperSlide>
+          )
+        })}
+        <div className="section3_btn">
+          <button>
+            수정하기
+          </button>
+          <button onClick={openModal} >추가하기</button>
         </div>
-        <div className="section3_next">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-          >
-            <path
-              d="M13.477 9.16591H3.33366V10.8326H13.477L9.00699 15.3026L10.1853 16.4809L16.667 9.99924L10.1853 3.51758L9.00699 4.69591L13.477 9.16591Z"
-              fill="#1F7CEB"
-            />
-          </svg>
-        </div>
-      </div>
-      <div className="section3_btn">
-        <button>
-          수정하기
-        </button>
-        <button onClick={openModal} >추가하기</button>
-      </div>
+      </Swiper>
       <MypageModal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -266,6 +279,11 @@ const MypageJob = ({token}) => {
 
 const Section3 = styled.div`
   margin-top: 50px;
+
+  .swiper-button-prev{
+    display: none;
+  }
+
   .section3_title {
     color: #000;
     font-size: 16px;
@@ -336,11 +354,13 @@ const Section3 = styled.div`
       }
     }
   }
-  .section3_next {
+  .swiper-button-next {
     width: 50px;
     height: 50px;
     flex-shrink: 0;
-    border: 2px solid #d2e2ec;
+    border: 2px solid #1F7CEB;
+    top: 170px;
+    right: 1px;
     border-radius: 100%;
     cursor: pointer;
     display: flex;
