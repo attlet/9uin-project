@@ -11,15 +11,14 @@
 //import com.inProject.in.domain.Board.Dto.response.ResponseBoardDto;
 //import com.inProject.in.domain.Board.repository.BoardRepository;
 //import com.inProject.in.domain.Board.service.BoardService;
-//import com.inProject.in.domain.RoleNeeded.Dto.RequestRoleNeededDto;
 //import com.inProject.in.domain.RoleNeeded.Dto.RequestUsingInBoardDto;
 //import com.inProject.in.domain.RoleNeeded.entity.RoleNeeded;
 //import com.inProject.in.domain.RoleNeeded.repository.RoleNeededRepository;
 //import com.inProject.in.domain.SkillTag.Dto.RequestSkillTagDto;
 //import com.inProject.in.domain.SkillTag.entity.SkillTag;
 //import com.inProject.in.domain.SkillTag.repository.SkillTagRepository;
+//import com.inProject.in.domain.User.entity.User;
 //import com.inProject.in.domain.User.repository.UserRepository;
-//import jakarta.servlet.*;
 //import jakarta.servlet.http.*;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.DisplayName;
@@ -28,20 +27,17 @@
 //import org.mockito.InjectMocks;
 //import org.mockito.Mock;
 //import org.mockito.junit.jupiter.MockitoExtension;
-//import org.springframework.data.domain.Page;
-//import org.springframework.data.domain.PageImpl;
-//import org.springframework.data.domain.PageRequest;
-//import org.springframework.data.domain.Pageable;
+//import org.springframework.cglib.core.Local;
+//import org.springframework.mock.web.MockHttpServletRequest;
+//import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 //
-//import java.io.BufferedReader;
-//import java.io.IOException;
-//import java.io.UnsupportedEncodingException;
-//import java.security.Principal;
+//import java.time.LocalDateTime;
 //import java.util.*;
 //
 //import static org.junit.jupiter.api.Assertions.assertEquals;
 //import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.ArgumentMatchers.eq;
+//import static org.mockito.ArgumentMatchers.anyString;
 //import static org.mockito.BDDMockito.given;
 //
 //
@@ -58,53 +54,178 @@
 //    @Mock
 //    RoleBoardRelationRepository roleBoardRelationRepository;
 //    @Mock
-//     UserRepository userRepository;
+//    UserRepository userRepository;
 //    @Mock
 //    JwtTokenProvider jwtTokenProvider;
 //    @Mock
 //    ViewCountRepository viewCountRepository;
 //
-//    @InjectMocks                                       //생성한 mock 객체를 주입받음.
-//    BoardService boardService = new BoardServiceImpl(
-//            boardRepository,
-//            skillTagRepository,
-//            roleNeededRepository,
-//            tagBoardRelationRepository,
-//            roleBoardRelationRepository,
-//            userRepository,
-//            jwtTokenProvider,
-//            viewCountRepository
-//    );
+//    BoardService boardService;
+////    @InjectMocks                                       //생성한 mock 객체를 주입받음.
+////    BoardService boardService = new BoardServiceImpl(
+////            boardRepository,
+////            skillTagRepository,
+////            roleNeededRepository,
+////            tagBoardRelationRepository,
+////            roleBoardRelationRepository,
+////            userRepository,
+////            jwtTokenProvider,
+////            viewCountRepository
+////    );
 //
 //    @BeforeEach
 //    void dataSetting(){
-//
+//        boardService = new BoardServiceImpl(
+//                boardRepository,
+//                skillTagRepository,
+//                roleNeededRepository,
+//                tagBoardRelationRepository,
+//                roleBoardRelationRepository,
+//                userRepository,
+//                jwtTokenProvider,
+//                viewCountRepository
+//        );
 //    }
 //
 //    @Test
-//    @DisplayName("게시글 하나 조회하는 로직")
-//    void getBoard() {
+//    @DisplayName("로그인 안 한 유저가 게시글 하나 조회하는 로직")
+//    void getBoardWithoutLogin() {
 //
 //        //given
-////        Board board = Board.builder()
-////                .title("title1")
-////                .text("text1")
-////                .build();
-////
-////        given(boardRepository.findById(1L)).willReturn(Optional.ofNullable(board));
-////
-////        //when
-////        ResponseBoardDto responseBoardDto = boardService.getBoard(1L);
-////
-////        //then
-////        assertEquals(board.getId(), responseBoardDto.getBoard_id());
+//        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//
+//        User user = User.builder()
+//                .username("user1")
+//                .password(passwordEncoder.encode("1234"))
+//                .mail("aa@naver.com")
+//                .build();
+//
+//        Board board = Board.builder()
+//                .title("title1")
+//                .text("text1")
+//                .type("project")
+//                .period(LocalDateTime.now())
+//                .proceed_method("")
+//                .author(user)
+//                .build();
+//
+//        SkillTag skillTag = SkillTag.builder()
+//                .name("react")
+//                .build();
+//
+//        RoleNeeded roleNeeded = RoleNeeded.builder()
+//                .name("frontend")
+//                .build();
+//
+//        TagBoardRelation tagBoardRelation = TagBoardRelation.builder()
+//                .skillTag(skillTag)
+//                .board(board)
+//                .build();
+//
+//        RoleBoardRelation roleBoardRelation = RoleBoardRelation.builder()
+//                .roleNeeded(roleNeeded)
+//                .board(board)
+//                .build();
+//
+//        board.setTagBoardRelationList(List.of(tagBoardRelation));
+//        board.setRoleBoardRelationList(List.of(roleBoardRelation));
+//
+//        MockHttpServletRequest request = new MockHttpServletRequest();
+//        request.addHeader("X-AUTH-TOKEN", "token");
+//
+//        given(jwtTokenProvider.resolveToken(request)).willReturn(null);
+//        given(boardRepository.findById(1L)).willReturn(Optional.ofNullable(board));
+//
+//
+//        //when
+//        ResponseBoardDto responseBoardDto = boardService.getBoard(1L, request);
+//
+//        //then
+//        assertEquals(board.getId(), responseBoardDto.getBoard_id());
+//        assertEquals(board.getView_cnt(), responseBoardDto.getView_cnt());
+//        assertEquals(responseBoardDto.getView_cnt(), 0);
+//
+//        System.out.println("--------------");
+//        System.out.println("view cnt : " + responseBoardDto.getView_cnt());
+//        System.out.println("--------------");
 //    }
 //
 //    @Test
-//    @DisplayName("게시글 하나 생성하는 로직")
-//    void createBoard() {
-//
+//    @DisplayName("로그인 한 유저가 게시글 하나 조회")
+//    void getBoardWithLogin(){
 //        //given
+//        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//
+//        User user = User.builder()
+//                .username("user1")
+//                .password(passwordEncoder.encode("1234"))
+//                .mail("aa@naver.com")
+//                .build();
+//
+//        Board board = Board.builder()
+//                .title("title1")
+//                .text("text1")
+//                .type("project")
+//                .period(LocalDateTime.now())
+//                .proceed_method("")
+//                .author(user)
+//                .build();
+//
+//        SkillTag skillTag = SkillTag.builder()
+//                .name("react")
+//                .build();
+//
+//        RoleNeeded roleNeeded = RoleNeeded.builder()
+//                .name("frontend")
+//                .build();
+//
+//        TagBoardRelation tagBoardRelation = TagBoardRelation.builder()
+//                .skillTag(skillTag)
+//                .board(board)
+//                .build();
+//
+//        RoleBoardRelation roleBoardRelation = RoleBoardRelation.builder()
+//                .roleNeeded(roleNeeded)
+//                .board(board)
+//                .build();
+//
+//        board.setTagBoardRelationList(List.of(tagBoardRelation));
+//        board.setRoleBoardRelationList(List.of(roleBoardRelation));
+//
+//        List<String> boardList = new ArrayList<>();
+//        boardList.add("1");
+//
+//        MockHttpServletRequest request = new MockHttpServletRequest();
+//        String token = jwtTokenProvider.createToken("user1", List.of("user"));
+//
+//        given(jwtTokenProvider.createToken("user1",List.of("user"))).willReturn(token);
+//        given(jwtTokenProvider.resolveToken(request)).willReturn(token);
+//
+//        given(viewCountRepository.getBoardList(anyString())).willReturn(boardList);   //viewCountRepository 부분을 나눠서 작성.
+//
+//        given(boardRepository.updateViewCnt(any(Long.class))).willReturn(1);
+//        given(boardRepository.findById(1L)).willReturn(Optional.ofNullable(board));
+//
+////        request.addHeader("X-AUTH-TOKEN", token);
+//        //when
+//        ResponseBoardDto responseBoardDto = boardService.getBoard(1L, request);
+//
+//        //then
+//        assertEquals(board.getId(), responseBoardDto.getBoard_id());
+//        assertEquals(board.getView_cnt(), responseBoardDto.getView_cnt());
+//        assertEquals(responseBoardDto.getView_cnt(), 1);
+//
+//        System.out.println("--------------");
+//        System.out.println("view cnt : " + responseBoardDto.getView_cnt());
+//        System.out.println("--------------");
+//
+//    }
+//
+////    @Test
+////    @DisplayName("게시글 하나 생성하는 로직")
+////    void createBoard() {
+////
+////        //given
 ////        Long testId = 1l;
 ////
 ////        RequestBoardDto requestBoardDto = RequestBoardDto.builder()
@@ -161,12 +282,12 @@
 ////
 ////
 ////        //when
-////        ResponseBoardDto responseBoardDto = boardService.createBoard( requestBoardDto, requestSkillTagDtoList, requestRoleNeededDtoList, request);
+////        ResponseBoardDto responseBoardDto = boardService.createBoard( );
 ////
 ////        //then
 ////        assertEquals(responseBoardDto.getBoard_id(), board.getId());
-//
-//    }
+////
+////    }
 //
 //    @Test
 //    @DisplayName("게시글 수정 로직")

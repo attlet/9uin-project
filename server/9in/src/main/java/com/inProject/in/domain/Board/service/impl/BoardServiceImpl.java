@@ -34,6 +34,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -56,6 +57,26 @@ public class BoardServiceImpl implements BoardService {
     private final ViewCountRepository viewCountRepository;
     private final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
 
+//    @Autowired
+//    public BoardServiceImpl(
+//            BoardRepository boardRepository,
+//            SkillTagRepository skilltagRepository,
+//            RoleNeededRepository roleNeededRepository,
+//            TagBoardRelationRepository tagBoardRelationRepository,
+//            RoleBoardRelationRepository roleBoardRelationRepository,
+//            UserRepository userRepository,
+//            JwtTokenProvider jwtTokenProvider,
+//            ViewCountRepository viewCountRepository
+//    ){
+//        this.boardRepository = boardRepository;
+//        this.skilltagRepository = skilltagRepository;
+//        this.roleNeededRepository = roleNeededRepository;
+//        this.tagBoardRelationRepository = tagBoardRelationRepository;
+//        this.roleBoardRelationRepository = roleBoardRelationRepository;
+//        this.userRepository = userRepository;
+//        this.jwtTokenProvider = jwtTokenProvider;
+//        this.viewCountRepository = viewCountRepository;
+//    }
 
     public List<TagBoardRelation> InsertTagBoardRelation(Board board, List<RequestSkillTagDto> requestSkillTagDtoList){
 
@@ -122,7 +143,7 @@ public class BoardServiceImpl implements BoardService {
             String str_board = String.valueOf(id);
             String str_user = String.valueOf(user.getId());
 
-            if(!viewCountRepository.getBoardList(str_user).contains(String.valueOf(str_board))){
+            if(!viewCountRepository.getBoardList(str_user).contains(str_board)){
                 viewCountRepository.setBoard(str_user, str_board);
 //            board.setView_cnt(board.getView_cnt() + 1);
                 int view = boardRepository.updateViewCnt(id);          //두 메서드 중 무엇을 쓸까. 한 번 테스트하기.
