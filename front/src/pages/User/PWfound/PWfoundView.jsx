@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { createAxiosInstance } from '../../../api/instance';
 
 export default function PWfoundView() {
+  const axiosInstance = createAxiosInstance();
   const navigate = useNavigate();
 
   const [id, setId] = useState('');
@@ -32,10 +34,7 @@ export default function PWfoundView() {
     };
 
     try {
-      const response = await axios.post(
-        'http://1.246.104.170:8080/find/checkId',
-        userInfo
-      );
+      const response = await axiosInstance.post('/find/checkId');
       console.log(response);
 
       if (response.data.message === '유저 존재') {
@@ -67,10 +66,7 @@ export default function PWfoundView() {
     };
 
     try {
-      const response = await axios.post(
-        'http://1.246.104.170:8080/find/findPw',
-        mailInfo
-      );
+      const response = await axiosInstance.post('/find/findPw', mailInfo);
       console.log(response);
 
       setIsMail(true);

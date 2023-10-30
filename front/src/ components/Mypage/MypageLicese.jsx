@@ -3,16 +3,9 @@ import styled from 'styled-components';
 import MypageModal from './MypageModal';
 import axios from 'axios';
 import { getNewTokens } from '../../api/refreshToken';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
+import { createAxiosInstance } from '../../api/instance';
 
-<<<<<<< HEAD
 const MypageLicese = ({ token }) => {
-  const axiosInstance = createAxiosInstance(token);
-
-=======
-const MypageLicese = ({token, licese}) => {
->>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [licenseFields, setLicenseFields] = useState([
     { id: 1, name: '', startDate: '', endDate: '', description: '' },
@@ -51,12 +44,15 @@ const MypageLicese = ({token, licese}) => {
           description: field.description,
         };
 
-        const response = axiosInstance.post('/certificate', data);
-        // const response = await axios.post('http://1.246.104.170:8080/certificate', data, {
-        //   headers: {
-        //     'X-AUTH-TOKEN': token
-        //   }
-        // });
+        const response = await axios.post(
+          'http://1.246.104.170:8080/certificate',
+          data,
+          {
+            headers: {
+              'X-AUTH-TOKEN': token,
+            },
+          }
+        );
 
         console.log(response.data);
       });
@@ -75,17 +71,15 @@ const MypageLicese = ({token, licese}) => {
             description: field.description,
           };
 
-          const refreshAxios = createAxiosInstance(refreshToken);
-          const response = await refreshAxios.post('/certificate', data);
-          // const response = await axios.post(
-          //   'http://1.246.104.170:8080/certificate',
-          //   data,
-          //   {
-          //     headers: {
-          //       'X-AUTH-TOKEN': refreshToken,
-          //     },
-          //   }
-          // );
+          const response = await axios.post(
+            'http://1.246.104.170:8080/certificate',
+            data,
+            {
+              headers: {
+                'X-AUTH-TOKEN': refreshToken,
+              },
+            }
+          );
 
           console.log(response.data);
         });
@@ -168,7 +162,6 @@ const MypageLicese = ({token, licese}) => {
       <div className="section2_title">
         자격증 현 <p className="title_length">1</p>
       </div>
-<<<<<<< HEAD
       <div className="section2_container">
         <div className="section2_content">
           <div>토익</div>
@@ -179,37 +172,6 @@ const MypageLicese = ({token, licese}) => {
           +
         </div>
       </div>
-=======
-      <Swiper
-        modules={[Navigation]}
-        spaceBetween={10}
-        navigation
-        className='siwper'
-        breakpoints={{
-          1325: {
-            slidesPerView: 5,
-            spaceBetween: 30
-          },
-          77: {
-            slidesPerView: 3,
-            spaceBetween: 20
-          },
-        }}
-      >
-        {licese?.map((a) => {
-          return (
-            <SwiperSlide key={a.id} className="section2_container">
-              <div className="section2_content">
-                <div>토익</div>
-                <div>880</div>
-                <div>2022.02.22 ~ 2024.02.21</div>
-              </div>
-            </SwiperSlide>
-          )
-        })}
-      </Swiper>
-      <div onClick={openModal} className="section2_plus">+</div>
->>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
       <MypageModal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -222,7 +184,6 @@ const MypageLicese = ({token, licese}) => {
 
 const Licese = styled.div`
   margin-top: 100px;
-
   .section2_title {
     color: #000;
     font-size: 16px;
@@ -245,7 +206,7 @@ const Licese = styled.div`
   .section2_container {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 50px;
   }
 
   .section2_content {

@@ -5,8 +5,11 @@ import useFetchData from '../../ components/hooks/getPostList';
 import axios from 'axios';
 import Modal from '../../ components/Mypage/MypageModal';
 import { refreshTokenAndRetry } from '../../api/user';
+import { createAxiosInstance } from '../../api/instance';
 
 export default function RecruitStatusView() {
+  const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+
   const { data: postList, Loading, error } = useFetchData('/boards');
   const navigate = useNavigate();
 
@@ -19,14 +22,15 @@ export default function RecruitStatusView() {
 
   const handleDelete = async (board_id) => {
     try {
-      const response = await axios.delete(
-        `http://1.246.104.170:8080/boards/${board_id}`,
-        {
-          headers: {
-            'X-AUTH-TOKEN': localStorage.getItem('token'),
-          },
-        }
-      );
+      const response = await axiosInstance.delete(`/boards/${board_id}`);
+      // const response = await axios.delete(
+      //   `http://1.246.104.170:8080/boards/${board_id}`,
+      //   {
+      //     headers: {
+      //       'X-AUTH-TOKEN': localStorage.getItem('token'),
+      //     },
+      //   }
+      // );
       console.log('글 삭제 성공');
       alert('게시글이 삭제되었습니다');
       navigate('/mypage');
@@ -37,6 +41,7 @@ export default function RecruitStatusView() {
       if (error.response.data.msg == '인증이 실패했습니다.') {
         console.log(error.response.data.msg);
 
+        //TODO 리프레쉬토큰
         try {
           const retryResponse = await refreshTokenAndRetry(
             'delete',

@@ -4,8 +4,11 @@ import styled from 'styled-components';
 import { useParams } from 'react-router-dom';
 import useFetchData from '../ components/hooks/getPostList';
 import { refreshTokenAndRetry } from '../api/user';
+import { createAxiosInstance } from '../api/instance';
 
 export default function ModifyPostView() {
+  const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+
   const { board_id } = useParams();
   console.log(board_id);
 
@@ -185,15 +188,16 @@ export default function ModifyPostView() {
     console.log(modifyData);
 
     try {
-      const response = await axios.put(
-        `http://1.246.104.170:8080/boards/${board_id}`,
-        modifyData,
-        {
-          headers: {
-            'X-AUTH-TOKEN': localStorage.getItem('token'),
-          },
-        }
-      );
+      const response = await axios.put(`/boards/${board_id}`, modifyData);
+      // const response = await axios.put(
+      //   `http://1.246.104.170:8080/boards/${board_id}`,
+      //   modifyData,
+      //   {
+      //     headers: {
+      //       'X-AUTH-TOKEN': localStorage.getItem('token'),
+      //     },
+      //   }
+      // );
       console.log('글 수정 성공');
     } catch (error) {
       console.error('글 수정 실패', error);
@@ -202,6 +206,7 @@ export default function ModifyPostView() {
         console.log(error.response.data.msg);
 
         try {
+          // TODO 리프레쉬 토큰 리팩토링
           const retryResponse = await refreshTokenAndRetry(
             'put',
             `http://1.246.104.170:8080/boards/${board_id}`,
