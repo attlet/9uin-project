@@ -31,15 +31,15 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
             redisTemplate.delete(refreshToken.getUsername());
             log.info("refreshToken Repository save -> update ");
         }
-        valueOperations.set(refreshToken.getUsername(), refreshToken.getRefreshToken());
-        redisTemplate.expire(refreshToken.getUsername(), 60 * 60 * 24, TimeUnit.SECONDS);
+        valueOperations.set(refreshToken.getUsername(), refreshToken.getRefreshToken());  //redis에 데이터 저장.
+        redisTemplate.expire(refreshToken.getUsername(), 60 * 60 * 24, TimeUnit.SECONDS);  //그 데이터 만료 시간 지정. 24시간.
     }
 
 
     @Override
     public Optional<RefreshToken> findByUsername(String username){
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        String refreshToken = valueOperations.get(username);
+        String refreshToken = valueOperations.get(username);     //username을 key로 가진 데이터 찾음.
 
         if(refreshToken== null){
             return Optional.empty();
@@ -48,7 +48,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
             return Optional.of(new RefreshToken(username, refreshToken));
         }
     }
-
+    @Override
     public void delete(String username){
         redisTemplate.delete(username);
     }

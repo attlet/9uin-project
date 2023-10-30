@@ -8,6 +8,7 @@ import com.inProject.in.domain.CommonLogic.Find.Dto.response.ResponseIsSuccessDt
 import com.inProject.in.domain.CommonLogic.Mail.service.MailService;
 import com.inProject.in.domain.CommonLogic.RefreshToken.entity.RefreshToken;
 import com.inProject.in.domain.CommonLogic.RefreshToken.repository.Impl.RefreshTokenRepositoryImpl;
+import com.inProject.in.domain.CommonLogic.RefreshToken.repository.RefreshTokenRepository;
 import com.inProject.in.domain.CommonLogic.Sign.Dto.request.*;
 import com.inProject.in.domain.CommonLogic.Sign.Dto.response.*;
 import com.inProject.in.domain.CommonLogic.Sign.service.SignService;
@@ -43,7 +44,7 @@ public class SignServiceImpl implements SignService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenRepositoryImpl refreshTokenRepositoryImpl;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final MailService mailService;
     private RedisTemplate redisTemplate;
 
@@ -164,18 +165,22 @@ public class SignServiceImpl implements SignService {
 //            RefreshToken savedRefreshToken = refreshTokenRepository.save(findRefreshToken.get());
 //        }
 
-        refreshTokenRepositoryImpl.findByUsername(username)         //위의 if문은 이렇게 간단하게도 만들 수 있다.
-                .ifPresentOrElse(
-                        token -> {
-                            token.updateRefreshToken(refreshToken);
-                            refreshTokenRepositoryImpl.save(token);       //영속화가 안 되는 것 같아 save추가.
-                            log.info("updated refresh token : " + token.toString());
-                            },
-                        () -> {
-                            refreshTokenRepositoryImpl.save(new RefreshToken(username, refreshToken));
-                            log.info("new refresh token " + username);
-                        }
-                        );
+
+//        refreshTokenRepository.findByUsername(username)         //위의 if문은 이렇게 간단하게도 만들 수 있다.
+//                .ifPresentOrElse(
+//                        token -> {
+//                            token.updateRefreshToken(refreshToken);
+//                            refreshTokenRepository.save(token);       //영속화가 안 되는 것 같아 save추가.
+//                            log.info("updated refresh token : " + token.toString());
+//                            },
+//                        () -> {
+//                            refreshTokenRepository.save(new RefreshToken(username, refreshToken));
+//                            log.info("new refresh token " + username);
+//                        }
+//                        );
+
+        refreshTokenRepository.save(new RefreshToken(username, refreshToken));
+
 
         ResponseSignInDto responseSignInDto = ResponseSignInDto.builder()
                 .token(accessToken)
@@ -205,7 +210,7 @@ public class SignServiceImpl implements SignService {
 
         String username = jwtTokenProvider.getUsername(refreshToken);
 
-        RefreshToken findRefreshToken = refreshTokenRepositoryImpl.findByUsername(username)    //DB에 실제로 그 유저에게 발급된 refresh토큰이 있는지 확인
+        RefreshToken findRefreshToken = refreshTokenRepository.findByUsername(username)//DB에 실제로 그 유저에게 발급된 refresh토큰이 있는지 확인
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.SIGN, HttpStatus.BAD_REQUEST, "로그아웃된 사용자"));
         log.info("reissue ==> DB에 사용자 이름과 refresh 토큰 존재 확인");
 
@@ -236,7 +241,7 @@ public class SignServiceImpl implements SignService {
         String newRefreshToken = jwtTokenProvider.createRefreshToken(username);
 
         findRefreshToken.updateRefreshToken(newRefreshToken);    //refresh 토큰도 업데이트.
-        refreshTokenRepositoryImpl.save(findRefreshToken);
+        refreshTokenRepository.save(findRefreshToken);
 
         ResponseRefreshDto responseRefreshDto = new ResponseRefreshDto(newAccessToken, newRefreshToken);
 
@@ -254,8 +259,8 @@ public class SignServiceImpl implements SignService {
 
         String username = jwtTokenProvider.getUsername(accessToken);
 
-        if(!refreshTokenRepositoryImpl.findByUsername(username).isEmpty()){  //redis 에 있는 유저의 refresh토큰을 삭제한다.
-            refreshTokenRepositoryImpl.delete(username);
+        if(!refreshTokenRepository.findByUsername(username).isEmpty()){  //redis 에 있는 유저의 refresh토큰을 삭제한다.
+            refreshTokenRepository.delete(username);
         }
 
         Long expiration = jwtTokenProvider.getExpiration(accessToken);

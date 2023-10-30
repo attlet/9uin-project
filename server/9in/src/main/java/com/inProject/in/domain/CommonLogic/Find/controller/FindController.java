@@ -56,14 +56,14 @@ public class FindController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "코드 전송 성공", content = {
                             @Content(mediaType = "application/json", schema =
-                            @Schema(implementation = ResponseCheckIdDto.class))
+                            @Schema(implementation = ResponseIsSuccessDto.class))
                     }),
                     @ApiResponse(responseCode = "400", description = "코드 전송 실패")
             })
     public ResponseEntity<ResponseIsSuccessDto> validCodeSend(@RequestBody RequestFindDto requestFindDto){
-        ResponseIsSuccessDto responseCheckMailDto = mailService.validCodeSend(requestFindDto);
+        ResponseIsSuccessDto responseIsSuccessDto = mailService.validCodeSend(requestFindDto);
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseCheckMailDto);
+        return ResponseEntity.status(HttpStatus.OK).body(responseIsSuccessDto);
     }
 
 
@@ -72,7 +72,7 @@ public class FindController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "코드 확인 성공", content = {
                             @Content(mediaType = "application/json", schema =
-                            @Schema(implementation = ResponseCheckIdDto.class))
+                            @Schema(implementation = ResponseIsSuccessDto.class))
                     }),
                     @ApiResponse(responseCode = "400", description = "코드 확인 실패")
             })

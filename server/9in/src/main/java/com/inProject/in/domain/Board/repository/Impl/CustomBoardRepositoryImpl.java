@@ -37,7 +37,8 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
         this.jpaQueryFactory =jpaQueryFactory;
     }
 
-    private JPAQuery<Long> getCount(){
+    @Override
+    public JPAQuery<Long> getCount(){
         JPAQuery<Long> count = jpaQueryFactory
                 .select(qBoard.count())
                 .from(qBoard);

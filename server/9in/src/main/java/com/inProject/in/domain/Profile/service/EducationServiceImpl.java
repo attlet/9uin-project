@@ -35,24 +35,28 @@ public class EducationServiceImpl {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public List<ResponseEducationDto> getEducation(Long user_id){
-        List<Education> educationList = educationRepository.findEducationByUserId(user_id)
+    public ResponseEducationDto getEducation(Long user_id){
+
+        Education education = educationRepository.findEducationByUserId(user_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.NOT_FOUND, "EducationService getEducation 에서 유효하지 않은 user id : " + user_id));
 
-        List<ResponseEducationDto> responseEducationDto = new ArrayList<>();
+        ResponseEducationDto responseEducationDto = new ResponseEducationDto(education);
+        log.info("EducationService getEducation ==> user id : " + user_id + " education : " + education.toString());
 
-        for(Education education : educationList){
-            responseEducationDto.add(new ResponseEducationDto(education));
-            log.info("EducationService getEducation ==> user id : " + user_id + " education : " + education.toString());
-        }
 
         return responseEducationDto;
     }
     @Transactional
     public ResponseEducationDto createEducation(RequestEducationDto requestEducationDto, HttpServletRequest request){
         User user = getUserFromRequest(request);
-
         Education education = requestEducationDto.toEntity(user);
+
+        Education find = educationRepository.findEducationByUserId(user.getId()).get();
+
+        if(find != null){
+            throw new CustomException(ConstantsClass.ExceptionClass.PROFILE, HttpStatus.CONFLICT, "이미 education 작성함.");
+        }
+
         Education savedEducation = educationRepository.save(education);
         user.getEducationList().add(savedEducation);
 

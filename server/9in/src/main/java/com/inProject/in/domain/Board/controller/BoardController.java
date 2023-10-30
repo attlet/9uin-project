@@ -7,6 +7,7 @@ import com.inProject.in.domain.Board.Dto.request.RequestSearchBoardDto;
 import com.inProject.in.domain.Board.Dto.request.RequestUpdateBoardDto;
 import com.inProject.in.domain.Board.Dto.response.ResponseBoardDto;
 import com.inProject.in.domain.Board.Dto.response.ResponseBoardListDto;
+import com.inProject.in.domain.Board.Dto.response.ResponsePagingBoardDto;
 import com.inProject.in.domain.Board.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -72,10 +73,10 @@ public class BoardController {
                     @Schema(implementation = ResponseBoardListDto.class))
             })
     })
-    public ResponseEntity<List<ResponseBoardListDto>> getBoards(@PageableDefault(size = 8) Pageable pageable,
-                                                     RequestSearchBoardDto requestSearchBoardDto){
+    public ResponseEntity<ResponsePagingBoardDto> getBoards(@PageableDefault(size = 8) Pageable pageable,
+                                                                                  RequestSearchBoardDto requestSearchBoardDto){
         try{
-            List<ResponseBoardListDto> responseBoardDtoList = boardService.getBoardList(pageable, requestSearchBoardDto);
+            ResponsePagingBoardDto responseBoardDtoList = boardService.getBoardList(pageable, requestSearchBoardDto);
 
             return ResponseEntity.status(HttpStatus.OK).body(responseBoardDtoList);
         }catch (CustomException e){
@@ -139,7 +140,9 @@ public class BoardController {
         }
     }
 
-
-
+    @GetMapping("ci/test2233")
+    public ResponseEntity<String> cicdTest(){
+        return ResponseEntity.status(HttpStatus.OK).body("cicd22 적용되었나요??");
+    }
 
 }

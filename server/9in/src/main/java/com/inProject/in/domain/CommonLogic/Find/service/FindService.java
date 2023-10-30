@@ -134,8 +134,6 @@ public class FindService {
         return responseCheckIdDto;
     }
 
-
-
     public String MakeTempPw(){
         String str = "";
 
@@ -148,17 +146,4 @@ public class FindService {
         return str;
 
     }
-
-    public String MakeValidNum(){
-        String str = "";
-
-        int idx = 0;
-
-        for (int i=0; i<6; i++) {
-            idx = (int) (charSet.length * Math.random());   //random을 통해 0 ~ 1 사이의 double형 값 반환.
-            str += charSet[idx];
-        }
-        return str;
-    }
-
 }

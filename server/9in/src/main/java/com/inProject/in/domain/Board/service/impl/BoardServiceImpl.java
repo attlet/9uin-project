@@ -7,6 +7,7 @@ import com.inProject.in.domain.Board.Dto.request.RequestCreateBoardDto;
 import com.inProject.in.domain.Board.Dto.request.RequestSearchBoardDto;
 import com.inProject.in.domain.Board.Dto.request.RequestUpdateBoardDto;
 import com.inProject.in.domain.Board.Dto.response.ResponseBoardListDto;
+import com.inProject.in.domain.Board.Dto.response.ResponsePagingBoardDto;
 import com.inProject.in.domain.Board.entity.Board;
 import com.inProject.in.domain.Board.repository.ViewCountRepository;
 import com.inProject.in.domain.Comment.Dto.ResponseCommentDto;
@@ -33,6 +34,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -55,6 +57,26 @@ public class BoardServiceImpl implements BoardService {
     private final ViewCountRepository viewCountRepository;
     private final Logger log = LoggerFactory.getLogger(BoardServiceImpl.class);
 
+//    @Autowired
+//    public BoardServiceImpl(
+//            BoardRepository boardRepository,
+//            SkillTagRepository skilltagRepository,
+//            RoleNeededRepository roleNeededRepository,
+//            TagBoardRelationRepository tagBoardRelationRepository,
+//            RoleBoardRelationRepository roleBoardRelationRepository,
+//            UserRepository userRepository,
+//            JwtTokenProvider jwtTokenProvider,
+//            ViewCountRepository viewCountRepository
+//    ){
+//        this.boardRepository = boardRepository;
+//        this.skilltagRepository = skilltagRepository;
+//        this.roleNeededRepository = roleNeededRepository;
+//        this.tagBoardRelationRepository = tagBoardRelationRepository;
+//        this.roleBoardRelationRepository = roleBoardRelationRepository;
+//        this.userRepository = userRepository;
+//        this.jwtTokenProvider = jwtTokenProvider;
+//        this.viewCountRepository = viewCountRepository;
+//    }
 
     public List<TagBoardRelation> InsertTagBoardRelation(Board board, List<RequestSkillTagDto> requestSkillTagDtoList){
 
@@ -121,7 +143,7 @@ public class BoardServiceImpl implements BoardService {
             String str_board = String.valueOf(id);
             String str_user = String.valueOf(user.getId());
 
-            if(!viewCountRepository.getBoardList(str_user).contains(String.valueOf(str_board))){
+            if(!viewCountRepository.getBoardList(str_user).contains(str_board)){
                 viewCountRepository.setBoard(str_user, str_board);
 //            board.setView_cnt(board.getView_cnt() + 1);
                 int view = boardRepository.updateViewCnt(id);          //두 메서드 중 무엇을 쓸까. 한 번 테스트하기.
@@ -310,7 +332,7 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Override
-    public List<ResponseBoardListDto> getBoardList(Pageable pageable, RequestSearchBoardDto requestSearchBoardDto)  {  //Pageable pageable, String user_id, String title, String type, List<String> tags
+    public ResponsePagingBoardDto getBoardList(Pageable pageable, RequestSearchBoardDto requestSearchBoardDto)  {  //Pageable pageable, String user_id, String title, String type, List<String> tags
 
         String username = requestSearchBoardDto.getUsername();
         String title = requestSearchBoardDto.getTitle();
@@ -323,7 +345,7 @@ public class BoardServiceImpl implements BoardService {
         log.info("BoardService getBoardList ==> filtering by username : " + username + " title : " + title + " type : " + type );
         log.info("Tag filtering : " + tags.toString());
 
-        for (Board board : boardList) {
+        for (Board board : boardList) {              //board들 돌면서 반환할 리스트 생성
             ResponseBoardListDto responseBoardListDto = new ResponseBoardListDto(board);
 
             for(TagBoardRelation tagBoardRelation : board.getTagBoardRelationList()){
@@ -337,7 +359,17 @@ public class BoardServiceImpl implements BoardService {
             responseBoardDtoList.add(responseBoardListDto);
         }
 
-        return responseBoardDtoList;
+        Long totalCount = boardPage.getTotalElements();    //전체 데이터 개수
+        int totalPage = boardPage.getTotalPages();     //전체 페이지 개수
+
+
+        ResponsePagingBoardDto responsePagingBoardDto = ResponsePagingBoardDto.builder()
+                .content(responseBoardDtoList)
+                .totalCount(totalCount)
+                .totalPage(totalPage)
+                .build();
+
+        return responsePagingBoardDto;
     }
 
     @Override
