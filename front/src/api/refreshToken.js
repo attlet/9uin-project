@@ -1,12 +1,21 @@
 import axios from "axios";
+import config from '../common/config';
 
 const getNewTokens = async () => {
+  let apiUrl = '';
+
+  apiUrl =
+    process.env.REACT_APP_NODE_ENV === 'development'
+      ? config.development.apiUrl
+      : process.env.REACT_APP_NODE_ENV === 'local'
+      ? config.local.apiUrl
+      : '';
+
   const refreshData = {
     refreshToken: localStorage.getItem('refreshToken'),
   };
 
-  const refreshResponse = await axios.post(
-    'http://1.246.104.170:8080/sign/reissue',
+  const refreshResponse = await axios.post(apiUrl + '/sign/reissue',
     refreshData
   );
 
