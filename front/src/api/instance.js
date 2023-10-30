@@ -1,7 +1,7 @@
 import axios from 'axios';
 import config from '../common/config';
 
-const createAxiosInstance = (token, page = 0) => {
+const createAxiosInstance = (token = null, page = 0) => {
   return axios.create({
     baseURL:
       process.env.REACT_APP_NODE_ENV === 'development'

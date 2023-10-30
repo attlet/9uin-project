@@ -1,15 +1,30 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import MypageModal from './MypageModal'
+import MypageModal from './MypageModal';
 import axios from 'axios';
 import { getNewTokens } from '../../api/refreshToken';
+<<<<<<< HEAD
+import { createAxiosInstance } from '../../api/instance';
+
+const MypageJob = ({ token }) => {
+  const axiosInstance = createAxiosInstance(token);
+
+=======
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 
 const MypageJob = ({ token, Jobs }) => {
+>>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobFields, setJobFields] = useState([
-    { id: 1, jobname: '', startDate: '', endDate: '', stack: [], description: '' },
+    {
+      id: 1,
+      jobname: '',
+      startDate: '',
+      endDate: '',
+      stack: [],
+      description: '',
+    },
   ]);
   const [selectedStack, setSelectedStack] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -27,14 +42,23 @@ const MypageJob = ({ token, Jobs }) => {
           join_date: job.startDate,
           leave_date: job.endDate,
           job_explanation: job.description,
-          skill_in_job: job.stack
+          skill_in_job: job.stack,
         };
 
+<<<<<<< HEAD
+        const response = await axiosInstance.post('/job_ex', data);
+        // const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
+        //   headers: {
+        //     'X-AUTH-TOKEN': token
+        //   }
+        // });
+=======
         const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
           headers: {
             'X-AUTH-TOKEN': token
           }
         });
+>>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
 
         console.log(response.data);
       });
@@ -53,11 +77,25 @@ const MypageJob = ({ token, Jobs }) => {
             explanation: field.description,
           };
 
+<<<<<<< HEAD
+          const refreshAxios = createAxiosInstance(refreshToken);
+          const response = refreshAxios.post('/job_ex', data);
+          // const response = await axios.post(
+          //   'http://1.246.104.170:8080/job_ex',
+          //   data,
+          //   {
+          //     headers: {
+          //       'X-AUTH-TOKEN': refreshToken,
+          //     },
+          //   }
+          // );
+=======
           const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
             headers: {
               'X-AUTH-TOKEN': refreshToken
             }
           });
+>>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
 
           console.log(response.data);
         });
@@ -82,7 +120,14 @@ const MypageJob = ({ token, Jobs }) => {
   };
 
   const addJobField = () => {
-    const newField = { id: Date.now(), jobname: '', startDate: '', endDate: '', stack: [], description: '' };
+    const newField = {
+      id: Date.now(),
+      jobname: '',
+      startDate: '',
+      endDate: '',
+      stack: [],
+      description: '',
+    };
     setJobFields([...jobFields, newField]);
   };
 
@@ -94,13 +139,21 @@ const MypageJob = ({ token, Jobs }) => {
       updatedFields[index].stack.push(stackToAdd);
       setJobFields(updatedFields);
     } else {
+<<<<<<< HEAD
+      alert('이미 추가한 스택입니다.');
+=======
       alert("이미 추가한 스택입니다.");
+>>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
     }
   };
 
-
   const handleRemoveSkill = (jobIndex, skillIndex) => {
+<<<<<<< HEAD
+    const shouldRemoveSkill =
+      window.confirm(`사용한 기술 스택을 삭제하시겠습니까?`);
+=======
     const shouldRemoveSkill = window.confirm(`사용한 기술 스택을 삭제하시겠습니까?`);
+>>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
 
     if (shouldRemoveSkill) {
       const updatedFields = [...jobFields];
@@ -108,7 +161,10 @@ const MypageJob = ({ token, Jobs }) => {
       setJobFields(updatedFields);
     }
   };
+<<<<<<< HEAD
+=======
 
+>>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
 
   const titleContent = (
     <TitleContentStyled>
@@ -121,49 +177,70 @@ const MypageJob = ({ token, Jobs }) => {
   const bodyContent = (
     <BodyContentStyled>
       {jobFields.map((field, index) => (
-        <div key={field.id} className='job-field'>
-          <div className='section1'>
+        <div key={field.id} className="job-field">
+          <div className="section1">
             <div>
               <span>직무 이름</span>
               <input
-                type='text'
+                type="text"
                 value={field.jobname}
-                onChange={(e) => handleFieldChange(index, 'jobname', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange(index, 'jobname', e.target.value)
+                }
               />
             </div>
             <div>
               <span>재직 기간</span>
-              <p className='date'>
+              <p className="date">
                 <input
-                  type='date'
+                  type="date"
                   value={field.startDate}
-                  onChange={(e) => handleFieldChange(index, 'startDate', e.target.value)}
+                  onChange={(e) =>
+                    handleFieldChange(index, 'startDate', e.target.value)
+                  }
                 />
-                <p className='date_p'>~</p>
+                <p className="date_p">~</p>
                 <input
-                  type='date'
+                  type="date"
                   value={field.endDate}
-                  onChange={(e) => handleFieldChange(index, 'endDate', e.target.value)}
+                  onChange={(e) =>
+                    handleFieldChange(index, 'endDate', e.target.value)
+                  }
                 />
               </p>
             </div>
           </div>
-          <div className='section2'>
+          <div className="section2">
             <span>사용한 기술 스택</span>
+<<<<<<< HEAD
+            <div className="section2_select">
+              <select
+                name="stack"
+                id=""
+=======
             <div className='section2_select'>
               <select
                 name='stack'
                 id=''
+>>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
                 value={selectedStack}
                 onChange={(e) => setSelectedStack(e.target.value)}
               >
-                <option value=''>선택</option>
-                <option value='react'>react</option>
-                <option value='Spring'>spring</option>
-                <option value='javascript'>javascript</option>
+                <option value="">선택</option>
+                <option value="react">react</option>
+                <option value="Spring">spring</option>
+                <option value="javascript">javascript</option>
               </select>
               <button>
+<<<<<<< HEAD
+                <img
+                  src="/icons/plus.png"
+                  alt=""
+                  onClick={() => handleAddStack(index, selectedStack)}
+                />
+=======
                 <img src='/icons/plus.png' alt='' onClick={() => handleAddStack(index, selectedStack)} />
+>>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
               </button>
             </div>
           </div>
@@ -171,26 +248,32 @@ const MypageJob = ({ token, Jobs }) => {
             {field.stack.map((skill, index) => (
               <div key={skill} onClick={() => handleRemoveSkill(index, index)}>
                 {skillImage[skill] && (
-                  <img className='skill_image' src={`/stack/${skillImage[skill]}`} alt={skill} />
+                  <img
+                    className="skill_image"
+                    src={`/stack/${skillImage[skill]}`}
+                    alt={skill}
+                  />
                 )}
               </div>
             ))}
           </div>
-          <div className='section3'>
+          <div className="section3">
             <span>직무 설명</span>
             <textarea
-              type='text'
+              type="text"
               value={field.description}
-              onChange={(e) => handleFieldChange(index, 'description', e.target.value)}
+              onChange={(e) =>
+                handleFieldChange(index, 'description', e.target.value)
+              }
             />
           </div>
         </div>
       ))}
-      <div className='section4'>
+      <div className="section4">
         <button onClick={addJobField}>
-          <img src='/icons/plus.png' alt='버튼' />
+          <img src="/icons/plus.png" alt="버튼" />
         </button>
-        <button onClick={handlePost} className='add_btn'>
+        <button onClick={handlePost} className="add_btn">
           추가
         </button>
       </div>
@@ -201,6 +284,56 @@ const MypageJob = ({ token, Jobs }) => {
       <div className="section3_title">
         직무 경험 <p className="title_length">2</p>
       </div>
+<<<<<<< HEAD
+      <div className="section3_flex">
+        <div className="section3_container">
+          <div className="section3_container_left">
+            <div className="section3_container_leftright_flex">
+              <span>회사 이름</span>
+              <p>모나미</p>
+            </div>
+            <div className="section3_container_leftright_flex">
+              <span>사용한 기술 스택</span>
+              <p>
+                <img src="stack/JS.png" width="24" height="24" alt="js icon" />
+              </p>
+            </div>
+            <div className="section3_container_leftright_flex">
+              <span>직무 설명</span>
+              <p></p>
+            </div>
+          </div>
+          <div className="section3_container_right">
+            <div className="section3_container_leftright_flex">
+              <span>재직 기간</span>
+              <p>
+                <div>2015.06</div>
+                <div>~</div>
+                <div>2018.03</div>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="section3_next">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+          >
+            <path
+              d="M13.477 9.16591H3.33366V10.8326H13.477L9.00699 15.3026L10.1853 16.4809L16.667 9.99924L10.1853 3.51758L9.00699 4.69591L13.477 9.16591Z"
+              fill="#1F7CEB"
+            />
+          </svg>
+        </div>
+      </div>
+      <div className="section3_btn">
+        <button>수정하기</button>
+        <button onClick={openModal}>추가하기</button>
+      </div>
+=======
       <Swiper
         modules={[Navigation]}
         navigation
@@ -267,6 +400,7 @@ const MypageJob = ({ token, Jobs }) => {
           <button onClick={openModal} >추가하기</button>
         </div>
       </Swiper>
+>>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
       <MypageModal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -274,8 +408,8 @@ const MypageJob = ({ token, Jobs }) => {
         bodyContent={bodyContent}
       />
     </Section3>
-  )
-}
+  );
+};
 
 const Section3 = styled.div`
   margin-top: 50px;
@@ -328,7 +462,6 @@ const Section3 = styled.div`
       gap: 40px;
 
       .section3_container_leftright_flex {
-        
         display: flex;
         justify-content: center;
         align-items: center;
@@ -413,7 +546,7 @@ const Section3 = styled.div`
           span {
             width: 100px;
           }
-          
+
           p {
             width: 90px;
           }
@@ -434,13 +567,12 @@ const TitleContentStyled = styled.div`
     width: 16px;
     height: 16px;
     flex-shrink: 0;
-    background-color: #B9BCC0;
+    background-color: #b9bcc0;
     border-radius: 100%;
   }
 `;
 
 const BodyContentStyled = styled.div`
- 
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -471,7 +603,7 @@ const BodyContentStyled = styled.div`
       }
     }
   }
-  
+
   .section1 {
     display: flex;
     align-items: center;
@@ -485,16 +617,16 @@ const BodyContentStyled = styled.div`
         height: 21px;
         width: 377px;
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
-        background: var(--bs-white, #FFF);
-        box-shadow: 0px 0px 0px 0px #CBDAFC;
+        border: 1.5px solid #1f7ceb;
+        background: var(--bs-white, #fff);
+        box-shadow: 0px 0px 0px 0px #cbdafc;
       }
     }
     div:last-child {
       display: flex;
       gap: 10px;
       flex-direction: column;
-     
+
       .date {
         display: flex;
         justify-content: space-around;
@@ -512,11 +644,10 @@ const BodyContentStyled = styled.div`
         height: 21px;
         width: 163px;
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
-        background: var(--bs-white, #FFF);
-        box-shadow: 0px 0px 0px 0px #CBDAFC;
+        border: 1.5px solid #1f7ceb;
+        background: var(--bs-white, #fff);
+        box-shadow: 0px 0px 0px 0px #cbdafc;
       }
-
     }
   }
 
@@ -525,14 +656,14 @@ const BodyContentStyled = styled.div`
     display: flex;
     height: 50px;
     align-items: center;
-    gap:10px;
-    
+    gap: 10px;
+
     .section2_select {
-      display:flex;
+      display: flex;
       gap: 10px;
       align-items: center;
     }
-    select{
+    select {
       display: flex;
       width: 163px;
       height: 42px;
@@ -542,12 +673,12 @@ const BodyContentStyled = styled.div`
       gap: 10px;
       flex-shrink: 0;
       border-radius: 5px;
-      border: 1.5px solid #1F7CEB;
-      background: var(--bs-white, #FFF);
-      box-shadow: 0px 0px 0px 0px #CBDAFC;
+      border: 1.5px solid #1f7ceb;
+      background: var(--bs-white, #fff);
+      box-shadow: 0px 0px 0px 0px #cbdafc;
     }
 
-    button{
+    button {
       width: 25px;
       height: 25px;
       background: none;
@@ -562,18 +693,17 @@ const BodyContentStyled = styled.div`
     margin-top: 30px;
     textarea {
       border-radius: 5px;
-      border: 1.5px solid #1F7CEB;
-      background: var(--bs-white, #FFF);
-      box-shadow: 0px 0px 0px 0px #CBDAFC;
+      border: 1.5px solid #1f7ceb;
+      background: var(--bs-white, #fff);
+      box-shadow: 0px 0px 0px 0px #cbdafc;
       height: 126px;
       width: 880px;
       padding: 10px;
     }
   }
 
-    
-  .section4{
-    margin-top:30px;
+  .section4 {
+    margin-top: 30px;
     display: flex;
     justify-content: center;
     button {
@@ -587,24 +717,24 @@ const BodyContentStyled = styled.div`
 
     .add_btn {
       cursor: pointer;
-      background-color: #1F7CEB;
+      background-color: #1f7ceb;
       width: 70px;
       height: 30px;
       border-radius: 20px;
-      color:white;
+      color: white;
     }
   }
 
   @media only screen and (min-width: 768px) and (max-width: 1325px) {
     overflow-x: hidden;
-    .section1{
+    .section1 {
       justify-content: start;
       div:first-child {
-        input{
+        input {
           width: 100px;
         }
       }
-      div:last-child{
+      div:last-child {
         .date {
           display: flex;
           justify-content: start;
@@ -616,11 +746,11 @@ const BodyContentStyled = styled.div`
         }
       }
     }
-    .section3{
-      textarea{
+    .section3 {
+      textarea {
         width: 575px;
       }
     }
   }
-`
-export default MypageJob
+`;
+export default MypageJob;

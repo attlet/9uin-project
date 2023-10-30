@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
+import { createAxiosInstance } from '../../../api/instance';
 
 export default function IDfoundView() {
+  const axiosInstance = createAxiosInstance();
   const navigate = useNavigate();
 
   const [mail, setMail] = useState('');
@@ -33,8 +35,8 @@ export default function IDfoundView() {
     };
 
     try {
-      const response = await axios.post(
-        'http://1.246.104.170:8080/find/validCodeSend',
+      const response = await axiosInstance.post(
+        '/find/validCodeSend',
         mailInfo
       );
       console.log(response);
@@ -50,7 +52,6 @@ export default function IDfoundView() {
         error.response.data.message ===
         `Sign Exception. 등록되지 않은 메일입니다.`
       ) {
-        console.log('들어옴');
         setIsNotMail(true);
         setIsMail(false);
         console.log(isNotMail);
@@ -102,10 +103,7 @@ export default function IDfoundView() {
     };
 
     try {
-      const response = await axios.post(
-        'http://1.246.104.170:8080/find/findId',
-        mailInfo
-      );
+      const response = await axiosInstance.post('/find/findId', mailInfo);
       console.log(response);
       setUserId(response.data.userId);
       setIsNotValid(false);

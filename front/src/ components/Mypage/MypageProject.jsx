@@ -1,12 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import MypageModal from './MypageModal'
+import MypageModal from './MypageModal';
 import axios from 'axios';
 
-const MypageProject = ({token}) => {
+const MypageProject = ({ token }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [projectFields, setProjectFields] = useState([
-    { id: 1, projectName: '', startDate: '', endDate: '', role: "", stack: [], description: '', file: "", link: "" },
+    {
+      id: 1,
+      projectName: '',
+      startDate: '',
+      endDate: '',
+      role: '',
+      stack: [],
+      description: '',
+      file: '',
+      link: '',
+    },
   ]);
   const [selectedStack, setSelectedStack] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -17,7 +27,7 @@ const MypageProject = ({token}) => {
   const handlePost = async () => {
     try {
       setIsLoading(true);
-  
+
       const promises = projectFields.map(async (project) => {
         const data = {
           name: project.projectName,
@@ -27,18 +37,22 @@ const MypageProject = ({token}) => {
           stack: project.stack,
           description: project.description,
           file: project.file,
-          link: project.link
+          link: project.link,
         };
-  
-        const response = await axios.post('http://1.246.104.170:8080/profile/프로젝트', data, {
-          headers: {
-            'X-AUTH-TOKEN': token
+
+        const response = await axios.post(
+          'http://1.246.104.170:8080/profile/프로젝트',
+          data,
+          {
+            headers: {
+              'X-AUTH-TOKEN': token,
+            },
           }
-        });
-  
+        );
+
         console.log(response.data);
       });
-  
+
       await Promise.all(promises);
     } catch (error) {
       console.error(error);
@@ -73,7 +87,7 @@ const MypageProject = ({token}) => {
     Spring: 'Spring.png',
     javascript: 'JS.png',
   };
-  
+
   const handleAddStack = (index, selectedStack) => {
     const updatedFields = [...projectFields];
     const stackToAdd = selectedStack.trim();
@@ -87,7 +101,8 @@ const MypageProject = ({token}) => {
   };
 
   const handleRemoveSkill = (projectIndex, skillIndex) => {
-    const shouldRemoveSkill = window.confirm(`사용한 기술 스택을 삭제하시겠습니까?`);
+    const shouldRemoveSkill =
+      window.confirm(`사용한 기술 스택을 삭제하시겠습니까?`);
 
     if (shouldRemoveSkill) {
       const updatedFields = [...projectFields];
@@ -103,8 +118,7 @@ const MypageProject = ({token}) => {
     </TitleContentStyled>
   );
 
-
-    const bodyContent = (
+  const bodyContent = (
     <BodyContentStyled>
       {projectFields.map((field, index) => (
         <div key={field.id} className="project-field">
@@ -114,7 +128,9 @@ const MypageProject = ({token}) => {
               <input
                 type="text"
                 value={field.projectName}
-                onChange={(e) => handleFieldChange(index, 'projectName', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange(index, 'projectName', e.target.value)
+                }
               />
             </div>
             <div>
@@ -123,13 +139,17 @@ const MypageProject = ({token}) => {
                 <input
                   type="date"
                   value={field.startDate}
-                  onChange={(e) => handleFieldChange(index, 'startDate', e.target.value)}
+                  onChange={(e) =>
+                    handleFieldChange(index, 'startDate', e.target.value)
+                  }
                 />
                 <p className="date_p">~</p>
                 <input
                   type="date"
                   value={field.endDate}
-                  onChange={(e) => handleFieldChange(index, 'endDate', e.target.value)}
+                  onChange={(e) =>
+                    handleFieldChange(index, 'endDate', e.target.value)
+                  }
                 />
               </p>
             </div>
@@ -141,7 +161,9 @@ const MypageProject = ({token}) => {
                 <select
                   name="role"
                   value={field.role}
-                  onChange={(e) => handleFieldChange(index, 'role', e.target.value)}
+                  onChange={(e) =>
+                    handleFieldChange(index, 'role', e.target.value)
+                  }
                 >
                   <option value="">선택</option>
                   <option value="프론트엔드">프론트엔드</option>
@@ -170,13 +192,21 @@ const MypageProject = ({token}) => {
                     />
                   </button>
                   <div className="skill_stack">
-                    {field.stack && field.stack.map((skill,index) => (
-                      <div key={skill} onClick={() => handleRemoveSkill(index, index)}>
-                        {skillImage[skill] && (
-                          <img className='skill_image' src={`/stack/${skillImage[skill]}`} alt={skill} />
-                        )}
-                      </div>
-                    ))}
+                    {field.stack &&
+                      field.stack.map((skill, index) => (
+                        <div
+                          key={skill}
+                          onClick={() => handleRemoveSkill(index, index)}
+                        >
+                          {skillImage[skill] && (
+                            <img
+                              className="skill_image"
+                              src={`/stack/${skillImage[skill]}`}
+                              alt={skill}
+                            />
+                          )}
+                        </div>
+                      ))}
                   </div>
                 </div>
               </div>
@@ -187,23 +217,39 @@ const MypageProject = ({token}) => {
             <textarea
               type="text"
               value={field.description}
-              onChange={(e) => handleFieldChange(index, 'description', e.target.value)}
+              onChange={(e) =>
+                handleFieldChange(index, 'description', e.target.value)
+              }
             />
           </div>
-          <div className='section4'>
+          <div className="section4">
             <div>
               <span>파일업로드</span>
-              <div className='file'>
+              <div className="file">
                 <p></p>
                 <div class="file-input">
-                  <input type="file" id="file" class="input-hidden" onChange={(e) => handleFieldChange(index, 'endDate', e.target.value)}/>
-                  <label for="file" class="button" >업로드</label>
+                  <input
+                    type="file"
+                    id="file"
+                    class="input-hidden"
+                    onChange={(e) =>
+                      handleFieldChange(index, 'endDate', e.target.value)
+                    }
+                  />
+                  <label for="file" class="button">
+                    업로드
+                  </label>
                 </div>
               </div>
             </div>
-            <div className='link'>
+            <div className="link">
               <span>링크</span>
-              <input type="text" onChange={(e) => handleFieldChange(index, 'link', e.target.value)}/>
+              <input
+                type="text"
+                onChange={(e) =>
+                  handleFieldChange(index, 'link', e.target.value)
+                }
+              />
             </div>
           </div>
         </div>
@@ -212,7 +258,9 @@ const MypageProject = ({token}) => {
         <button onClick={addProjectField}>
           <img src="/icons/plus.png" alt="버튼" />
         </button>
-        <button onClick={handlePost} className="add_btn">추가</button>
+        <button onClick={handlePost} className="add_btn">
+          추가
+        </button>
       </div>
     </BodyContentStyled>
   );
@@ -232,12 +280,7 @@ const MypageProject = ({token}) => {
             <div className="section3_container_leftright_flex">
               <span>기술 스택</span>
               <p>
-                <img
-                  src="stack/JS.png"
-                  width="24"
-                  height="24"
-                  alt="js icon"
-                />
+                <img src="stack/JS.png" width="24" height="24" alt="js icon" />
               </p>
             </div>
             <div className="section3_container_leftright_flex">
@@ -280,9 +323,7 @@ const MypageProject = ({token}) => {
         </div>
       </div>
       <div className="section3_btn">
-        <button>
-          수정하기
-        </button>
+        <button>수정하기</button>
         <button onClick={openModal}>추가하기</button>
       </div>
       <MypageModal
@@ -292,9 +333,8 @@ const MypageProject = ({token}) => {
         bodyContent={bodyContent}
       />
     </MyProject>
-
-  )
-}
+  );
+};
 const TitleContentStyled = styled.div`
   width: 100%;
   display: flex;
@@ -313,7 +353,6 @@ const TitleContentStyled = styled.div`
 `;
 
 const BodyContentStyled = styled.div`
- 
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -328,7 +367,7 @@ const BodyContentStyled = styled.div`
     line-height: normal;
     padding-bottom: 10px;
   }
-  
+
   .section1 {
     display: flex;
     align-items: center;
@@ -342,16 +381,16 @@ const BodyContentStyled = styled.div`
         height: 21px;
         width: 377px;
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
-        background: var(--bs-white, #FFF);
-        box-shadow: 0px 0px 0px 0px #CBDAFC;
+        border: 1.5px solid #1f7ceb;
+        background: var(--bs-white, #fff);
+        box-shadow: 0px 0px 0px 0px #cbdafc;
       }
     }
     div:last-child {
       display: flex;
       gap: 10px;
       flex-direction: column;
-     
+
       .date {
         display: flex;
         width: 500px;
@@ -361,44 +400,43 @@ const BodyContentStyled = styled.div`
         height: 21px;
         width: 180px;
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
-        background: var(--bs-white, #FFF);
-        box-shadow: 0px 0px 0px 0px #CBDAFC;
+        border: 1.5px solid #1f7ceb;
+        background: var(--bs-white, #fff);
+        box-shadow: 0px 0px 0px 0px #cbdafc;
       }
-
     }
   }
 
   .section2 {
     display: flex;
-    align-items:center;
+    align-items: center;
     margin-top: 20px;
     margin-bottom: 20px;
 
     .section2_flex {
-      display:flex;
+      display: flex;
       gap: 10px;
     }
 
     .section2_select {
-      display:flex;
+      display: flex;
       gap: 10px;
       align-items: center;
     }
 
     .section_select {
-      display:flex;
+      display: flex;
       flex-direction: column;
       gap: 10px;
     }
 
     .section_select_flex {
-      display: flex; 
+      display: flex;
       justify-content: center;
       align-items: center;
       gap: 10px;
     }
-    select{
+    select {
       display: flex;
       width: 163px;
       height: 42px;
@@ -408,12 +446,12 @@ const BodyContentStyled = styled.div`
       gap: 10px;
       flex-shrink: 0;
       border-radius: 5px;
-      border: 1.5px solid #1F7CEB;
-      background: var(--bs-white, #FFF);
-      box-shadow: 0px 0px 0px 0px #CBDAFC;
+      border: 1.5px solid #1f7ceb;
+      background: var(--bs-white, #fff);
+      box-shadow: 0px 0px 0px 0px #cbdafc;
     }
 
-    button{
+    button {
       width: 25px;
       height: 25px;
       background: none;
@@ -439,24 +477,24 @@ const BodyContentStyled = styled.div`
 
     textarea {
       border-radius: 5px;
-      border: 1.5px solid #1F7CEB;
-      background: var(--bs-white, #FFF);
-      box-shadow: 0px 0px 0px 0px #CBDAFC;
+      border: 1.5px solid #1f7ceb;
+      background: var(--bs-white, #fff);
+      box-shadow: 0px 0px 0px 0px #cbdafc;
       height: 126px;
       width: 880px;
       padding: 10px;
     }
   }
 
-  .section4{
-    margin-top:30px;
+  .section4 {
+    margin-top: 30px;
     display: flex;
     gap: 10px;
-    
-    .file{
+
+    .file {
       display: flex;
       align-items: center;
-      gap:20px;
+      gap: 20px;
       p {
         margin-top: 10px;
         display: flex;
@@ -467,9 +505,9 @@ const BodyContentStyled = styled.div`
         gap: 10px;
         flex-shrink: 0;
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
-        background: var(--bs-white, #FFF);
-        box-shadow: 0px 0px 0px 0px #CBDAFC;
+        border: 1.5px solid #1f7ceb;
+        background: var(--bs-white, #fff);
+        box-shadow: 0px 0px 0px 0px #cbdafc;
       }
 
       .file-input {
@@ -484,9 +522,9 @@ const BodyContentStyled = styled.div`
       .button {
         margin-top: 10px;
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
-        background: #FFF;
-        box-shadow: 0px 0px 0px 0px #CBDAFC;
+        border: 1.5px solid #1f7ceb;
+        background: #fff;
+        box-shadow: 0px 0px 0px 0px #cbdafc;
         cursor: pointer;
         display: flex;
         width: 100px;
@@ -502,14 +540,14 @@ const BodyContentStyled = styled.div`
         margin-left: 10px;
       }
     }
-    .link{
-      display:flex;
+    .link {
+      display: flex;
       flex-direction: column;
       input {
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
-        background: var(--bs-white, #FFF);
-        box-shadow: 0px 0px 0px 0px #CBDAFC;
+        border: 1.5px solid #1f7ceb;
+        background: var(--bs-white, #fff);
+        box-shadow: 0px 0px 0px 0px #cbdafc;
         display: inline-flex;
         height: 21px;
         padding: 10px;
@@ -519,10 +557,10 @@ const BodyContentStyled = styled.div`
         flex-shrink: 0;
       }
     }
-  }  
+  }
 
-  .section5{
-    margin-top:30px;
+  .section5 {
+    margin-top: 30px;
     display: flex;
     justify-content: center;
     button {
@@ -536,16 +574,16 @@ const BodyContentStyled = styled.div`
 
     .add_btn {
       cursor: pointer;
-      background-color: #1F7CEB;
+      background-color: #1f7ceb;
       width: 70px;
       height: 30px;
       border-radius: 20px;
-      color:white;
+      color: white;
     }
   }
 
-  .section5{
-    margin-top:30px;
+  .section5 {
+    margin-top: 30px;
     display: flex;
     justify-content: center;
     button {
@@ -557,7 +595,7 @@ const BodyContentStyled = styled.div`
       }
     }
   }
-`
+`;
 const MyProject = styled.div`
   margin-top: 50px;
   .section3_title {
@@ -669,7 +707,7 @@ const MyProject = styled.div`
       line-height: normal;
     }
   }
-  
+
   @media only screen and (min-width: 768px) and (max-width: 1325px) {
     width: 750px;
     justify-content: center;
@@ -686,7 +724,7 @@ const MyProject = styled.div`
           span {
             width: 110px;
           }
-          
+
           p {
             width: 110px;
           }
@@ -695,4 +733,4 @@ const MyProject = styled.div`
     }
   }
 `;
-export default MypageProject
+export default MypageProject;

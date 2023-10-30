@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from './JoinView.module.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { createAxiosInstance } from '../../api/instance';
 
 export default function JoinView() {
   const [mail, setMail] = useState('');
@@ -33,11 +34,9 @@ export default function JoinView() {
     const userData = { username, password, mail, role: 'user' };
 
     try {
-      const response = await axios.post(
-        'http://1.246.104.170:8080/sign/sign-up',
-        userData
-      );
-      console.log('회원가입 성공');
+      const axiosInstance = createAxiosInstance();
+      const response = await axiosInstance.post('/sign/sign-up', userData);
+      console.log('회원가입 성공', response);
       navigate('/joinSuccess');
     } catch (error) {
       console.error('회원가입 실패', error);
