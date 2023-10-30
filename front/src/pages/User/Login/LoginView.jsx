@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 // import { useAuth } from '../../../ components/context/AuthContext';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../modules/auth';
+import { createAxiosInstance } from '../../../api/instance';
 
 export default function LoginView() {
   const [username, setUsername] = useState('');
@@ -44,10 +44,8 @@ export default function LoginView() {
     const userData = { username, password };
 
     try {
-      const response = await axios.post(
-        'http://1.246.104.170:8080/sign/sign-in',
-        userData
-      );
+      const axiosInstance = createAxiosInstance();
+      const response = await axiosInstance.post('/sign/sign-in', userData);
       console.log('로그인 성공');
       console.log(response.data);
       const token = response.data.token;

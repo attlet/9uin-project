@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import MypageModal from './MypageModal'
+import MypageModal from './MypageModal';
 import axios from 'axios';
 import { getNewTokens } from '../../api/refreshToken';
 import { createAxiosInstance } from '../../api/instance';
 
-const MypageLicese = ({token}) => {
+const MypageLicese = ({ token }) => {
+  const axiosInstance = createAxiosInstance(token);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [licenseFields, setLicenseFields] = useState([
     { id: 1, name: '', startDate: '', endDate: '', description: '' },
@@ -22,14 +24,20 @@ const MypageLicese = ({token}) => {
   };
 
   const addLicenseField = () => {
-    const newField = { id: Date.now(), name: '', startDate: '', endDate: '', description: '' };
+    const newField = {
+      id: Date.now(),
+      name: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+    };
     setLicenseFields([...licenseFields, newField]);
   };
-  
+
   const handlePost = async () => {
     try {
       setIsLoading(true);
-  
+
       const promises = licenseFields.map(async (field) => {
         const data = {
           name: field.name,
@@ -37,16 +45,17 @@ const MypageLicese = ({token}) => {
           endDate: field.endDate,
           description: field.description,
         };
-  
-        const response = await axios.post('http://1.246.104.170:8080/certificate', data, {
-          headers: {
-            'X-AUTH-TOKEN': token
-          }
-        });
-  
+
+        const response = axiosInstance.post('/certificate', data);
+        // const response = await axios.post('http://1.246.104.170:8080/certificate', data, {
+        //   headers: {
+        //     'X-AUTH-TOKEN': token
+        //   }
+        // });
+
         console.log(response.data);
       });
-  
+
       await Promise.all(promises);
     } catch (error) {
       console.error(error);
@@ -60,13 +69,19 @@ const MypageLicese = ({token}) => {
             endDate: field.endDate,
             description: field.description,
           };
-    
-          const response = await axios.post('http://1.246.104.170:8080/certificate', data, {
-            headers: {
-              'X-AUTH-TOKEN': refreshToken
-            }
-          });
-    
+
+          const refreshAxios = createAxiosInstance(refreshToken);
+          const response = await refreshAxios.post('/certificate', data);
+          // const response = await axios.post(
+          //   'http://1.246.104.170:8080/certificate',
+          //   data,
+          //   {
+          //     headers: {
+          //       'X-AUTH-TOKEN': refreshToken,
+          //     },
+          //   }
+          // );
+
           console.log(response.data);
         });
 
@@ -88,48 +103,56 @@ const MypageLicese = ({token}) => {
   const bodyContent = (
     <BodyContentStyled>
       {licenseFields.map((field, index) => (
-        <div key={field.id} className='license-field'>
-          <div className='section1'>
+        <div key={field.id} className="license-field">
+          <div className="section1">
             <div>
               <span>자격증 이름</span>
               <input
-                type='text'
+                type="text"
                 value={field.name}
-                onChange={(e) => handleFieldChange(index, 'name', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange(index, 'name', e.target.value)
+                }
               />
             </div>
             <div>
               <span>취득 일자</span>
               <input
-                type='date'
+                type="date"
                 value={field.acquiredDate}
-                onChange={(e) => handleFieldChange(index, 'acquiredDate', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange(index, 'acquiredDate', e.target.value)
+                }
               />
             </div>
             <div>
               <span>(유효 기간)</span>
               <input
-                type='date'
+                type="date"
                 value={field.expiryDate}
-                onChange={(e) => handleFieldChange(index, 'expiryDate', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange(index, 'expiryDate', e.target.value)
+                }
               />
             </div>
           </div>
-          <div className='section2'>
+          <div className="section2">
             <span>직무 설명</span>
             <textarea
-              type='text'
+              type="text"
               value={field.description}
-              onChange={(e) => handleFieldChange(index, 'description', e.target.value)}
+              onChange={(e) =>
+                handleFieldChange(index, 'description', e.target.value)
+              }
             />
           </div>
         </div>
       ))}
-      <div className='section3'>
+      <div className="section3">
         <button onClick={addLicenseField}>
           <img src="/icons/plus.png" alt="버튼" />
         </button>
-        <button onClick={handlePost} className='add_btn'>
+        <button onClick={handlePost} className="add_btn">
           추가
         </button>
       </div>
@@ -146,7 +169,9 @@ const MypageLicese = ({token}) => {
           <div>880</div>
           <div>2022.02.22 ~ 2024.02.21</div>
         </div>
-        <div onClick={openModal} className="section2_plus">+</div>
+        <div onClick={openModal} className="section2_plus">
+          +
+        </div>
       </div>
       <MypageModal
         isOpen={isModalOpen}
@@ -155,8 +180,8 @@ const MypageLicese = ({token}) => {
         bodyContent={bodyContent}
       />
     </Licese>
-  )
-}
+  );
+};
 
 const Licese = styled.div`
   margin-top: 100px;
@@ -262,7 +287,7 @@ const TitleContentStyled = styled.div`
     width: 16px;
     height: 16px;
     flex-shrink: 0;
-    background-color: #B9BCC0;
+    background-color: #b9bcc0;
     border-radius: 100%;
   }
 `;
@@ -285,12 +310,12 @@ const BodyContentStyled = styled.div`
     display: flex;
     gap: 10px;
     div:first-child {
-      display:flex;
+      display: flex;
       flex-direction: column;
       gap: 20px;
       input {
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
+        border: 1.5px solid #1f7ceb;
         display: inline-flex;
         height: 21px;
         align-items: center;
@@ -300,13 +325,13 @@ const BodyContentStyled = styled.div`
       }
     }
     div:nth-child(2) {
-      display:flex;
+      display: flex;
       flex-direction: column;
       gap: 20px;
       input {
         width: 163px;
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
+        border: 1.5px solid #1f7ceb;
         display: inline-flex;
         height: 21px;
         align-items: center;
@@ -315,13 +340,13 @@ const BodyContentStyled = styled.div`
       }
     }
     div:last-child {
-      display:flex;
+      display: flex;
       flex-direction: column;
       gap: 20px;
       input {
         width: 163px;
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
+        border: 1.5px solid #1f7ceb;
         display: inline-flex;
         height: 21px;
         align-items: center;
@@ -341,14 +366,14 @@ const BodyContentStyled = styled.div`
       padding: 10px;
       width: 850px;
       border-radius: 5px;
-      border: 1.5px solid #1F7CEB;
-      background: var(--bs-white, #FFF);
-      box-shadow: 0px 0px 0px 0px #CBDAFC;
+      border: 1.5px solid #1f7ceb;
+      background: var(--bs-white, #fff);
+      box-shadow: 0px 0px 0px 0px #cbdafc;
       height: 126px;
     }
   }
-  
-  .section3{
+
+  .section3 {
     display: flex;
     justify-content: center;
     gap: 10px;
@@ -367,17 +392,16 @@ const BodyContentStyled = styled.div`
 
     .add_btn {
       cursor: pointer;
-      background-color: #1F7CEB;
+      background-color: #1f7ceb;
       width: 70px;
       height: 30px;
       border-radius: 20px;
-      color:white;
+      color: white;
     }
   }
 
   @media only screen and (min-width: 768px) and (max-width: 1325px) {
-  
-    .section1{
+    .section1 {
       div:first-child {
         input {
           width: 150px;
@@ -385,11 +409,11 @@ const BodyContentStyled = styled.div`
       }
     }
 
-    .section2{
+    .section2 {
       textarea {
         width: 620px;
       }
     }
   }
-`
-export default MypageLicese
+`;
+export default MypageLicese;

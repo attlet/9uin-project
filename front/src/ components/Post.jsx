@@ -4,6 +4,7 @@ import Role from './Role';
 import styles from './Post.module.css';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { createAxiosInstance } from '../api/instance';
 
 export default function Post({
   board_id,
@@ -17,6 +18,8 @@ export default function Post({
   view_cnt,
   createAt,
 }) {
+  const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+
   const user_id = useSelector((state) => state.auth.user_id);
 
   const [isClip, setIsClip] = useState(false);
@@ -37,15 +40,7 @@ export default function Post({
     };
 
     try {
-      const response = await axios.post(
-        'http://1.246.104.170:8080/cliped',
-        clipInfo,
-        {
-          headers: {
-            'X-AUTH-TOKEN': localStorage.getItem('token'),
-          },
-        }
-      );
+      const response = await axiosInstance.post('/cliped', clipInfo);
       console.log(response);
       setIsClip(true);
       alert('게시글을 즐겨찾기에 등록했습니다.');

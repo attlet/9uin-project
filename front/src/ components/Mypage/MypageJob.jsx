@@ -1,42 +1,53 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import MypageModal from './MypageModal'
+import MypageModal from './MypageModal';
 import axios from 'axios';
 import { getNewTokens } from '../../api/refreshToken';
+import { createAxiosInstance } from '../../api/instance';
 
-const MypageJob = ({token}) => {
+const MypageJob = ({ token }) => {
+  const axiosInstance = createAxiosInstance(token);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobFields, setJobFields] = useState([
-    { id: 1, jobname: '', startDate: '', endDate: '', stack: [], description: '' },
+    {
+      id: 1,
+      jobname: '',
+      startDate: '',
+      endDate: '',
+      stack: [],
+      description: '',
+    },
   ]);
   const [selectedStack, setSelectedStack] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  
+
   const handlePost = async () => {
     try {
       setIsLoading(true);
-  
+
       const promises = jobFields.map(async (job) => {
         const data = {
           company_name: job.jobname,
           join_date: job.startDate,
           leave_date: job.endDate,
           job_explanation: job.description,
-          skill_in_job: job.stack
+          skill_in_job: job.stack,
         };
-  
-        const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
-          headers: {
-            'X-AUTH-TOKEN': token
-          }
-        });
-  
+
+        const response = await axiosInstance.post('/job_ex', data);
+        // const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
+        //   headers: {
+        //     'X-AUTH-TOKEN': token
+        //   }
+        // });
+
         console.log(response.data);
       });
-  
+
       await Promise.all(promises);
     } catch (error) {
       console.error(error);
@@ -50,13 +61,19 @@ const MypageJob = ({token}) => {
             expire: field.endDate,
             explanation: field.description,
           };
-    
-          const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
-            headers: {
-              'X-AUTH-TOKEN': refreshToken
-            }
-          });
-    
+
+          const refreshAxios = createAxiosInstance(refreshToken);
+          const response = refreshAxios.post('/job_ex', data);
+          // const response = await axios.post(
+          //   'http://1.246.104.170:8080/job_ex',
+          //   data,
+          //   {
+          //     headers: {
+          //       'X-AUTH-TOKEN': refreshToken,
+          //     },
+          //   }
+          // );
+
           console.log(response.data);
         });
 
@@ -72,41 +89,47 @@ const MypageJob = ({token}) => {
     Spring: 'Spring.png',
     javascript: 'JS.png',
   };
-  
+
   const handleFieldChange = (index, field, value) => {
     const updatedFields = [...jobFields];
     updatedFields[index][field] = value;
     setJobFields(updatedFields);
   };
-  
+
   const addJobField = () => {
-    const newField = { id: Date.now(), jobname: '', startDate: '', endDate: '', stack: [], description: '' };
+    const newField = {
+      id: Date.now(),
+      jobname: '',
+      startDate: '',
+      endDate: '',
+      stack: [],
+      description: '',
+    };
     setJobFields([...jobFields, newField]);
   };
-  
+
   const handleAddStack = (index, selectedStack) => {
     const updatedFields = [...jobFields];
     const stackToAdd = selectedStack.trim();
-  
+
     if (stackToAdd && !updatedFields[index].stack.includes(stackToAdd)) {
       updatedFields[index].stack.push(stackToAdd);
       setJobFields(updatedFields);
     } else {
-      alert("이미 추가한 스택입니다.");
-    } 
+      alert('이미 추가한 스택입니다.');
+    }
   };
 
-
   const handleRemoveSkill = (jobIndex, skillIndex) => {
-    const shouldRemoveSkill = window.confirm(`사용한 기술 스택을 삭제하시겠습니까?`);
-  
+    const shouldRemoveSkill =
+      window.confirm(`사용한 기술 스택을 삭제하시겠습니까?`);
+
     if (shouldRemoveSkill) {
       const updatedFields = [...jobFields];
       updatedFields[jobIndex].stack.splice(skillIndex, 1);
       setJobFields(updatedFields);
     }
   };
-  
 
   const titleContent = (
     <TitleContentStyled>
@@ -115,80 +138,96 @@ const MypageJob = ({token}) => {
       <p></p>
     </TitleContentStyled>
   );
-  
+
   const bodyContent = (
     <BodyContentStyled>
       {jobFields.map((field, index) => (
-        <div key={field.id} className='job-field'>
-          <div className='section1'>
+        <div key={field.id} className="job-field">
+          <div className="section1">
             <div>
               <span>직무 이름</span>
               <input
-                type='text'
+                type="text"
                 value={field.jobname}
-                onChange={(e) => handleFieldChange(index, 'jobname', e.target.value)}
+                onChange={(e) =>
+                  handleFieldChange(index, 'jobname', e.target.value)
+                }
               />
             </div>
             <div>
               <span>재직 기간</span>
-              <p className='date'>
+              <p className="date">
                 <input
-                  type='date'
+                  type="date"
                   value={field.startDate}
-                  onChange={(e) => handleFieldChange(index, 'startDate', e.target.value)}
+                  onChange={(e) =>
+                    handleFieldChange(index, 'startDate', e.target.value)
+                  }
                 />
-                <p className='date_p'>~</p>
+                <p className="date_p">~</p>
                 <input
-                  type='date'
+                  type="date"
                   value={field.endDate}
-                  onChange={(e) => handleFieldChange(index, 'endDate', e.target.value)}
+                  onChange={(e) =>
+                    handleFieldChange(index, 'endDate', e.target.value)
+                  }
                 />
               </p>
             </div>
           </div>
-          <div className='section2'>
+          <div className="section2">
             <span>사용한 기술 스택</span>
-            <div className='section2_select'>
-              <select 
-              name='stack' 
-              id=''
-              value={selectedStack} 
-              onChange={(e) => setSelectedStack(e.target.value)}
+            <div className="section2_select">
+              <select
+                name="stack"
+                id=""
+                value={selectedStack}
+                onChange={(e) => setSelectedStack(e.target.value)}
               >
-                <option value=''>선택</option>
-                <option value='react'>react</option>
-                <option value='Spring'>spring</option>
-                <option value='javascript'>javascript</option>
+                <option value="">선택</option>
+                <option value="react">react</option>
+                <option value="Spring">spring</option>
+                <option value="javascript">javascript</option>
               </select>
               <button>
-                <img src='/icons/plus.png' alt='' onClick={() => handleAddStack(index, selectedStack)}/>
+                <img
+                  src="/icons/plus.png"
+                  alt=""
+                  onClick={() => handleAddStack(index, selectedStack)}
+                />
               </button>
             </div>
           </div>
           <div className="skill_stack">
-            {field.stack.map((skill,index) => (
+            {field.stack.map((skill, index) => (
               <div key={skill} onClick={() => handleRemoveSkill(index, index)}>
                 {skillImage[skill] && (
-                  <img className='skill_image' src={`/stack/${skillImage[skill]}`} alt={skill} />
+                  <img
+                    className="skill_image"
+                    src={`/stack/${skillImage[skill]}`}
+                    alt={skill}
+                  />
                 )}
               </div>
             ))}
           </div>
-          <div className='section3'>
+          <div className="section3">
             <span>직무 설명</span>
             <textarea
-              type='text'
+              type="text"
               value={field.description}
-              onChange={(e) => handleFieldChange(index, 'description', e.target.value)}
+              onChange={(e) =>
+                handleFieldChange(index, 'description', e.target.value)
+              }
             />
           </div>
         </div>
       ))}
-      <div className='section4'>
+      <div className="section4">
         <button onClick={addJobField}>
-          <img src='/icons/plus.png' alt='버튼' />
+          <img src="/icons/plus.png" alt="버튼" />
         </button>
-        <button onClick={handlePost} className='add_btn'>
+        <button onClick={handlePost} className="add_btn">
           추가
         </button>
       </div>
@@ -209,12 +248,7 @@ const MypageJob = ({token}) => {
             <div className="section3_container_leftright_flex">
               <span>사용한 기술 스택</span>
               <p>
-                <img
-                  src="stack/JS.png"
-                  width="24"
-                  height="24"
-                  alt="js icon"
-                />
+                <img src="stack/JS.png" width="24" height="24" alt="js icon" />
               </p>
             </div>
             <div className="section3_container_leftright_flex">
@@ -249,10 +283,8 @@ const MypageJob = ({token}) => {
         </div>
       </div>
       <div className="section3_btn">
-        <button>
-          수정하기
-        </button>
-        <button onClick={openModal} >추가하기</button>
+        <button>수정하기</button>
+        <button onClick={openModal}>추가하기</button>
       </div>
       <MypageModal
         isOpen={isModalOpen}
@@ -261,8 +293,8 @@ const MypageJob = ({token}) => {
         bodyContent={bodyContent}
       />
     </Section3>
-  )
-}
+  );
+};
 
 const Section3 = styled.div`
   margin-top: 50px;
@@ -310,7 +342,6 @@ const Section3 = styled.div`
       gap: 40px;
 
       .section3_container_leftright_flex {
-        
         display: flex;
         justify-content: center;
         align-items: center;
@@ -393,7 +424,7 @@ const Section3 = styled.div`
           span {
             width: 100px;
           }
-          
+
           p {
             width: 90px;
           }
@@ -414,13 +445,12 @@ const TitleContentStyled = styled.div`
     width: 16px;
     height: 16px;
     flex-shrink: 0;
-    background-color: #B9BCC0;
+    background-color: #b9bcc0;
     border-radius: 100%;
   }
 `;
 
 const BodyContentStyled = styled.div`
- 
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -451,7 +481,7 @@ const BodyContentStyled = styled.div`
       }
     }
   }
-  
+
   .section1 {
     display: flex;
     align-items: center;
@@ -465,16 +495,16 @@ const BodyContentStyled = styled.div`
         height: 21px;
         width: 377px;
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
-        background: var(--bs-white, #FFF);
-        box-shadow: 0px 0px 0px 0px #CBDAFC;
+        border: 1.5px solid #1f7ceb;
+        background: var(--bs-white, #fff);
+        box-shadow: 0px 0px 0px 0px #cbdafc;
       }
     }
     div:last-child {
       display: flex;
       gap: 10px;
       flex-direction: column;
-     
+
       .date {
         display: flex;
         justify-content: space-around;
@@ -492,11 +522,10 @@ const BodyContentStyled = styled.div`
         height: 21px;
         width: 163px;
         border-radius: 5px;
-        border: 1.5px solid #1F7CEB;
-        background: var(--bs-white, #FFF);
-        box-shadow: 0px 0px 0px 0px #CBDAFC;
+        border: 1.5px solid #1f7ceb;
+        background: var(--bs-white, #fff);
+        box-shadow: 0px 0px 0px 0px #cbdafc;
       }
-
     }
   }
 
@@ -505,14 +534,14 @@ const BodyContentStyled = styled.div`
     display: flex;
     height: 50px;
     align-items: center;
-    gap:10px;
-    
+    gap: 10px;
+
     .section2_select {
-      display:flex;
+      display: flex;
       gap: 10px;
       align-items: center;
     }
-    select{
+    select {
       display: flex;
       width: 163px;
       height: 42px;
@@ -522,12 +551,12 @@ const BodyContentStyled = styled.div`
       gap: 10px;
       flex-shrink: 0;
       border-radius: 5px;
-      border: 1.5px solid #1F7CEB;
-      background: var(--bs-white, #FFF);
-      box-shadow: 0px 0px 0px 0px #CBDAFC;
+      border: 1.5px solid #1f7ceb;
+      background: var(--bs-white, #fff);
+      box-shadow: 0px 0px 0px 0px #cbdafc;
     }
 
-    button{
+    button {
       width: 25px;
       height: 25px;
       background: none;
@@ -542,18 +571,17 @@ const BodyContentStyled = styled.div`
     margin-top: 30px;
     textarea {
       border-radius: 5px;
-      border: 1.5px solid #1F7CEB;
-      background: var(--bs-white, #FFF);
-      box-shadow: 0px 0px 0px 0px #CBDAFC;
+      border: 1.5px solid #1f7ceb;
+      background: var(--bs-white, #fff);
+      box-shadow: 0px 0px 0px 0px #cbdafc;
       height: 126px;
       width: 880px;
       padding: 10px;
     }
   }
 
-    
-  .section4{
-    margin-top:30px;
+  .section4 {
+    margin-top: 30px;
     display: flex;
     justify-content: center;
     button {
@@ -567,24 +595,24 @@ const BodyContentStyled = styled.div`
 
     .add_btn {
       cursor: pointer;
-      background-color: #1F7CEB;
+      background-color: #1f7ceb;
       width: 70px;
       height: 30px;
       border-radius: 20px;
-      color:white;
+      color: white;
     }
   }
 
   @media only screen and (min-width: 768px) and (max-width: 1325px) {
     overflow-x: hidden;
-    .section1{
+    .section1 {
       justify-content: start;
       div:first-child {
-        input{
+        input {
           width: 100px;
         }
       }
-      div:last-child{
+      div:last-child {
         .date {
           display: flex;
           justify-content: start;
@@ -596,11 +624,11 @@ const BodyContentStyled = styled.div`
         }
       }
     }
-    .section3{
-      textarea{
+    .section3 {
+      textarea {
         width: 575px;
       }
     }
   }
-`
-export default MypageJob
+`;
+export default MypageJob;
