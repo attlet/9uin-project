@@ -3,18 +3,10 @@ import styled from 'styled-components';
 import MypageModal from './MypageModal';
 import axios from 'axios';
 import { getNewTokens } from '../../api/refreshToken';
-<<<<<<< HEAD
-import { createAxiosInstance } from '../../api/instance';
-
-const MypageJob = ({ token }) => {
-  const axiosInstance = createAxiosInstance(token);
-
-=======
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 
 const MypageJob = ({ token, Jobs }) => {
->>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [jobFields, setJobFields] = useState([
     {
@@ -45,20 +37,15 @@ const MypageJob = ({ token, Jobs }) => {
           skill_in_job: job.stack,
         };
 
-<<<<<<< HEAD
-        const response = await axiosInstance.post('/job_ex', data);
-        // const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
-        //   headers: {
-        //     'X-AUTH-TOKEN': token
-        //   }
-        // });
-=======
-        const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
-          headers: {
-            'X-AUTH-TOKEN': token
+        const response = await axios.post(
+          'http://1.246.104.170:8080/job_ex',
+          data,
+          {
+            headers: {
+              'X-AUTH-TOKEN': token,
+            },
           }
-        });
->>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
+        );
 
         console.log(response.data);
       });
@@ -77,25 +64,15 @@ const MypageJob = ({ token, Jobs }) => {
             explanation: field.description,
           };
 
-<<<<<<< HEAD
-          const refreshAxios = createAxiosInstance(refreshToken);
-          const response = refreshAxios.post('/job_ex', data);
-          // const response = await axios.post(
-          //   'http://1.246.104.170:8080/job_ex',
-          //   data,
-          //   {
-          //     headers: {
-          //       'X-AUTH-TOKEN': refreshToken,
-          //     },
-          //   }
-          // );
-=======
-          const response = await axios.post('http://1.246.104.170:8080/job_ex', data, {
-            headers: {
-              'X-AUTH-TOKEN': refreshToken
+          const response = await axios.post(
+            'http://1.246.104.170:8080/job_ex',
+            data,
+            {
+              headers: {
+                'X-AUTH-TOKEN': refreshToken,
+              },
             }
-          });
->>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
+          );
 
           console.log(response.data);
         });
@@ -139,21 +116,13 @@ const MypageJob = ({ token, Jobs }) => {
       updatedFields[index].stack.push(stackToAdd);
       setJobFields(updatedFields);
     } else {
-<<<<<<< HEAD
       alert('이미 추가한 스택입니다.');
-=======
-      alert("이미 추가한 스택입니다.");
->>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
     }
   };
 
   const handleRemoveSkill = (jobIndex, skillIndex) => {
-<<<<<<< HEAD
     const shouldRemoveSkill =
       window.confirm(`사용한 기술 스택을 삭제하시겠습니까?`);
-=======
-    const shouldRemoveSkill = window.confirm(`사용한 기술 스택을 삭제하시겠습니까?`);
->>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
 
     if (shouldRemoveSkill) {
       const updatedFields = [...jobFields];
@@ -161,10 +130,6 @@ const MypageJob = ({ token, Jobs }) => {
       setJobFields(updatedFields);
     }
   };
-<<<<<<< HEAD
-=======
-
->>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
 
   const titleContent = (
     <TitleContentStyled>
@@ -212,17 +177,10 @@ const MypageJob = ({ token, Jobs }) => {
           </div>
           <div className="section2">
             <span>사용한 기술 스택</span>
-<<<<<<< HEAD
             <div className="section2_select">
               <select
                 name="stack"
                 id=""
-=======
-            <div className='section2_select'>
-              <select
-                name='stack'
-                id=''
->>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
                 value={selectedStack}
                 onChange={(e) => setSelectedStack(e.target.value)}
               >
@@ -232,15 +190,11 @@ const MypageJob = ({ token, Jobs }) => {
                 <option value="javascript">javascript</option>
               </select>
               <button>
-<<<<<<< HEAD
                 <img
                   src="/icons/plus.png"
                   alt=""
                   onClick={() => handleAddStack(index, selectedStack)}
                 />
-=======
-                <img src='/icons/plus.png' alt='' onClick={() => handleAddStack(index, selectedStack)} />
->>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
               </button>
             </div>
           </div>
@@ -284,60 +238,10 @@ const MypageJob = ({ token, Jobs }) => {
       <div className="section3_title">
         직무 경험 <p className="title_length">2</p>
       </div>
-<<<<<<< HEAD
-      <div className="section3_flex">
-        <div className="section3_container">
-          <div className="section3_container_left">
-            <div className="section3_container_leftright_flex">
-              <span>회사 이름</span>
-              <p>모나미</p>
-            </div>
-            <div className="section3_container_leftright_flex">
-              <span>사용한 기술 스택</span>
-              <p>
-                <img src="stack/JS.png" width="24" height="24" alt="js icon" />
-              </p>
-            </div>
-            <div className="section3_container_leftright_flex">
-              <span>직무 설명</span>
-              <p></p>
-            </div>
-          </div>
-          <div className="section3_container_right">
-            <div className="section3_container_leftright_flex">
-              <span>재직 기간</span>
-              <p>
-                <div>2015.06</div>
-                <div>~</div>
-                <div>2018.03</div>
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="section3_next">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-          >
-            <path
-              d="M13.477 9.16591H3.33366V10.8326H13.477L9.00699 15.3026L10.1853 16.4809L16.667 9.99924L10.1853 3.51758L9.00699 4.69591L13.477 9.16591Z"
-              fill="#1F7CEB"
-            />
-          </svg>
-        </div>
-      </div>
-      <div className="section3_btn">
-        <button>수정하기</button>
-        <button onClick={openModal}>추가하기</button>
-      </div>
-=======
       <Swiper
         modules={[Navigation]}
         navigation
-        className='siwper'
+        className="siwper"
         slidesPerView={1}
       >
         {Jobs?.map((a) => {
@@ -391,16 +295,13 @@ const MypageJob = ({ token, Jobs }) => {
                 </svg>
               </div> */}
             </SwiperSlide>
-          )
+          );
         })}
         <div className="section3_btn">
-          <button>
-            수정하기
-          </button>
-          <button onClick={openModal} >추가하기</button>
+          <button>수정하기</button>
+          <button onClick={openModal}>추가하기</button>
         </div>
       </Swiper>
->>>>>>> 0c0487ac9e9f5083f6f20c59fb59cc3b7c8b27d5
       <MypageModal
         isOpen={isModalOpen}
         onClose={closeModal}
@@ -414,7 +315,7 @@ const MypageJob = ({ token, Jobs }) => {
 const Section3 = styled.div`
   margin-top: 50px;
 
-  .swiper-button-prev{
+  .swiper-button-prev {
     display: none;
   }
 
@@ -491,7 +392,7 @@ const Section3 = styled.div`
     width: 50px;
     height: 50px;
     flex-shrink: 0;
-    border: 2px solid #1F7CEB;
+    border: 2px solid #1f7ceb;
     top: 170px;
     right: 1px;
     border-radius: 100%;

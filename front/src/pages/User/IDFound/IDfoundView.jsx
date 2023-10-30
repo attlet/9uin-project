@@ -76,10 +76,7 @@ export default function IDfoundView() {
     console.log(validInfo);
 
     try {
-      const res = await axios.post(
-        'http://1.246.104.170:8080/find/validMail',
-        validInfo
-      );
+      const res = await axiosInstance.post('/find/validMail', validInfo);
 
       console.log(res);
       if (res.data.success === true) {

@@ -4,8 +4,11 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import useFetchData from '../ components/hooks/getPostList';
 import { useSelector } from 'react-redux';
+import { createAxiosInstance } from '../api/instance';
 
 export default function PostDetail() {
+  const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+
   const { board_id } = useParams();
   const user_id = useSelector((state) => state.auth.user_id);
 
@@ -39,15 +42,16 @@ export default function PostDetail() {
       };
 
       try {
-        const response = await axios.post(
-          `http://1.246.104.170:8080/applications`,
-          applyData,
-          {
-            headers: {
-              'X-AUTH-TOKEN': localStorage.getItem('token'),
-            },
-          }
-        );
+        const response = await axios.post('/applications', applyData);
+        // const response = await axios.post(
+        //   `http://1.246.104.170:8080/applications`,
+        //   applyData,
+        //   {
+        //     headers: {
+        //       'X-AUTH-TOKEN': localStorage.getItem('token'),
+        //     },
+        //   }
+        // );
         console.log('게시글 지원 성공');
         alert('지원이 완료되었습니다.');
         console.log(response);
@@ -64,6 +68,7 @@ export default function PostDetail() {
           const refreshData = {
             refreshToken: localStorage.getItem('refreshToken'),
           };
+          //TODO 리프레쉬토큰 리팩토링
           try {
             const refreshResponse = await axios.post(
               'http://1.246.104.170:8080/sign/reissue',
@@ -77,6 +82,7 @@ export default function PostDetail() {
             localStorage.setItem('refreshToken', newRefreshToken);
 
             // 새로운 액세스 토큰을 사용하여 원래의 요청 다시 보내기
+            //TODO 리프레쉬토큰 리팩토링
             const retryResponse = await axios.put(
               `http://1.246.104.170:8080/applications`,
               applyData,

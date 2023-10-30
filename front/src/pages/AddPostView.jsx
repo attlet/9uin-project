@@ -3,8 +3,11 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { refreshTokenAndRetry } from '../api/user';
+import { createAxiosInstance } from '../api/instance';
 
 export default function AddPost() {
+  const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+
   const [formData, setFormData] = useState({
     title: '',
     skill: '',
@@ -120,15 +123,8 @@ export default function AddPost() {
     console.log(postData);
 
     try {
-      const response = await axios.post(
-        'http://1.246.104.170:8080/boards',
-        postData,
-        {
-          headers: {
-            'X-AUTH-TOKEN': localStorage.getItem('token'),
-          },
-        }
-      );
+      const response = await axiosInstance.post('/boards', postData);
+
       alert('글 작성 성공');
       navigate('/');
       console.log('글 작성 성공');
@@ -139,6 +135,7 @@ export default function AddPost() {
         console.log(error.response.data.msg);
 
         try {
+          // TODO refresh token 코드 리팩토링
           const retryResponse = await refreshTokenAndRetry(
             'post',
             'http://1.246.104.170:8080/boards',

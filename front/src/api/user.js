@@ -1,15 +1,17 @@
 import axios from 'axios';
+import { createAxiosInstance } from './instance';
 
 export async function refreshTokenAndRetry(method, url, data, headers) {
+  const axiosInstance = createAxiosInstance(
+    localStorage.getItem('refreshToken')
+  );
+
   try {
     const refreshData = {
       refreshToken: localStorage.getItem('refreshToken'),
     };
 
-    const refreshResponse = await axios.post(
-      'http://1.246.104.170:8080/sign/reissue',
-      refreshData
-    );
+    const refreshResponse = await axios.post('/sign/reissue', refreshData);
 
     // Update tokens
     const newAccessToken = refreshResponse.data.accessToken;

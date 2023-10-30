@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { createAxiosInstance } from '../../../api/instance';
 
 // TODO 기존 비밀번호와 아이디 확인되면 변경 기능 활성화
 export default function PWChangeView() {
+  const axiosInstance = createAxiosInstance();
   const navigate = useNavigate();
 
   const [id, setId] = useState('');
@@ -31,10 +33,7 @@ export default function PWChangeView() {
     };
 
     try {
-      const response = await axios.post(
-        'http://1.246.104.170:8080/change/checkId',
-        userInfo
-      );
+      const response = await axiosInstance.post('/change/checkId', userInfo);
       console.log(response);
 
       if (response.data.message === '유저 존재') {
@@ -72,10 +71,7 @@ export default function PWChangeView() {
     };
 
     try {
-      const response = axios.post(
-        'http://1.246.104.170:8080/change/password',
-        userInfo
-      );
+      const response = axios.post('/change/password', userInfo);
 
       // 아이디와 기존 비밀번호 검사 로직 후 결과처리
       alert('비밀번호가 변경되었습니다.');
