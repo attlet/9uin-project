@@ -70,6 +70,7 @@ jobs:
         key: ${{secrets.GCP_PRIVATEKEY}}
         source: ./server/9in/docker-compose.yml
         target: /side_project/server/9in/
+        overwrite: true
     
     - name: Deploy to Instance
       uses: appleboy/ssh-action@master     #가장 최신 버젼 appleboy 사용
