@@ -71,7 +71,7 @@ jobs:
         host: ${{secrets.GCP_HOST}}
         username: ${{secrets.GCP_USERNAME}}
         key: ${{secrets.GCP_PRIVATEKEY}}
-        source: ./side_project/server/9in/docker-compose.yml
+        source: ./server/9in/docker-compose.yml
         target: ./side_project/server/9in/
     
     - name: Deploy to Instance
