@@ -56,7 +56,7 @@ jobs:
   deploy: 
   
     runs-on: ubuntu-latest
-
+    permissions: write-all
     needs: build
     
     steps:
