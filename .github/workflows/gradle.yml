@@ -69,10 +69,10 @@ jobs:
         username: ${{secrets.GCP_USERNAME}}
         key: ${{secrets.GCP_PRIVATEKEY}}
         source: "./server/9in/docker-compose.yml"
-        strip_components: 2
         target: "/home/${{secrets.GCP_USERNAME}}/side_project/server/9in/"
-        overwrite: true
-        debug: true
+        strip_components: 2
+        #overwrite: true
+     
     
     - name: Deploy to Instance
       uses: appleboy/ssh-action@master     #가장 최신 버젼 appleboy 사용
