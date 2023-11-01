@@ -80,7 +80,7 @@ jobs:
 
     - name: Copy docker-compose into instance
       run: |
-        scp ./server/9in/docker-compose.yml ${{secrets.GCP_USERNAME}}@${{secrets.GCP_HOST}}:/home/${{secrets.GCP_USERNAME}} 
+        scp ./server/9in/docker-compose.yml ${{secrets.GCP_USERNAME}}@${{secrets.GCP_HOST}}:/home
      
     
     - name: Deploy to Instance
