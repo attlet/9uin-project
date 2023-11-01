@@ -64,7 +64,7 @@ public class SignController {
                     @ApiResponse(responseCode = "400", description = "코드 전송 실패")
             })
     public ResponseEntity<ResponseIsSuccessDto> validCodeSend(@RequestBody RequestFindDto requestFindDto){
-        ResponseIsSuccessDto responseCheckMailDto = mailService.validCodeSend(requestFindDto);
+        ResponseIsSuccessDto responseCheckMailDto = mailService.validCodeSendForSignUp(requestFindDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseCheckMailDto);
     }

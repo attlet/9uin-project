@@ -72,6 +72,29 @@ public class MailService {
     }
 
     @Transactional
+    public ResponseIsSuccessDto validCodeSendForSignUp(RequestFindDto requestFindDto){
+        log.info("mail 인증 시작");
+        String mail = requestFindDto.getMail();
+
+        log.info("mail이 등록된 것 확인");
+
+        String validNum = MakeValidNum();
+
+        SendMailDto sendMailDto = new SendMailDto();
+
+        sendMailDto.setAddress(mail);
+        sendMailDto.setSubject("9uin 회원가입 인증번호가 전송되었습니다.");
+        sendMailDto.setText("인증번호는 " + validNum + " 입니다.");
+        sendMail(sendMailDto);
+
+        log.info("mail 전송 완료");
+
+        mailRepository.setValidCode(mail, validNum);
+
+        return new ResponseIsSuccessDto("success", true);
+    }
+
+    @Transactional
     public ResponseIsSuccessDto validMail(RequestValidCodeDto requestValidCodeDto){
         String mail = requestValidCodeDto.getMail();
         String inputCode = requestValidCodeDto.getValidCode();
