@@ -65,6 +65,14 @@
   border-radius: 1px;
 }
 
+.input__valid {
+  background-color: #d2e2ec;
+  padding: 0.5rem;
+  width: 12rem;
+  border: 1px solid #d2e2ec;
+  border-radius: 1px;
+}
+
 .input__pw {
   width: 93%;
   padding: 0.5rem;
