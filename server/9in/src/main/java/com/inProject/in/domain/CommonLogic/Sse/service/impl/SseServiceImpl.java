@@ -43,17 +43,18 @@ public class SseServiceImpl implements SseService {
     /**
      * 클라이언트가 구독을 위해 호출하는 메서드.
      *
-     * @param username - 구독하는 클라이언트의 사용자 아이디.
+     * @param user_id - 구독하는 클라이언트의 사용자 아이디.
      * @return SseEmitter - 서버에서 보낸 이벤트 Emitter
      */
     //SseEmitter inputEmitter
-    public SseEmitter subscribe(String username, RequestApplicationDto data) {
+    public SseEmitter subscribe(Long user_id, String data) {
 
-        SseEmitter emitter = sseRepository.get(username);
-        sendToClient(username,data);
+        SseEmitter emitter = sseRepository.get(user_id);
+        sendToClient(user_id,data);
 
         return emitter;
     }
+
 
 
 
@@ -64,7 +65,7 @@ public class SseServiceImpl implements SseService {
      * @param data - 전송할 데이터.
      */
 
-    public void sendToClient(String id, RequestApplicationDto data) {
+    public void sendToClient(Long id, String data) {
         SseEmitter emitter = sseRepository.get(id);
         if (emitter != null) {
             try {
@@ -98,12 +99,13 @@ public class SseServiceImpl implements SseService {
             throw new CustomException(ConstantsClass.ExceptionClass.SSE, HttpStatus.UNAUTHORIZED, "token이 없거나, 권한이 유효하지 않습니다.");
         }
 
-        String id =  user.getUsername();
+        Long id =  user.getId();
 
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
 
         //더미 데이터 send
-        RequestApplicationDto dummy = new RequestApplicationDto(Long.valueOf(0),Long.valueOf(0),Long.valueOf(0),"dummy data");
+//        RequestApplicationDto dummy = new RequestApplicationDto(Long.valueOf(0),Long.valueOf(0),Long.valueOf(0),"dummy data");
+        String dummy = "dummy";
         sendToClient(id,dummy);
 
         sseRepository.save(id, emitter);
@@ -118,7 +120,7 @@ public class SseServiceImpl implements SseService {
     }
 
     //로그아웃 시 호출
-    public void closeEmitter(String id){
+    public void closeEmitter(Long id){
         sseRepository.deleteById(id);
     }
 }

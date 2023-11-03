@@ -7,9 +7,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
 public interface SseService {
-    SseEmitter subscribe(String username, RequestApplicationDto data);
-    void sendToClient(String id, RequestApplicationDto data);
+    SseEmitter subscribe(Long user_id, String data);
+    void sendToClient(Long id, String data);
     SseEmitter createEmitter(HttpServletRequest request);
 
-    void closeEmitter(String id);
+    void closeEmitter(Long id);
 }
