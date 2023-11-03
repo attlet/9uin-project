@@ -5,6 +5,7 @@ import com.inProject.in.Global.exception.CustomException;
 import com.inProject.in.domain.Board.entity.Board;
 import com.inProject.in.domain.CommonLogic.Application.Dto.RequestApplicationDto;
 import com.inProject.in.domain.CommonLogic.Application.Dto.ResponseApplicationDto;
+import com.inProject.in.domain.CommonLogic.Application.Dto.ResponseSseDto;
 import com.inProject.in.domain.CommonLogic.Application.service.ApplicationService;
 import com.inProject.in.domain.MToNRelation.ApplicantBoardRelation.entity.ApplicantBoardRelation;
 import com.inProject.in.domain.MToNRelation.ApplicantBoardRelation.repository.ApplicantBoardRelationRepository;
@@ -210,4 +211,16 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicantBoardRelation.setStatus(0);
         return applicantBoardRelation;
     }
+    public ResponseSseDto ApplicationToSseResponse(RequestApplicationDto requestApplicationDto){
+        String board_title = boardRepository.getById(requestApplicationDto.getBoard_id()).getTitle();
+        Long role = requestApplicationDto.getRole_id();
+        String user_name = userRepository.getById(requestApplicationDto.getUser_id()).getUsername();
+        ResponseSseDto responseSseDto =  ResponseSseDto.builder().
+                title(board_title).
+                role(role).
+                user_name(user_name).
+                build();
+        return responseSseDto;
+    }
+
 }

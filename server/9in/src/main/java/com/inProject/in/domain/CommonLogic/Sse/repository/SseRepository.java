@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class SseRepository {
     // 모든 Emitters를 저장하는 ConcurrentHashMap
-    private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
+    private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     /**
      * 주어진 아이디와 이미터를 저장
@@ -22,7 +22,7 @@ public class SseRepository {
      * @param emitter - 이벤트 Emitter.
      */
 
-    public void save(String id, SseEmitter emitter) {
+    public void save(Long id, SseEmitter emitter) {
         emitters.put(id, emitter);
     }
     //(id , emitter<time_out>)
@@ -31,7 +31,7 @@ public class SseRepository {
      *
      * @param id - 사용자 아이디.
      */
-    public void deleteById(String id) {
+    public void deleteById(Long id) {
         emitters.remove(id);
     }
 
@@ -41,7 +41,7 @@ public class SseRepository {
      * @param id - 사용자 아이디.
      * @return SseEmitter - 이벤트 Emitter.
      */
-    public SseEmitter get(String id) {
+    public SseEmitter get(Long id) {
         return emitters.get(id);
     }
 }

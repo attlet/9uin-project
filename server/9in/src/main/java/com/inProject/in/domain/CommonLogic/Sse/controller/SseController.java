@@ -33,12 +33,7 @@ public class SseController {
     @GetMapping(value = "/apply") //반드시 json으로 반환 produces = MediaType.APPLICATION_JSON_VALUE//
     public SseEmitter subscribe(@PathVariable String id,  @RequestBody RequestApplicationDto data) {
         Long board_id_long = Long.parseLong(id);
-        return sseService.subscribe(id,data);
+        String data_1 = "test";
+        return sseService.subscribe(board_id_long,data_1);
     }
-
-
-//        @PostMapping("/send-data/{id}")
-//        public void sendData(@PathVariable String id) {
-//            sseService.notify(id, "data");
-//    }
 }

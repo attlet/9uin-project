@@ -1,8 +1,10 @@
 package com.inProject.in.domain.CommonLogic.Application.controller;
 
 import com.inProject.in.Global.exception.CustomException;
+import com.inProject.in.domain.Board.service.BoardService;
 import com.inProject.in.domain.CommonLogic.Application.Dto.ResponseApplicationDto;
 import com.inProject.in.domain.CommonLogic.Application.Dto.RequestApplicationDto;
+import com.inProject.in.domain.CommonLogic.Application.Dto.ResponseSseDto;
 import com.inProject.in.domain.CommonLogic.Application.service.ApplicationService;
 import com.inProject.in.domain.CommonLogic.Sse.service.SseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,10 +25,12 @@ import org.springframework.web.bind.annotation.*;
 public class ApplicationController {
     private ApplicationService applicationService;
     private  SseService sseService;
+    private BoardService boardService;
     @Autowired
-    public ApplicationController(ApplicationService applicationService, SseService sseService){
+    public ApplicationController(ApplicationService applicationService, SseService sseService, BoardService boardService){
         this.applicationService = applicationService;
         this.sseService = sseService;
+        this.boardService = boardService;
     }
 
     @PostMapping()
@@ -43,7 +47,12 @@ public class ApplicationController {
         try{
             ResponseApplicationDto responseApplicationDto = applicationService.createApplication(requestApplicationDto);
             //sseEvent 게시자의 id 로 바꿔야됨.
-            sseService.subscribe(String.valueOf(requestApplicationDto.getUser_id()),requestApplicationDto);
+            Long board_id = requestApplicationDto.getBoard_id();
+
+            ResponseSseDto responseSseDto = applicationService.ApplicationToSseResponse(requestApplicationDto);
+            String message = responseSseDto.getTitle()+" 의"+responseSseDto.getRole()+" 신청이 1건 있습니다.";
+
+            sseService.subscribe(requestApplicationDto.getUser_id(),message);
             return ResponseEntity.status(HttpStatus.OK).body(responseApplicationDto);
         }catch (CustomException e){
             throw e;
@@ -56,7 +65,6 @@ public class ApplicationController {
     public ResponseEntity<String> deleteApplication(RequestApplicationDto requestApplicationDto){
         try{
             applicationService.deleteApplication(requestApplicationDto);
-
             return ResponseEntity.status(HttpStatus.OK).body("삭제 완료");
         }catch (CustomException e){
             throw e;
@@ -68,6 +76,9 @@ public class ApplicationController {
     public ResponseEntity<String> rejectApplication(RequestApplicationDto requestApplicationDto){
         try{
             applicationService.rejectApplication(requestApplicationDto);
+            ResponseSseDto responseSseDto = applicationService.ApplicationToSseResponse(requestApplicationDto);
+            String message = "지원하신" + responseSseDto.getTitle()+"지원글에 참가하지 못하셨습니다.";
+            sseService.subscribe(requestApplicationDto.getUser_id(),message);
             return ResponseEntity.status(HttpStatus.OK).body("거절완료");
         }catch (CustomException e){
             throw e;
@@ -75,13 +86,18 @@ public class ApplicationController {
     }
 
     @PostMapping("accept")
-    @Operation(summary = "지원 거절", description = "게시글에 지원한 걸 거절합니다.")
+    @Operation(summary = "지원 수락", description = "게시글에 지원한 걸 수락합니다.")
     public ResponseEntity<String> acceptApplication(RequestApplicationDto requestApplicationDto){
         try{
             applicationService.acceptApplication(requestApplicationDto);
+            //~
+            ResponseSseDto responseSseDto = applicationService.ApplicationToSseResponse(requestApplicationDto);
+            String message = "지원하신" + responseSseDto.getTitle()+"의 팀에 참가하게 되었습니다.";
+            sseService.subscribe(requestApplicationDto.getUser_id(),message);
             return ResponseEntity.status(HttpStatus.OK).body("수락완료");
         }catch (CustomException e){
             throw e;
         }
     }
+
 }
