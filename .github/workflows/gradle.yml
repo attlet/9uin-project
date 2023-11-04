@@ -24,7 +24,12 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-
+        
+    - name: Copy application.yml into runner         #application.yml을 복사해서 러너로 가져옴.
+      run: |
+        touch ./server/9in/src/main/resources/application.yml
+        echo "${{secrets.APPLICATION_YML}}" > ./server/9in/src/main/resources/application.yml
+        
     - name: Grant Execute Permission For Gradlew & Build gradle
       run: |
         cd ./server/9in
