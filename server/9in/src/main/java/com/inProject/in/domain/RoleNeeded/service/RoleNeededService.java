@@ -6,8 +6,8 @@ import com.inProject.in.domain.RoleNeeded.Dto.RequestRoleNeededDto;
 import java.util.List;
 
 public interface RoleNeededService {
-    ResponseRoleNeededDto getRoleNeeded(Long id);
+    List<ResponseRoleNeededDto> getRoleNeeded();
     List<ResponseRoleNeededDto> createRoleNeededs(RequestRoleNeededDto requestRoleNeededDto);
-    ResponseRoleNeededDto updateRoleNeeded(Long id, RequestRoleNeededDto requestRoleNeededDto);
-    void deleteRoleNeeded(Long id);
+    ResponseRoleNeededDto updateRoleNeeded(Long role_id, String name);
+    void deleteRoleNeeded(Long role_id);
 }

@@ -1,11 +1,15 @@
 package com.inProject.in.domain.SkillTag.service.Impl;
 
+import com.inProject.in.Global.exception.ConstantsClass;
+import com.inProject.in.Global.exception.CustomException;
+import com.inProject.in.domain.SkillTag.Dto.RequestCreateSkillTagDto;
 import com.inProject.in.domain.SkillTag.Dto.RequestSkillTagDto;
 import com.inProject.in.domain.SkillTag.Dto.ResponseSkillTagDto;
 import com.inProject.in.domain.SkillTag.entity.SkillTag;
 import com.inProject.in.domain.SkillTag.repository.SkillTagRepository;
 import com.inProject.in.domain.SkillTag.service.SkillTagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +32,7 @@ public class SkillTagServiceImpl implements SkillTagService {
 
         for(SkillTag skillTag : skillTagList){
             ResponseSkillTagDto responseSkillTagDto = ResponseSkillTagDto.builder()
+                    .skillTag_id(skillTag.getId())
                     .name(skillTag.getName())
                     .build();
 
@@ -38,18 +43,32 @@ public class SkillTagServiceImpl implements SkillTagService {
     }
 
     @Override
-    public ResponseSkillTagDto createSkillTag(RequestSkillTagDto requestSkillTagDto) {
-        SkillTag skillTag = requestSkillTagDto.toEntity();
-        SkillTag savedTag = skillTagRepository.save(skillTag);
+    public List<ResponseSkillTagDto> createSkillTag(RequestCreateSkillTagDto requestCreateSkillTagDto) {
 
-        ResponseSkillTagDto responseSkillTagDto = new ResponseSkillTagDto(savedTag);
+        List<ResponseSkillTagDto> responseSkillTagDtoList = new ArrayList<>();
 
-        return responseSkillTagDto;
+        for(String tagName : requestCreateSkillTagDto.getName()){
+            SkillTag skillTag = SkillTag.builder()
+                    .name(tagName)
+                    .build();
+
+            SkillTag savedTag = skillTagRepository.save(skillTag);
+
+            ResponseSkillTagDto responseSkillTagDto = ResponseSkillTagDto.builder()
+                    .skillTag_id(savedTag.getId())
+                    .name(savedTag.getName())
+                    .build();
+
+            responseSkillTagDtoList.add(responseSkillTagDto);
+        }
+
+        return responseSkillTagDtoList;
     }
 
     @Override
     public ResponseSkillTagDto updateSkillTag(Long skillTag_id, RequestSkillTagDto requestSkillTagDto) {
-        SkillTag skillTag = skillTagRepository.findById(skillTag_id).get();
+        SkillTag skillTag = skillTagRepository.findById(skillTag_id).
+                orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.SKILLTAG, HttpStatus.NOT_FOUND, "updateSkill에서 없는 태그입니다."));
 
         skillTag.updateSkillTag(requestSkillTagDto);
         SkillTag updateTag = skillTagRepository.save(skillTag);

@@ -29,4 +29,8 @@ public class RoleNeeded extends BaseEntity {
 
     @OneToMany(mappedBy = "roleNeeded")
     private List<ApplicantRoleRelation> applicantRoleRelationList;   //여러 지원자들과 연관
+
+    public void updateRoleNeeded(RoleNeeded roleNeeded){
+        this.name = roleNeeded.getName();
+    }
 }
