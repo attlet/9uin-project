@@ -48,6 +48,7 @@ export default function JoinView() {
         mailInfo
       );
       console.log(response);
+      alert('인증번호를 전송했습니다.');
     } catch (error) {
       console.error('메일 인증코드 전송실패', error);
     }
@@ -66,6 +67,7 @@ export default function JoinView() {
       );
       console.log(response);
       setIsMailCheck(true);
+      alert('인증이 완료되었습니다.');
     } catch (error) {
       console.error('메일 인증코드 검증실패', error);
       setIsMailCheck(false);
@@ -85,6 +87,7 @@ export default function JoinView() {
       );
       console.log(response);
       setIsIdCheck(true);
+      alert('사용가능한 아이디입니다.');
     } catch (error) {
       console.error('아이디 체크 실패', error);
       setIsIdCheck(false);
@@ -131,6 +134,7 @@ export default function JoinView() {
     try {
       const response = await axiosInstance.post('/sign/sign-up', userData);
       console.log('회원가입 성공', response);
+      alert('회원가입을 성공했습니다!');
       navigate('/joinSuccess');
     } catch (error) {
       console.error('회원가입 실패', error);
@@ -140,7 +144,7 @@ export default function JoinView() {
   return (
     <section className={styles.container}>
       <p className={styles.title}>회원가입</p>
-      <form className={styles.container__box} onSubmit={handleSubmit}>
+      <form className={styles.container__box}>
         <div>
           <p className={styles.title__sub}>이메일 주소</p>
           <div className={styles.input__box}>
@@ -148,11 +152,13 @@ export default function JoinView() {
               className={styles.input__content}
               type="email"
               placeholder="내용을 입력해 주세요."
-              name=""
-              id="mail"
               onChange={handleMailChange}
             />
-            <button onClick={handleValidCodeSend} className={styles.check__btn}>
+            <button
+              type="button"
+              onClick={handleValidCodeSend}
+              className={styles.check__btn}
+            >
               인증요청
             </button>
           </div>
@@ -162,14 +168,13 @@ export default function JoinView() {
             <input
               className={styles.input__valid}
               type="text"
-              name=""
-              id=""
               placeholder="내용을 입력해 주세요."
               onChange={handleValidCodeChange}
             />
             <button
               onClick={handleValidCodeCheck}
               className={styles.check__btn}
+              type="button"
             >
               인증하기
             </button>
@@ -181,12 +186,14 @@ export default function JoinView() {
             <input
               className={styles.input__content}
               type="text"
-              name=""
-              id=""
               placeholder="내용을 입력해 주세요."
               onChange={handleUsernameChange}
             />
-            <button onClick={handleIdCheck} className={styles.check__btn}>
+            <button
+              onClick={handleIdCheck}
+              className={styles.check__btn}
+              type="button"
+            >
               중복확인
             </button>
           </div>
@@ -196,10 +203,9 @@ export default function JoinView() {
           <input
             className={styles.input__pw}
             type="password"
-            name=""
-            id=""
             placeholder="내용을 입력해 주세요."
             onChange={handlePasswordChange}
+            autoComplete="new-password"
           />
         </div>
         <div className={styles.pw__containter}>
@@ -207,14 +213,15 @@ export default function JoinView() {
           <input
             className={styles.input__pw}
             type="password"
-            name=""
-            id=""
             placeholder="내용을 입력해 주세요."
             onChange={handleRePasswordChange}
+            autoComplete="new-password"
           />
         </div>
         <div className={styles.btn__container}>
-          <button className={styles.btn__join}>가입하기</button>
+          <button onClick={handleSubmit} className={styles.btn__join}>
+            가입하기
+          </button>
         </div>
       </form>
     </section>

@@ -1,7 +1,10 @@
 import axios from 'axios';
 import config from '../common/config';
 
-const createAxiosInstance = (token = null, page = 0) => {
+const createAxiosInstance = (token, page) => {
+  const headers = token ? { 'X-AUTH-TOKEN': token } : {};
+  const params = page !== undefined ? { page } : {};
+
   return axios.create({
     baseURL:
       process.env.REACT_APP_NODE_ENV === 'development'
@@ -9,12 +12,8 @@ const createAxiosInstance = (token = null, page = 0) => {
         : process.env.REACT_APP_NODE_ENV === 'local'
         ? config.local.apiUrl
         : '',
-    headers: {
-      'X-AUTH-TOKEN': token,
-    },
-    params: {
-      page,
-    },
+    headers,
+    params,
   });
 };
 
