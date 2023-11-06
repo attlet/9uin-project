@@ -11,7 +11,9 @@ public class ConstantsClass{
         FIND("Find"),
         CHANGE("Change"),
         CLIP("Clip"),
-        SSE("Sse");
+        SSE("Sse"),
+        ROLE("Role"),
+        SKILLTAG("SkillTag");
 
         private String exceptionClass;
 

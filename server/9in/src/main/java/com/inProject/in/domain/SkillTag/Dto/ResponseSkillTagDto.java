@@ -13,6 +13,7 @@ import java.util.List;
 @ToString
 @Builder
 public class ResponseSkillTagDto {
+    private Long skillTag_id;
     private String name;
     public ResponseSkillTagDto(SkillTag SkillTag){
         this.name = SkillTag.getName();
