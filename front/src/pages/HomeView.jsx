@@ -17,6 +17,7 @@ export default function HomeView() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
 
   // 로그인 후 처음 home => clipList 받아옴
   useEffect(() => {
@@ -28,8 +29,9 @@ export default function HomeView() {
       try {
         const axiosInstance = createAxiosInstance(null, page);
         const response = await axiosInstance.get('/boards');
-        setPostList(response.data);
+        setPostList(response.data.content);
         setLoading(false);
+        setTotalPage(response.data.totalPage);
       } catch (error) {
         setError(error.message);
         setLoading(false);
@@ -42,6 +44,8 @@ export default function HomeView() {
   const handleClick = (board_id) => {
     navigate(`/postDetail/${board_id}`);
   };
+
+  const pages = Array.from({ length: totalPage }, (_, index) => index + 1);
 
   if (loading) return <p>Loading...</p>;
 
@@ -71,8 +75,11 @@ export default function HomeView() {
           ))}
       </div>
       <PageBox>
-        <PageIndex onClick={() => setPage(0)}>1</PageIndex>
-        <PageIndex onClick={() => setPage(1)}>2</PageIndex>
+        {pages.map((pageIndex) => (
+          <PageIndex key={pageIndex} onClick={() => setPage(pageIndex - 1)}>
+            {pageIndex}
+          </PageIndex>
+        ))}
       </PageBox>
     </>
   );
@@ -83,6 +90,9 @@ const PageBox = styled.ul`
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 `;
 
 const PageIndex = styled.li`
