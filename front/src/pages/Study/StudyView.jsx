@@ -15,14 +15,16 @@ export default function StudyView() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const axiosInstance = createAxiosInstance(null, page);
         const response = await axiosInstance.get('/boards');
-        setStudyList(response.data);
+        setStudyList(response.data.content);
         setLoading(false);
+        setTotalPage(response.data.totalPage);
       } catch (error) {
         setError(error.message);
         setLoading(false);
@@ -31,6 +33,8 @@ export default function StudyView() {
 
     fetchData();
   }, [page]);
+
+  const pages = Array.from({ length: totalPage }, (_, index) => index + 1);
 
   if (error) return <p>{error}</p>;
 
@@ -112,8 +116,11 @@ export default function StudyView() {
         )}
       </ProjectGrid>
       <PageBox>
-        <PageIndex onClick={() => setPage(0)}>1</PageIndex>
-        <PageIndex onClick={() => setPage(1)}>2</PageIndex>
+        {pages.map((pageIndex) => (
+          <PageIndex key={pageIndex} onClick={() => setPage(pageIndex - 1)}>
+            {pageIndex}
+          </PageIndex>
+        ))}
       </PageBox>
     </section>
   );
@@ -273,6 +280,9 @@ const PageBox = styled.ul`
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 `;
 
 const PageIndex = styled.li`

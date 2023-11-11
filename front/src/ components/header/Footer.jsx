@@ -23,14 +23,14 @@ const Bottom = styled.div`
   max-width: 1300px;
   width: 100%;
   margin: auto;
-  height: 10rem;
+  height: 7rem;
 `;
 
 const BottomImg = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 7rem;
+  margin-top: 2rem;
 `;
 
 const BottomWriting = styled.div`
