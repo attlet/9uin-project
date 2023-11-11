@@ -15,6 +15,8 @@ export default function JoinView() {
   const [isMailCheck, setIsMailCheck] = useState(false);
   const [isIdCheck, setIsIdCheck] = useState(false);
 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const navigate = useNavigate();
 
   const handleMailChange = (e) => {
@@ -42,15 +44,19 @@ export default function JoinView() {
       mail,
     };
 
-    try {
-      const response = await axiosInstance.post(
-        '/sign/sign-up/validCodeSend',
-        mailInfo
-      );
-      console.log(response);
-      alert('인증번호를 전송했습니다.');
-    } catch (error) {
-      console.error('메일 인증코드 전송실패', error);
+    if (emailRegex.test(mail)) {
+      try {
+        const response = await axiosInstance.post(
+          '/sign/sign-up/validCodeSend',
+          mailInfo
+        );
+        console.log(response);
+        alert('인증번호를 전송했습니다.');
+      } catch (error) {
+        console.error('메일 인증코드 전송실패', error);
+      }
+    } else {
+      alert('유효한 이메일을 입력해주세요.');
     }
   };
 
