@@ -40,6 +40,7 @@ export default function IDfoundView() {
         mailInfo
       );
       console.log(response);
+      alert('인증번호를 전송했습니다.');
       setIsNotMail(false);
       setIsMail(true);
       setTimeout(() => {
@@ -52,6 +53,7 @@ export default function IDfoundView() {
         error.response.data.message ===
         `Sign Exception. 등록되지 않은 메일입니다.`
       ) {
+        alert('등록되지 않은 메일입니다.');
         setIsNotMail(true);
         setIsMail(false);
         console.log(isNotMail);
@@ -83,6 +85,7 @@ export default function IDfoundView() {
         findId();
       } else {
         // 메일의 인증번호와 입력한 인증번호가 일치하지 않음
+        alert('인증번호가 일치하지 않습니다.');
         setIsNotValid(true);
 
         setTimeout(() => {
@@ -90,6 +93,7 @@ export default function IDfoundView() {
         }, 3000);
       }
     } catch (error) {
+      alert('이메일 또는 인증번호를 확인해주세요.');
       console.error('네트워크 에러 발생', error);
     }
   };

@@ -34,7 +34,7 @@ export default function PWfoundView() {
     };
 
     try {
-      const response = await axiosInstance.post('/find/checkId');
+      const response = await axiosInstance.post('/find/checkId', userInfo);
       console.log(response);
 
       if (response.data.message === '유저 존재') {
@@ -50,7 +50,6 @@ export default function PWfoundView() {
         error.response.data.message ===
         'Find Exception. find - checkId에서 username이 존재하지 않음 확인'
       ) {
-        console.log('들어옴');
         setIsNotId(true);
 
         setTimeout(() => {
