@@ -8,8 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RequestChangePwDto {
+public class RequestCheckCurPwDto {
     private String username;
-    private String newPw;
-    private String checkPw;
+    private String cur_pw;
 }

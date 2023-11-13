@@ -110,6 +110,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             ApplicantBoardRelation createApplicantBoardRelation = applicantBoardRelationRepository.save(applicantBoardRelation);
             ApplicantRoleRelation createApplicantRoleRelation = applicantRoleRelationRepository.save(applicantRoleRelation);
 
+            board.getApplicantBoardRelationList().add(createApplicantBoardRelation);
 
             log.info("Insert application ==> user - post relation_id : " + createApplicantBoardRelation.getId() +
                     " user - role relation_id : " + createApplicantRoleRelation.getId());

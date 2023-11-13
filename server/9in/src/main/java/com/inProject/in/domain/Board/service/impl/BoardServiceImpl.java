@@ -175,12 +175,13 @@ public class BoardServiceImpl implements BoardService {
 
         if(board.getApplicantBoardRelationList() != null){
             for(ApplicantBoardRelation applicantBoardRelation : board.getApplicantBoardRelationList()){
-                ResponseInfoInBoardDto responseInfoInBoardDto = new ResponseInfoInBoardDto(applicantBoardRelation);
+                if(applicantBoardRelation.getStatus() == 0) {    //게시글 참여 승낙이 된 사람만 출력.
+                    ResponseInfoInBoardDto responseInfoInBoardDto = new ResponseInfoInBoardDto(applicantBoardRelation);
 
-                responseBoardDto.getResponseInfoInBoardDtoList().add(responseInfoInBoardDto);
+                    responseBoardDto.getResponseInfoInBoardDtoList().add(responseInfoInBoardDto);
+                }
             }
         }
-
         return responseBoardDto;
     }
 

@@ -1,16 +1,19 @@
 package com.inProject.in.domain.CommonLogic.Change.controller;
 
 import com.inProject.in.domain.CommonLogic.Change.Dto.request.RequestChangePwDto;
+import com.inProject.in.domain.CommonLogic.Change.Dto.request.RequestCheckCurPwDto;
 import com.inProject.in.domain.CommonLogic.Change.Dto.response.ResponseChangeDto;
 import com.inProject.in.domain.CommonLogic.Change.service.ChangeService;
 import com.inProject.in.domain.CommonLogic.Find.Dto.request.RequestCheckIdDto;
 import com.inProject.in.domain.CommonLogic.Find.Dto.response.ResponseCheckIdDto;
+import com.inProject.in.domain.CommonLogic.Find.Dto.response.ResponseIsSuccessDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,5 +62,18 @@ public class ChangeController {
         ResponseCheckIdDto responseCheckIdDto = changeService.checkId(requestCheckIdDto);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseCheckIdDto);
+    }
+
+    @PostMapping("/checkCurPw")
+    @Operation(summary = "기존 비밀번호 체크", description = "비밀번호 변경 전에, 기존 비밀번호 확인.", responses = {
+            @ApiResponse(responseCode = "200", description = "기존 비밀번호 확인", content = {
+                    @Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ResponseCheckIdDto.class))
+            })
+    })
+    public ResponseEntity<ResponseIsSuccessDto> checkCurPw(@RequestBody RequestCheckCurPwDto requestCheckCurPwDto){
+        ResponseIsSuccessDto responseIsSuccessDto = changeService.checkCurPw(requestCheckCurPwDto);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseIsSuccessDto);
     }
 }
