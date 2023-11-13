@@ -109,6 +109,22 @@ export default function AddPost() {
       });
     }
 
+    // 유효성 검사
+    if (!formData.type) {
+      alert('프로젝트 또는 스터디를 선택해주세요.');
+      return;
+    }
+
+    if (!formData.title) {
+      alert('제목을 입력해주세요.');
+      return;
+    }
+
+    if (!formData.period) {
+      alert('마감 기한을 입력해주세요.');
+      return;
+    }
+
     const postData = {
       type: formData.type,
       title: formData.title,

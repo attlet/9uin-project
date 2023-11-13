@@ -12,6 +12,9 @@ export default function PWChangeView() {
   const [id, setId] = useState('');
   const [isId, setIsId] = useState(false);
 
+  const [prevPw, setPrevPw] = useState('');
+  const [isPrevPw, setIsPrevPw] = useState(false);
+
   const [newPw, setNewPw] = useState('');
   const [checkPw, setCheckPw] = useState('');
 
@@ -52,12 +55,37 @@ export default function PWChangeView() {
     }
   };
 
+  const handleCheckPw = async () => {
+    const userInfo = {
+      username: id,
+      cur_pw: prevPw,
+    };
+
+    try {
+      const response = await axiosInstance.post('/change/checkCurPw', userInfo);
+      console.log(response);
+      setIsPrevPw(true);
+    } catch (error) {
+      console.error('기존 비밀번호 체크실패', error);
+      if (
+        error.response.data.message === 'Change Exception. 기존 비밀번호 틀림'
+      ) {
+        alert('기존 비밀번호가 일치하지 않습니다.');
+      }
+    }
+  };
+
   const handleChangePw = () => {
     if (!isId) {
       alert('아이디 인증을 해주세요.');
+      return;
     }
 
     // Todo 기존 비밀번호 인증처리
+    if (!isPrevPw) {
+      alert('기존 비밀번호 인증을 해주세요.');
+      return;
+    }
 
     if (newPw !== checkPw) {
       alert('새 비밀번호가 일치하지 않습니다.');
@@ -72,8 +100,6 @@ export default function PWChangeView() {
 
     try {
       const response = axios.post('/change/password', userInfo);
-
-      // 아이디와 기존 비밀번호 검사 로직 후 결과처리
       alert('비밀번호가 변경되었습니다.');
       navigate('/user/login');
     } catch (error) {
@@ -97,8 +123,15 @@ export default function PWChangeView() {
         </InputBox>
         <SubTitle>기존 비밀번호</SubTitle>
         <InputBox>
-          <StyledInput type="text" placeholder="내용을 입력해 주세요." />
-          <CheckBtn>확인</CheckBtn>
+          <StyledInput
+            value={prevPw}
+            onChange={(e) => setPrevPw(e.target.value)}
+            type="text"
+            placeholder="내용을 입력해 주세요."
+          />
+          <CheckBtn onClick={handleCheckPw}>
+            {isPrevPw ? '확인완료' : '확인'}
+          </CheckBtn>
         </InputBox>
         <SubTitle>새 비밀번호</SubTitle>
         <InputBox>
