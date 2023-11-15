@@ -21,7 +21,12 @@ export default function ProjectView() {
     const fetchData = async () => {
       try {
         const axiosInstance = createAxiosInstance(null, page);
-        const response = await axiosInstance.get('/boards');
+        const boardInfo = {
+          type: '프로젝트',
+        };
+        const response = await axiosInstance.get('/boards', {
+          params: boardInfo,
+        });
         setProjectList(response.data.content);
         setLoading(false);
         setTotalPage(response.data.totalPage);
@@ -95,24 +100,22 @@ export default function ProjectView() {
           <p>Loading...</p>
         ) : (
           projectList.length > 0 &&
-          projectList
-            .filter((post) => post.type === '프로젝트')
-            .map((post) => (
-              <div onClick={() => navigate(`/postDetail/${post.board_id}`)}>
-                <Post
-                  key={post.board_id}
-                  title={post.title}
-                  type={post.type}
-                  period={post.period}
-                  roles={post.roles}
-                  proceed_method={post.proceed_method}
-                  username={post.username}
-                  tags={post.tags}
-                  createAt={post.createAt}
-                  view_cnt={post.view_cnt}
-                />
-              </div>
-            ))
+          projectList.map((post) => (
+            <div onClick={() => navigate(`/postDetail/${post.board_id}`)}>
+              <Post
+                key={post.board_id}
+                title={post.title}
+                type={post.type}
+                period={post.period}
+                roles={post.roles}
+                proceed_method={post.proceed_method}
+                username={post.username}
+                tags={post.tags}
+                createAt={post.createAt}
+                view_cnt={post.view_cnt}
+              />
+            </div>
+          ))
         )}
       </ProjectGrid>
       <PageBox>

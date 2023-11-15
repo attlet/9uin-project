@@ -21,7 +21,12 @@ export default function StudyView() {
     const fetchData = async () => {
       try {
         const axiosInstance = createAxiosInstance(null, page);
-        const response = await axiosInstance.get('/boards');
+        const boardInfo = {
+          type: '스터디',
+        };
+        const response = await axiosInstance.get('/boards', {
+          params: boardInfo,
+        });
         setStudyList(response.data.content);
         setLoading(false);
         setTotalPage(response.data.totalPage);
@@ -95,24 +100,22 @@ export default function StudyView() {
           <p>Loading..,</p>
         ) : (
           studyList.length > 0 &&
-          studyList
-            .filter((post) => post.type === '스터디')
-            .map((post) => (
-              <div onClick={() => navigate(`/postDetail/${post.board_id}`)}>
-                <Post
-                  key={post.board_id}
-                  title={post.title}
-                  type={post.type}
-                  period={post.period}
-                  roles={post.roles}
-                  proceed_method={post.proceed_method}
-                  username={post.username}
-                  tags={post.tags}
-                  createAt={post.createAt}
-                  view_cnt={post.view_cnt}
-                />
-              </div>
-            ))
+          studyList.map((post) => (
+            <div onClick={() => navigate(`/postDetail/${post.board_id}`)}>
+              <Post
+                key={post.board_id}
+                title={post.title}
+                type={post.type}
+                period={post.period}
+                roles={post.roles}
+                proceed_method={post.proceed_method}
+                username={post.username}
+                tags={post.tags}
+                createAt={post.createAt}
+                view_cnt={post.view_cnt}
+              />
+            </div>
+          ))
         )}
       </ProjectGrid>
       <PageBox>
