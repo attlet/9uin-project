@@ -66,7 +66,7 @@ public class ProfileController {
 
     @GetMapping("/myBoards/{username}")
     @Parameter(name = "username", description = "username 입력", in = ParameterIn.PATH)
-    @Operation(summary = "프로필에 내 게시글 가져오는 api", description = "한 유저가 작성한 글들을 반환합니다.", responses = {
+    @Operation(summary = "프로필에 내 게시글 가져오는 api", description = "한 유저가 작성한 글들을 반환합니다. type을 지정할 수 있습니다.", responses = {
             @ApiResponse(responseCode = "200", description = "게시글 가져오기 성공", content = {
                     @Content(mediaType = "application/json", schema =
                     @Schema(implementation = ResponseProfileDto.class))

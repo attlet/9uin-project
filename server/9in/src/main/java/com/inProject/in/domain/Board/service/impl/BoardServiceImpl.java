@@ -147,14 +147,14 @@ public class BoardServiceImpl implements BoardService {
                 viewCountRepository.setBoard(str_user, str_board);
 //            board.setView_cnt(board.getView_cnt() + 1);
                 int view = boardRepository.updateViewCnt(id);          //두 메서드 중 무엇을 쓸까. 한 번 테스트하기.
-                log.info("view cnt up : " + view);
+                log.info("view cnt up : " + view );
             }
         }
 
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.NOT_FOUND, id + "는 유효하지 않은 게시글 id입니다." ));
 
-
+        log.info("view cnt : " + board.getView_cnt());
         ResponseBoardDto responseBoardDto = new ResponseBoardDto(board);
 
         for(TagBoardRelation tagBoardRelation : board.getTagBoardRelationList()){
