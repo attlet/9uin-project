@@ -269,9 +269,8 @@ export default function PostDetail() {
 }
 
 const Container = styled.div`
-  width: 1344px;
-  margin: 50px auto;
-  height: 2000px;
+  max-width: 1344px;
+  margin: 2rem auto;
 
   h1 {
     color: #000;
@@ -279,20 +278,20 @@ const Container = styled.div`
     font-style: normal;
     font-weight: 700;
     line-height: normal;
-    margin-left: 100px;
+    margin-left: 8rem;
   }
 `;
 
 const Content = styled.div`
-  margin-left: 100px;
+  margin: 3rem 8rem;
   display: flex;
-  margin-top: 67px;
-  margin-bottom: 24px;
-  gap: 160px;
+  gap: 6rem;
+  
   .content_flex {
     display: flex;
     align-items: center;
-    gap: 30px;
+    justify-content = center;
+    gap: 25px;
     color: #000;
     font-size: 20px;
     font-style: normal;
@@ -308,15 +307,18 @@ const Content = styled.div`
   }
 `;
 const Line = styled.div`
-  width: 1344.006px;
+  max-width: 1344px;
+  margin: 0 7rem;
   height: 2px;
   background: #d9d9d9;
   margin-bottom: 24px;
 `;
 
 const Section = styled.div`
-  width: 1344px;
-  height: 384px;
+  border-top: 2px solid #d9d9d9;
+  max-width: 1344px;
+  margin: 2rem 7rem;
+  height: 20rem;
   flex-shrink: 0;
   border-radius: 15px;
   display: flex;
@@ -326,9 +328,11 @@ const Section = styled.div`
   background: #dae9fc;
   .section1,
   .section2 {
-    width: 577px;
-    height: 350px;
+    max-width: 577px;
+    width: 27rem;
+    height: 15rem;
     border-radius: 15px;
+    margin: 0.2rem;
   }
 
   .section1 {
@@ -446,7 +450,7 @@ const Section = styled.div`
 `;
 
 const Section2 = styled.div`
-  margin-top: 50px;
+  margin: 3rem 7rem;
 
   .section2_title {
     display: flex;
@@ -549,8 +553,7 @@ const Section2 = styled.div`
 `;
 
 const Section3 = styled.div`
-  margin-top: 100px;
-
+  margin: 2rem 7rem;
   .section3_title {
     color: #000;
     font-size: 22px;
@@ -562,7 +565,7 @@ const Section3 = styled.div`
   }
 
   .section3_content {
-    height: 500px;
+    height: 10rem;
   }
   form {
     display: flex;
@@ -570,8 +573,9 @@ const Section3 = styled.div`
     align-items: center;
     gap: 20px;
     textarea {
-      width: 1343px;
-      height: 147px;
+      height: 7rem;
+      width: 100%;
+      margin: 2rem 7rem;
       flex-shrink: 0;
       border-radius: 30px;
       border: 2px solid #d9d9d9;
