@@ -11,14 +11,32 @@ export default function PostDetail() {
 
   const { board_id } = useParams();
   const user_id = useSelector((state) => state.auth.user_id);
+  const [boardInfo, setBoardInfo] = useState(null);
 
-  const { data, loading, error } = useFetchData('/boards/' + board_id);
+  useEffect(() => {
+    const fetchBoard = async () => {
+      try {
+        const response = await axiosInstance.get(`/boards/${board_id}`);
+        setBoardInfo(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error fetching boarInfo', error);
+      }
+    };
 
-  const { title, type, proceed_method, period, roles, tags } = data;
-  console.log(tags);
-  console.log(roles);
+    fetchBoard();
+  }, [axiosInstance, board_id]);
 
-  const formattedPeriod = new Date(data.period).toLocaleDateString('ko-KR', {
+  const { title, type, proceed_method, period, roles, tags, createAt } =
+    boardInfo || {};
+
+  const formattedPeriod = new Date(period).toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+
+  const formattedCreateAt = new Date(createAt).toLocaleDateString('ko-KR', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -114,7 +132,7 @@ export default function PostDetail() {
       <Content>
         <div className="content_flex">
           <span>게시 날짜</span>
-          <span>{formattedPeriod}</span>
+          <span>{formattedCreateAt}</span>
         </div>
         <div className="content_flex">
           <svg
@@ -141,7 +159,7 @@ export default function PostDetail() {
         </div>
         <div className="content_flex">
           <span>시작날짜</span>
-          <span>{period}</span>
+          <span>{formattedPeriod}</span>
         </div>
         <div className="content_flex">
           <span>예상기간</span>
@@ -237,7 +255,7 @@ export default function PostDetail() {
       </Section2>
       <Section3>
         <div className="section3_title">프로젝트 소개</div>
-        <div className="section3_content">{data.text}</div>
+        <div className="section3_content"></div>
         <form>
           <textarea
             className="section3_textarea"
