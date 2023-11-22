@@ -60,7 +60,7 @@ export default function PostDetail() {
       };
 
       try {
-        const response = await axios.post('/applications', applyData);
+        const response = await axiosInstance.post('/applications', applyData);
         // const response = await axios.post(
         //   `http://1.246.104.170:8080/applications`,
         //   applyData,
@@ -70,7 +70,9 @@ export default function PostDetail() {
         //     },
         //   }
         // );
-        console.log('게시글 지원 성공');
+        console.log('게시글 지원 성공', response);
+
+        // sse 구현
         alert('지원이 완료되었습니다.');
         console.log(response);
 
