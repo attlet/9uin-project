@@ -5,9 +5,13 @@ import styled from 'styled-components';
 import useFetchData from '../ components/hooks/getPostList';
 import { useSelector } from 'react-redux';
 import { createAxiosInstance } from '../api/instance';
+import useSSE from '../api/sse';
+import config from '../common/config';
 
 export default function PostDetail() {
   const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+  const eventData = useSSE('/sse/connect');
+  console.log(eventData);
 
   const { board_id } = useParams();
   const user_id = useSelector((state) => state.auth.user_id);
@@ -25,7 +29,7 @@ export default function PostDetail() {
     };
 
     fetchBoard();
-  }, [axiosInstance, board_id]);
+  }, [board_id]);
 
   const { title, type, proceed_method, period, roles, tags, createAt } =
     boardInfo || {};
@@ -71,8 +75,6 @@ export default function PostDetail() {
         //   }
         // );
         console.log('게시글 지원 성공', response);
-
-        // sse 구현
         alert('지원이 완료되었습니다.');
         console.log(response);
 

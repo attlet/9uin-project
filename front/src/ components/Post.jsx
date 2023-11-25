@@ -72,7 +72,7 @@ export default function Post({
       <div className={styles.type__container}>
         <div className={styles.type__text}>{type}</div>
         <div className={styles.period__text}>
-          {monthDifference === 0 ? '1개월 미만' : `${monthDifference}개월 이상`}
+          {monthDifference <= 0 ? '1개월 미만' : `${monthDifference}개월 이상`}
         </div>
       </div>
       <p className={styles.title}>{title}</p>

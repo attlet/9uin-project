@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import config from '../common/config';
 
-const useSSE = (endPoint, params) => {
+const useSSE = (endPoint) => {
   const [data, setData] = useState(null);
   const baseURL =
     process.env.REACT_APP_NODE_ENV === 'development'
@@ -11,9 +11,7 @@ const useSSE = (endPoint, params) => {
       : '';
 
   useEffect(() => {
-    const sseUrl = `${baseURL}${endPoint}?${new URLSearchParams(
-      params
-    ).toString()}`;
+    const sseUrl = `${baseURL}${endPoint}`;
     const eventSource = new EventSource(sseUrl);
 
     eventSource.onmessage = (event) => {
@@ -30,7 +28,7 @@ const useSSE = (endPoint, params) => {
     return () => {
       eventSource.close();
     };
-  }, [endPoint, params]);
+  }, [endPoint]);
 
   return data;
 };
