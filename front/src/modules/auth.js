@@ -4,9 +4,9 @@ const LOGOUT = 'auth/LOGOUT';
 const UPDATE_TOKENS = 'auth/UPDATE_TOKENS';
 
 // Action Creators
-export const login = (token, refreshToken, userId) => ({
+export const login = (token, refreshToken, userId, username) => ({
   type: LOGIN,
-  payload: { token, refreshToken, userId },
+  payload: { token, refreshToken, userId, username },
 });
 
 export const logout = () => ({
@@ -34,6 +34,7 @@ export default function authReducer(state = initialState, action) {
         token: action.payload.token,
         refreshToken: action.payload.refreshToken,
         userId: action.payload.userId,
+        username: action.payload.username,
       };
     case LOGOUT:
       return {
@@ -41,6 +42,7 @@ export default function authReducer(state = initialState, action) {
         token: null,
         refreshToken: null,
         userId: 0,
+        username: '',
       };
     case UPDATE_TOKENS:
       return {

@@ -52,7 +52,7 @@ export default function LoginView() {
       const refreshToken = response.data.refreshToken;
       const user_id = response.data.user_id;
       // login(token, refreshToken, user_id);
-      dispatch(login(token, refreshToken, user_id));
+      dispatch(login(token, refreshToken, user_id, username));
 
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-const MypageEtc = () => {
+const MypageEtc = ({ clipCnt, projectCnt, studyCnt }) => {
   const navigate = useNavigate();
 
   return (
@@ -15,7 +15,7 @@ const MypageEtc = () => {
           <img src="icons/clip.png" width="24" height="24" alt="clip icon" />
           <p>클립 해놓은 게시물 {'>'}</p>
         </div>
-        <div>3</div>
+        <div>{clipCnt}</div>
       </div>
       <div className="section1_etc_recruitment">
         <div
@@ -31,11 +31,11 @@ const MypageEtc = () => {
         >
           <div className="section1_etc_recruitment_content_project">
             <div>프로젝트</div>
-            <div>1</div>
+            <div>{projectCnt}</div>
           </div>
           <div className="section1_etc_recruitment_content_study">
             <div>스터디</div>
-            <div>1</div>
+            <div>{studyCnt}</div>
           </div>
         </div>
       </div>

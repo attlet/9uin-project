@@ -71,6 +71,7 @@ const Headers = styled.header`
   height: 80px;
   color: black;
   z-index: 99;
+  background-color: white;
 `;
 
 const Container = styled.div`

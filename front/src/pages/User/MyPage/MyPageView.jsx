@@ -8,70 +8,63 @@ import MypageJob from '../../../ components/Mypage/MypageJob';
 import MypageProject from '../../../ components/Mypage/MypageProject';
 import { getNewTokens } from '../../../api/refreshToken';
 import { createAxiosInstance } from '../../../api/instance';
+import { useSelector } from 'react-redux';
 
 export default function MyPage() {
   const [token, setToken] = useState('');
   const [refreshToken, setRefreshToken] = useState('');
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const user_id = 1234; // user_id
+  const username = useSelector((state) => state.auth.username); // username
 
   useEffect(() => {
-    setToken(localStorage.getItem("token"));
-    setRefreshToken(localStorage.getItem("refresh_token"));
+    setToken(localStorage.getItem('token'));
+    setRefreshToken(localStorage.getItem('refresh_token'));
+  }, [token, refreshToken]);
 
-  },[token, refreshToken])
+  console.log(data);
 
-  console.log(data)
-
-  const getProfile = async() => {
+  const getProfile = async () => {
     try {
       setIsLoading(true);
       const axiosInstance = createAxiosInstance(token);
-      const response = await axiosInstance.get(`/profile/${user_id}`);
-      setData(response.data)
+      const response = await axiosInstance.get(`/profile/${username}`);
+      setData(response.data);
     } catch (error) {
       console.error(error);
       if (error.response && error.response.status === 401) {
         const { accessToken, refreshToken } = await getNewTokens();
 
         const axiosInstance = createAxiosInstance(refreshToken);
-        const response = await axiosInstance.get(`/profile/${user_id}`);
-        setData(response.data)
+        const response = await axiosInstance.get(`/profile/${username}`);
+        setData(response.data);
       }
-    } finally { 
+    } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    getProfile()
-  },[])
+    getProfile();
+  }, []);
 
   return (
     <Mypage>
       <Section1>
-        <MypageUser 
-          token={refreshToken}
-          myinfoData={data.myInfoDto}
-        />
-        <div className='section1_flex'>
-          <MypageSchool 
-            token={refreshToken}
+        <MypageUser token={refreshToken} myinfoData={data.myInfoDto} />
+        <div className="section1_flex">
+          <MypageSchool token={refreshToken} />
+          <MypageEtc
+            clipCnt={data.clipedCounts}
+            projectCnt={data.projectCounts}
+            studyCnt={data.studyCounts}
           />
-          <MypageEtc />
         </div>
       </Section1>
       <Section2>
-        <MypageLicese 
-          token={refreshToken}
-        />
-        <MypageJob 
-          token={refreshToken}
-        />
-        <MypageProject 
-          token={refreshToken}
-        />
+        <MypageLicese token={refreshToken} />
+        <MypageJob token={refreshToken} />
+        <MypageProject token={refreshToken} />
       </Section2>
     </Mypage>
   );
@@ -81,7 +74,7 @@ const Mypage = styled.div`
   width: 1300px;
   padding-top: 50px;
   margin: auto;
-`
+`;
 
 const Section1 = styled.div`
   display: flex;
@@ -202,7 +195,7 @@ const Section1 = styled.div`
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap:30px;
+    gap: 30px;
     .section1_profile {
       width: 750px;
     }
@@ -216,4 +209,4 @@ const Section2 = styled.div`
     justify-content: center;
     align-items: center;
   }
-`
+`;
