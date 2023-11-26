@@ -67,11 +67,10 @@ const Headers = styled.header`
   top: 0;
   left: 50%;
   width: 100%;
-  transform: translate(-50%,0%);
+  transform: translate(-50%, 0%);
   height: 80px;
   color: black;
   z-index: 99;
-  background-color: aqua;
 `;
 
 const Container = styled.div`

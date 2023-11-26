@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import config from '../common/config';
+import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
+import { useSelector } from 'react-redux';
 
 const useSSE = (endPoint) => {
   const [data, setData] = useState(null);
+  const token = useSelector((state) => state.auth.token);
   const baseURL =
     process.env.REACT_APP_NODE_ENV === 'development'
       ? config.development.apiUrl
@@ -12,7 +15,13 @@ const useSSE = (endPoint) => {
 
   useEffect(() => {
     const sseUrl = `${baseURL}${endPoint}`;
-    const eventSource = new EventSource(sseUrl);
+    const EventSource = EventSourcePolyfill || NativeEventSource;
+    const eventSource = new EventSource(sseUrl, {
+      headers: {
+        'X-AUTH-TOKEN': token,
+        'Content-Type': 'text/event-stream',
+      },
+    });
 
     eventSource.onmessage = (event) => {
       console.log(event);

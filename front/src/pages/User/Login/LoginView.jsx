@@ -58,9 +58,9 @@ export default function LoginView() {
       localStorage.setItem('refreshToken', refreshToken);
 
       // connect 서버 소켓통신
-      const loginAxios = createAxiosInstance(token);
-      const connect = await loginAxios.get('/connect');
-      console.log(connect);
+      // const loginAxios = createAxiosInstance(token);
+      // const connect = await loginAxios.get('/connect');
+      // console.log(connect);
 
       navigate('/');
     } catch (error) {

@@ -9,12 +9,13 @@ import useSSE from '../api/sse';
 import config from '../common/config';
 
 export default function PostDetail() {
-  const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+  const token = useSelector((state) => state.auth.token);
+  const axiosInstance = createAxiosInstance(token);
   const eventData = useSSE('/sse/connect');
   console.log(eventData);
 
   const { board_id } = useParams();
-  const user_id = useSelector((state) => state.auth.user_id);
+  const user_id = useSelector((state) => state.auth.userId);
   const [boardInfo, setBoardInfo] = useState(null);
 
   useEffect(() => {
@@ -54,6 +55,10 @@ export default function PostDetail() {
   // applyStatus는 다른화면에 들어가면 초기화됨 -> 전역상태관리 필요성 (redux)
 
   const handleApply = async (role_id, pre_cnt, want_cnt) => {
+    if (!token) {
+      alert('로그인 후 이용하세요.');
+    }
+
     if (pre_cnt >= want_cnt) {
       alert('모집 완료되었습니다.');
     } else {
@@ -63,17 +68,9 @@ export default function PostDetail() {
         role_id,
       };
 
+      console.log(applyData);
       try {
         const response = await axiosInstance.post('/applications', applyData);
-        // const response = await axios.post(
-        //   `http://1.246.104.170:8080/applications`,
-        //   applyData,
-        //   {
-        //     headers: {
-        //       'X-AUTH-TOKEN': localStorage.getItem('token'),
-        //     },
-        //   }
-        // );
         console.log('게시글 지원 성공', response);
         alert('지원이 완료되었습니다.');
         console.log(response);
@@ -85,6 +82,13 @@ export default function PostDetail() {
       } catch (error) {
         console.error('게시글 지원 실패', error);
         console.log(error.response.data);
+        if (
+          error.response.data.message ===
+          'Application Exception. 이미 지원한 게시글'
+        ) {
+          alert('이미 지원한 게시글입니다.');
+          return;
+        }
         if (error.response.data.msg == '인증이 실패했습니다.') {
           console.log(error.response.data.msg);
           const refreshData = {
