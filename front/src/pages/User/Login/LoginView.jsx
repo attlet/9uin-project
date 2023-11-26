@@ -52,15 +52,15 @@ export default function LoginView() {
       const refreshToken = response.data.refreshToken;
       const user_id = response.data.user_id;
       // login(token, refreshToken, user_id);
-      dispatch(login(token, refreshToken, user_id));
+      dispatch(login(token, refreshToken, user_id, username));
 
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
 
       // connect 서버 소켓통신
-      const loginAxios = createAxiosInstance(token);
-      const connect = await loginAxios.get('/connect');
-      console.log(connect);
+      // const loginAxios = createAxiosInstance(token);
+      // const connect = await loginAxios.get('/connect');
+      // console.log(connect);
 
       navigate('/');
     } catch (error) {

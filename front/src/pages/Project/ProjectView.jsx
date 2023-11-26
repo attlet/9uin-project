@@ -141,7 +141,7 @@ const InputContainer = styled.div`
 `;
 
 const Icon = styled.div`
-  background: url('icons/search.png');
+  background: url('/icons/search.png');
   background-size: cover;
   width: 1rem;
   height: 1rem;
@@ -164,7 +164,7 @@ const TagBox = styled.div`
 `;
 
 const TagIcon = styled.div`
-  background: url('icons/tag.png');
+  background: url('/icons/tag.png');
   background-size: cover;
   width: 0.8rem;
   height: 0.8rem;
@@ -178,7 +178,7 @@ const Part = styled.div`
 `;
 
 const PartIcon = styled.div`
-  background: url('icons/part.png');
+  background: url('/icons/part.png');
   background-size: cover;
   width: 0.9rem;
   height: 0.9rem;
@@ -207,7 +207,7 @@ const SortBox = styled.div`
 `;
 
 const SortIcon = styled.div`
-  background: url('icons/sort.png');
+  background: url('/icons/sort.png');
   background-size: cover;
   width: 0.8rem;
   height: 0.8rem;
