@@ -1,7 +1,14 @@
 import axios from 'axios';
 import { createAxiosInstance } from './instance';
+import { updateTokens } from '../modules/auth';
 
-export async function refreshTokenAndRetry(method, url, data, headers) {
+export async function refreshTokenAndRetry(
+  method,
+  url,
+  data,
+  headers,
+  dispatch
+) {
   const axiosInstance = createAxiosInstance(
     localStorage.getItem('refreshToken')
   );
@@ -11,13 +18,18 @@ export async function refreshTokenAndRetry(method, url, data, headers) {
       refreshToken: localStorage.getItem('refreshToken'),
     };
 
-    const refreshResponse = await axios.post('/sign/reissue', refreshData);
+    const refreshResponse = await axiosInstance.post(
+      '/sign/reissue',
+      refreshData
+    );
 
     // Update tokens
     const newAccessToken = refreshResponse.data.accessToken;
     const newRefreshToken = refreshResponse.data.refreshToken;
     localStorage.setItem('token', newAccessToken);
     localStorage.setItem('refreshToken', newRefreshToken);
+
+    dispatch(updateTokens(newAccessToken, newRefreshToken));
 
     const newHeaders = {
       ...headers,

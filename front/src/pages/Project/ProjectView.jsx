@@ -307,10 +307,10 @@ const PageIndex = styled.li`
 
 // ProjectGrid Styles
 const ProjectGrid = styled.div`
-  margin-top: 1rem;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-gap: 1rem;
+  grid-gap: 0.2rem;
+  margin: 3rem 6rem;
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
