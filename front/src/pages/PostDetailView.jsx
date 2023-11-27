@@ -1,22 +1,23 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import useFetchData from '../ components/hooks/getPostList';
 import { useSelector } from 'react-redux';
 import { createAxiosInstance } from '../api/instance';
 import useSSE from '../api/sse';
-import config from '../common/config';
+import { refreshTokenAndRetry } from '../api/user';
 
 export default function PostDetail() {
   const token = useSelector((state) => state.auth.token);
   const axiosInstance = createAxiosInstance(token);
-  const eventData = useSSE('/sse/connect');
-  console.log(eventData);
+  // const eventData = useSSE('/sse/connect');
+  // console.log(eventData);
 
   const { board_id } = useParams();
   const user_id = useSelector((state) => state.auth.userId);
   const [boardInfo, setBoardInfo] = useState(null);
+
+  const [authorName, setAuthorName] = useState('');
+  const [applyStatus, setApplyStatus] = useState({});
 
   useEffect(() => {
     const fetchBoard = async () => {
@@ -24,16 +25,41 @@ export default function PostDetail() {
         const response = await axiosInstance.get(`/boards/${board_id}`);
         setBoardInfo(response.data);
         console.log(response.data);
+        console.log(response.data.username);
+        setAuthorName(response.data.username);
       } catch (error) {
         console.error('Error fetching boarInfo', error);
+        if (error.response.data.status === '401') {
+          try {
+            const retryResponse = await refreshTokenAndRetry(
+              'get',
+              `http://1.246.104.170:8080/boards/${board_id}`,
+              {
+                'X-AUTH-TOKEN': token,
+              }
+            );
+            console.log('게시글 조회 성공 (재시도)');
+            console.log(retryResponse);
+          } catch (refreshError) {
+            console.error('새로운 액세스 토큰 얻기 실패', refreshError);
+          }
+        }
       }
     };
 
     fetchBoard();
   }, [board_id]);
 
-  const { title, type, proceed_method, period, roles, tags, createAt } =
-    boardInfo || {};
+  const {
+    title,
+    type,
+    proceed_method,
+    period,
+    roles,
+    tags,
+    createAt,
+    view_cnt,
+  } = boardInfo || {};
 
   const formattedPeriod = new Date(period).toLocaleDateString('ko-KR', {
     year: 'numeric',
@@ -47,7 +73,21 @@ export default function PostDetail() {
     day: '2-digit',
   });
 
-  const [applyStatus, setApplyStatus] = useState({});
+  const handleAddClip = async () => {
+    const clipInfo = {
+      user_id,
+      board_id,
+    };
+
+    try {
+      const response = await axiosInstance.post('/cliped', clipInfo);
+      console.log(response);
+      alert('게시글을 즐겨찾기에 등록했습니다.');
+    } catch (error) {
+      console.log('즐겨찾기 등록 실패', error);
+      alert('게시글 즐겨찾기 등록에 실패했습니다.');
+    }
+  };
 
   console.log(applyStatus);
   console.log(applyStatus[2]);
@@ -66,6 +106,7 @@ export default function PostDetail() {
         board_id: parseInt(board_id),
         user_id,
         role_id,
+        authorName,
       };
 
       console.log(applyData);
@@ -91,31 +132,14 @@ export default function PostDetail() {
         }
         if (error.response.data.msg == '인증이 실패했습니다.') {
           console.log(error.response.data.msg);
-          const refreshData = {
-            refreshToken: localStorage.getItem('refreshToken'),
-          };
           //TODO 리프레쉬토큰 리팩토링
           try {
-            const refreshResponse = await axios.post(
-              'http://1.246.104.170:8080/sign/reissue',
-              refreshData
-            );
-
-            // 새로운 액세스 토큰 저장
-            const newAccessToken = refreshResponse.data.accessToken;
-            const newRefreshToken = refreshResponse.data.refreshToken;
-            localStorage.setItem('token', newAccessToken);
-            localStorage.setItem('refreshToken', newRefreshToken);
-
-            // 새로운 액세스 토큰을 사용하여 원래의 요청 다시 보내기
-            //TODO 리프레쉬토큰 리팩토링
-            const retryResponse = await axios.put(
+            const retryResponse = await refreshTokenAndRetry(
+              'post',
               `http://1.246.104.170:8080/applications`,
               applyData,
               {
-                headers: {
-                  'X-AUTH-TOKEN': newAccessToken,
-                },
+                'X-AUTH-TOKEN': token,
               }
             );
             console.log('게시글 지원 성공 (재시도)');
@@ -163,7 +187,7 @@ export default function PostDetail() {
               stroke-linejoin="round"
             />
           </svg>
-          <span>123</span>
+          <span>{view_cnt}</span>
         </div>
         <div className="content_flex">
           <span>시작날짜</span>
@@ -172,6 +196,9 @@ export default function PostDetail() {
         <div className="content_flex">
           <span>예상기간</span>
           <span>6개월</span>
+        </div>
+        <div>
+          <ClipBtn onClick={handleAddClip}>즐겨찾기</ClipBtn>
         </div>
       </Content>
       <Line></Line>
@@ -613,6 +640,18 @@ const Section3 = styled.div`
       color: white;
       cursor: pointer;
     }
+  }
+`;
+
+const ClipBtn = styled.button`
+  background-color: #1f7ceb;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+
+  &:hover {
+    cursor: pointer;
   }
 `;
 

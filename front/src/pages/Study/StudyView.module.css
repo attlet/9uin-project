@@ -149,11 +149,10 @@ select {
 }
 
 .projectGrid {
-  margin-top: 1rem;
-
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-gap: 1rem;
+  grid-gap: 0.2rem;
+  margin: 3rem;
 }
 
 @media (max-width: 768px) {
