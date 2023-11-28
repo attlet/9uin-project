@@ -1,0 +1,64 @@
+name: react CI and deploy         
+
+on:
+  pull_request:
+    branches: [ "main" ] 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js environment
+        uses: actions/setup-node@v2.5.2
+        with:
+          node-version: lts/Hydrogen
+
+      - name: Cache node modules
+        uses: actions/cache@v2.1.8
+        id: cache
+        with:
+          # node_modules라는 폴더를 검사하여
+          path: node_modules
+          # 아래 키값으로 cache가 돼있는지 확인한다.
+          key: npm-packages-${{ hashFiles('**/package-lock.json') }}
+
+        # 위 step에서 node_modules에 대한 cache 검사를 했다.
+        # 만약 모듈에 변한 게 있다면 `npm install`을 실행하고 아니면 해당 step을 건너뛰게 된다.
+        # if 키워드는 해당 스텝을 실행할지 말지를 결정할 수 있는 키워드이다.
+        # 위 step에서 정했던 cache라는 id를 steps.cache로 가져올 수 있다.
+        # cache라는 id 값을 가진 step에서는 cache-hit라는 output을 내뱉는다. 
+        # 그걸로 cache가 hit 됐는지 안 됐는지를 알 수 있다.
+        # 그 값이 true가 아닐 때만 npm install을 한다.
+     
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install
+
+      - name: Build
+        run: yarn run build
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Docker image build
+        run: |
+          cd ./front
+          docker build -t ${{secrets.DOCKERHUB_ID}}/9uin-front .
+
+      - name: Pull and restart Docker Container
+        uses: appleboy/ssh-action@master
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          script: |
+            sudo docker login -u ${{ secrets.DOCKERHUB_ID }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+            sudo docker pull ${{secrets.DOCKERHUB_ID}}/9uin-front
+            sudo docker rm -f $(docker ps -qa) 2>/dev/null || true
+            sudo docker run -d --rm --name 9uin-front -p 3000:3000 ${{ secrets.DOCKERHUB_USERNAME }}/9uin-front
