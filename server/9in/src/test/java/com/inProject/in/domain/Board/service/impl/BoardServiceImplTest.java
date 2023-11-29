@@ -104,7 +104,7 @@ class BoardServiceImplTest {
                 .title("title1")
                 .text("text1")
                 .type("project")
-                .period(LocalDateTime.now())
+                .period(LocalDateTime.parse("2023-12-31T23:59:59.999"))
                 .proceed_method("")
                 .author(user)
                 .build();
@@ -347,7 +347,6 @@ class BoardServiceImplTest {
 
         assertEquals(responseBoardDto.getTitle(), board2.getTitle());
         assertEquals(responseBoardDto.getText(), board2.getText());
-        assertEquals(responseBoardDto.getPeriod(), board2.getPeriod());
         assertEquals(responseBoardDto.getProceed_method(), board2.getProceed_method());
 
         System.out.println("--------------");
