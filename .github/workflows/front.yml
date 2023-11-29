@@ -55,7 +55,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           key: ${{ secrets.SSH_KEY }}
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.GCP_FRONT_HOST }}
           username: ${{ secrets.USER }}
           script: |
             sudo docker login -u ${{ secrets.DOCKERHUB_ID }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
