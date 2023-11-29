@@ -126,7 +126,10 @@ public class BoardServiceImpl implements BoardService {
                     .board(board)
                     .build();
 
-            roleBoardRelationList.add(roleBoardRelationRepository.save(roleBoardRelation));
+            RoleBoardRelation savedRoleBoardRelation = roleBoardRelationRepository.save(roleBoardRelation);
+            log.info("request want cnt : " + requestRoleNeededDto.getWant_cnt());
+            log.info("saved want cnt : " + savedRoleBoardRelation.getWant_cnt());
+            roleBoardRelationList.add(savedRoleBoardRelation);
         }
         return roleBoardRelationList;
     }
@@ -216,6 +219,8 @@ public class BoardServiceImpl implements BoardService {
             for(RoleBoardRelation roleBoardRelation : roleBoardRelationList){
                 log.info("Insert Role - Board relation ==> Board id :" + roleBoardRelation.getBoard().getId()
                         + " role id : " + roleBoardRelation.getRoleNeeded().getId());
+                log.info("pre cnt : " + roleBoardRelation.getPre_cnt());
+                log.info("want cnt : " + roleBoardRelation.getWant_cnt());
             }
 
             ResponseBoardDto responseBoardDto = new ResponseBoardDto(createBoard );

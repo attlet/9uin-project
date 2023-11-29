@@ -30,7 +30,7 @@ public class SseServiceImpl implements SseService {
     private JwtTokenProvider jwtTokenProvider;
     private  SseRepository sseRepository;
     private ApplicationEventPublisher applicationEventPublisher;
-    private final Logger log = LoggerFactory.getLogger(CustomAccessDeniedHandler.class);
+    private final Logger log = LoggerFactory.getLogger(SseServiceImpl.class);
     @Autowired
     SseServiceImpl(SseRepository sseRepository , JwtTokenProvider jwtTokenProvider, UserRepository userRepository, ApplicationEventPublisher applicationEventPublisher){
         this.userRepository = userRepository;
@@ -43,39 +43,37 @@ public class SseServiceImpl implements SseService {
     /**
      * 클라이언트가 구독을 위해 호출하는 메서드.
      *
-     * @param user_id - 구독하는 클라이언트의 사용자 아이디.
-     * @return SseEmitter - 서버에서 보낸 이벤트 Emitter
+     *  username - 구독하는 클라이언트의 사용자 아이디.
+     * SseEmitter - 서버에서 보낸 이벤트 Emitter
      */
     //SseEmitter inputEmitter
-    public SseEmitter subscribe(Long user_id, String data) {
+    public SseEmitter subscribe(String username, String data) {
 
-        SseEmitter emitter = sseRepository.get(user_id);
-        sendToClient(user_id,data);
+        SseEmitter emitter = sseRepository.get(username);
+        sendToClient(username,data);
 
         return emitter;
     }
 
 
-
-
     /**
      * 클라이언트에게 데이터를 전송
      *
-     * @param id   - 데이터를 받을 사용자의 아이디.
+     *  id   - 데이터를 받을 사용자의 아이디.
      * @param data - 전송할 데이터.
      */
 
-    public void sendToClient(Long id, String data) {
-        SseEmitter emitter = sseRepository.get(id);
+    public void sendToClient(String username, String data) {
+        SseEmitter emitter = sseRepository.get(username);
         if (emitter != null) {
             try {
                 emitter.send(SseEmitter.event()
-                        .id(String.valueOf(id))
-                        .name("sse")
+                        .id(username)
+                        .name("sse")  //프론트에서 eventsource.addEventListener("sse" ...) 이 부분
                         .data(data));
                 log.info("data 전송 완료 : message => " + data);
             } catch (IOException exception) {
-                sseRepository.deleteById(id);
+                sseRepository.deleteById(username);
                 emitter.completeWithError(exception);
             }
         }
@@ -99,28 +97,29 @@ public class SseServiceImpl implements SseService {
             throw new CustomException(ConstantsClass.ExceptionClass.SSE, HttpStatus.UNAUTHORIZED, "token이 없거나, 권한이 유효하지 않습니다.");
         }
 
-        Long id =  user.getId();
+        String username =  user.getUsername();
 
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
 
         //더미 데이터 send
 //        RequestApplicationDto dummy = new RequestApplicationDto(Long.valueOf(0),Long.valueOf(0),Long.valueOf(0),"dummy data");
-        String dummy = "dummy";
-        sendToClient(id,dummy);
+        String dummy = "connect request";
+        
+        sendToClient(username,dummy);
 
-        sseRepository.save(id, emitter);
+        sseRepository.save(username, emitter);
 
 //        // Emitter가 완료될 때(모든 데이터가 성공적으로 전송된 상태) Emitter를 삭제한다.한번 보내고 말것이 아니라 주석처리 하였음.
 //        emitter.onCompletion(() -> sseRepository.deleteById(id));
 
         // Emitter가 타임아웃 되었을 때(지정된 시간동안 어떠한 이벤트도 전송되지 않았을 때) Emitter를 삭제한다.
-        emitter.onTimeout(() -> sseRepository.deleteById(id));
+        emitter.onTimeout(() -> sseRepository.deleteById(username));
 
         return emitter;
     }
 
     //로그아웃 시 호출
-    public void closeEmitter(Long id){
-        sseRepository.deleteById(id);
+    public void closeEmitter(String username){
+        sseRepository.deleteById(username);
     }
 }

@@ -214,11 +214,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
     public ResponseSseDto ApplicationToSseResponse(RequestApplicationDto requestApplicationDto){
         String board_title = boardRepository.getById(requestApplicationDto.getBoard_id()).getTitle();
-        Long role = requestApplicationDto.getRole_id();
+        String role_name = roleNeededRepository.findById(requestApplicationDto.getRole_id()).get().getName();
         String user_name = userRepository.getById(requestApplicationDto.getUser_id()).getUsername();
         ResponseSseDto responseSseDto =  ResponseSseDto.builder().
                 title(board_title).
-                role(role).
+                role(role_name).
                 user_name(user_name).
                 build();
         return responseSseDto;
