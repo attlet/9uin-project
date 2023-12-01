@@ -60,7 +60,7 @@ jobs:
       - name: Pull and restart Docker Container
         uses: appleboy/ssh-action@master
         with:
-          key: ${{ secrets.SSH_KEY }}
+          key: ${{ secrets.GCP_PRIVATEKEY }}
           host: ${{ secrets.GCP_FRONT_HOST }}
           username: ${{ secrets.USER }}
           script: |
