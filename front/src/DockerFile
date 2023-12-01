@@ -3,7 +3,6 @@ WORKDIR /app
 COPY package.json .
 RUN yarn install
 
-# 환경변수
 ENV REACT_APP_NODE_ENV=development
 
 COPY . .
