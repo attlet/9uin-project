@@ -23,6 +23,10 @@ const useSSE = (endPoint) => {
       },
     });
 
+    eventSource.addEventListener('notice', (e) => {
+      console.log(e.data);
+    });
+
     eventSource.onmessage = (event) => {
       console.log(event);
       const eventData = JSON.parse(event.data);

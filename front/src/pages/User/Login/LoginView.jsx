@@ -56,6 +56,12 @@ export default function LoginView() {
       localStorage.setItem('token', token);
       localStorage.setItem('refreshToken', refreshToken);
 
+      // connect 서버 소켓통신
+      // console.log('connect 전');
+      // const loginAxios = createAxiosInstance(token);
+      // const connect = await loginAxios.get('/sse/connect');
+      // console.log(connect);
+
       navigate('/');
     } catch (error) {
       alert('아이디 또는 비밀번호를 확인해주세요.');
