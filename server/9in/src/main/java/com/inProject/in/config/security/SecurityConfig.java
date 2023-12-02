@@ -34,7 +34,8 @@ public class SecurityConfig  {   //WebSecurityConfigurerAdapter 상속받아서 
             "/find/**",
             "/change/**",
             "/users/**",
-            "/actuator/**"
+            "/actuator/**",
+            "/sse/**"
     };
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{

@@ -61,7 +61,8 @@ public class Board extends BaseEntity {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     @ToString.Exclude
-    private List<ApplicantBoardRelation> applicantBoardRelationList;     //게시글에 지원서를 제출한 유저에 대한 정보
+    @Builder.Default
+    private List<ApplicantBoardRelation> applicantBoardRelationList = new ArrayList<>();     //게시글에 지원서를 제출한 유저에 대한 정보
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     @ToString.Exclude
@@ -69,15 +70,18 @@ public class Board extends BaseEntity {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     @ToString.Exclude
-    private List<TagBoardRelation> tagBoardRelationList;   //태그
+    @Builder.Default
+    private List<TagBoardRelation> tagBoardRelationList = new ArrayList<>();   //태그
 
     @OneToMany(mappedBy = "clipedBoard", cascade = CascadeType.REMOVE)
     @ToString.Exclude
-    private List<ClipBoardRelation> clipBoardRelationList; //관심 클립으로 지정한 유저들
+    @Builder.Default
+    private List<ClipBoardRelation> clipBoardRelationList = new ArrayList<>(); //관심 클립으로 지정한 유저들
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
     @ToString.Exclude
-    private List<RoleBoardRelation> roleBoardRelationList;   //직군
+    @Builder.Default
+    private List<RoleBoardRelation> roleBoardRelationList = new ArrayList<>();   //직군
 
     public void updateBoard(RequestUpdateBoardDto requestUpdateBoardDto){
         this.type = requestUpdateBoardDto.getType();

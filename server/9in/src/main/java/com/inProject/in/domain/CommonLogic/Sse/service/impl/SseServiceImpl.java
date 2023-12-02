@@ -25,7 +25,7 @@ import java.io.IOException;
 @Service
 public class SseServiceImpl implements SseService {
     // 기본 타임아웃 설정
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60;
+    private static final Long DEFAULT_TIMEOUT = 120L * 1000 * 60;
     private UserRepository userRepository;
     private JwtTokenProvider jwtTokenProvider;
     private  SseRepository sseRepository;
@@ -69,7 +69,7 @@ public class SseServiceImpl implements SseService {
             try {
                 emitter.send(SseEmitter.event()
                         .id(username)
-                        .name("sse")  //프론트에서 eventsource.addEventListener("sse" ...) 이 부분
+                        .name("notice")  //프론트에서 eventsource.addEventListener("sse" ...) 이 부분
                         .data(data));
                 log.info("data 전송 완료 : message => " + data);
             } catch (IOException exception) {
