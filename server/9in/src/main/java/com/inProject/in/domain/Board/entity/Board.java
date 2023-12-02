@@ -86,8 +86,8 @@ public class Board extends BaseEntity {
         this.proceed_method = requestUpdateBoardDto.getProceed_method();
         this.period = requestUpdateBoardDto.getPeriod();
 
-        this.roleBoardRelationList.clear();
-        this.tagBoardRelationList.clear();
+//        this.roleBoardRelationList.clear();
+//        this.tagBoardRelationList.clear();
 
 
 //        this.tagBoardRelationList = requestBoardDto.getTagBoardRelationList();

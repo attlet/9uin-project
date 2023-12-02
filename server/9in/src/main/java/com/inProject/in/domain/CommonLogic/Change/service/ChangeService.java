@@ -3,9 +3,11 @@ package com.inProject.in.domain.CommonLogic.Change.service;
 import com.inProject.in.Global.exception.ConstantsClass;
 import com.inProject.in.Global.exception.CustomException;
 import com.inProject.in.domain.CommonLogic.Change.Dto.request.RequestChangePwDto;
+import com.inProject.in.domain.CommonLogic.Change.Dto.request.RequestCheckCurPwDto;
 import com.inProject.in.domain.CommonLogic.Change.Dto.response.ResponseChangeDto;
 import com.inProject.in.domain.CommonLogic.Find.Dto.request.RequestCheckIdDto;
 import com.inProject.in.domain.CommonLogic.Find.Dto.response.ResponseCheckIdDto;
+import com.inProject.in.domain.CommonLogic.Find.Dto.response.ResponseIsSuccessDto;
 import com.inProject.in.domain.User.entity.User;
 import com.inProject.in.domain.User.repository.UserRepository;
 import org.slf4j.Logger;
@@ -33,7 +35,6 @@ public class ChangeService {
     @Transactional
     public ResponseChangeDto changePw(RequestChangePwDto requestChangePwDto){
         String username = requestChangePwDto.getUsername();
-        String curPw = requestChangePwDto.getCurPw();
         String newPw = requestChangePwDto.getNewPw();
         String checkPw = requestChangePwDto.getCheckPw();
 
@@ -45,10 +46,6 @@ public class ChangeService {
 
         User user = userRepository.getByUsername(username)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.CHANGE, HttpStatus.NOT_FOUND, username + "은 없는 유저입니다."));
-
-        if(!passwordEncoder.matches(curPw, user.getPassword())){
-            throw new CustomException(ConstantsClass.ExceptionClass.CHANGE, HttpStatus.CONFLICT, "기존 비밀번호 틀림");
-        }
 
         log.info("changePw ==> DB에 유저 확인");
 
@@ -70,5 +67,21 @@ public class ChangeService {
         ResponseCheckIdDto responseCheckIdDto = new ResponseCheckIdDto("유저 존재", success);
 
         return responseCheckIdDto;
+    }
+
+    public ResponseIsSuccessDto checkCurPw(RequestCheckCurPwDto requestCheckCurPwDto){
+
+        User user = userRepository.getByUsername(requestCheckCurPwDto.getUsername())
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.FIND, HttpStatus.NOT_FOUND,"존재하지 않는 유저"));
+
+        String curPw = requestCheckCurPwDto.getCur_pw();
+
+        if(!passwordEncoder.matches(curPw, user.getPassword())){
+            throw new CustomException(ConstantsClass.ExceptionClass.CHANGE, HttpStatus.CONFLICT, "기존 비밀번호 틀림");
+        }
+        else{
+            return new ResponseIsSuccessDto("success", true);
+        }
+
     }
 }

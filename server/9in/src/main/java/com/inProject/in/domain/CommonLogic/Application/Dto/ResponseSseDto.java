@@ -10,6 +10,6 @@ import lombok.*;
 @Builder
 public class ResponseSseDto {
     String title;
-    Long role;
+    String role;
     String user_name;
 }
