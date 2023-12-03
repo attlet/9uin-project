@@ -338,6 +338,7 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Override
+    @Transactional
     public ResponsePagingBoardDto getBoardList(Pageable pageable, RequestSearchBoardDto requestSearchBoardDto)  {  //Pageable pageable, String user_id, String title, String type, List<String> tags
 
         String username = requestSearchBoardDto.getUsername();
