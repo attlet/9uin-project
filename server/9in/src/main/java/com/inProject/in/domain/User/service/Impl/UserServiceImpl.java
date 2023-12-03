@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 
@@ -30,13 +33,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         this.userRepository = userRepository;
     }
     @Override
-    public ResponseUserDto getUser(String username) {
-        User user = userRepository.getByUsername(username)
-                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.USER, HttpStatus.NOT_FOUND, "getUser에서 유효하지 않은 아이디" + username));
+    public List<ResponseUserDto> getUserList() {
+        List<User> users = userRepository.findSomeUser();
+        List<ResponseUserDto> responseUserDtoList = new ArrayList<>();
 
-        ResponseUserDto responseUserDto = new ResponseUserDto(user);
-
-        return responseUserDto;
+        for(User user : users) {
+            ResponseUserDto responseUserDto = new ResponseUserDto(user);
+            responseUserDtoList.add(responseUserDto);
+        }
+        return responseUserDtoList;
     }
 
     @Override

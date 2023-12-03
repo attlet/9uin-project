@@ -10,9 +10,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.awt.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -25,6 +29,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping()
+    public ResponseEntity<List<ResponseUserDto>> getUserList(){
+        List<ResponseUserDto> users = userService.getUserList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(users);
+    }
 //    @PostMapping()
 //    public ResponseEntity<ResponseUserDto> createUser(@Valid @RequestBody RequestUserDto requestUserDto){
 //

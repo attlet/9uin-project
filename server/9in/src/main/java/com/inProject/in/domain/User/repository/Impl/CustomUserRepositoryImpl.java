@@ -20,7 +20,12 @@ public class CustomUserRepositoryImpl implements CustomUserRepository{
 
     @Override
     public List<User> findSomeUser() {
-        return null;
+        List<User> users = jpaQueryFactory
+                .select(qUser)
+                .from(qUser)
+                .fetch();
+
+        return users;
     }
 
     @Override
