@@ -37,7 +37,7 @@ public class SseController {
 
     //로그인성공시 반드시 sseConnect를 호출해야 합니다.
     @Parameter(name = "X-AUTH-TOKEN", description = "토큰을 전송합니다.", in = ParameterIn.HEADER)
-    @GetMapping(value = "/connect", produces = "text/event-stream")  //produces = MediaType.TEXT_EVENT_STREAM_VALUE
+    @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)  //produces = MediaType.TEXT_EVENT_STREAM_VALUE
     public SseEmitter SseConnect(HttpServletRequest request){
         SseEmitter sse = sseService.createEmitter(request);
         return sse;
