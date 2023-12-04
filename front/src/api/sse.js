@@ -15,15 +15,20 @@ const useSSE = (endPoint) => {
 
   useEffect(() => {
     const sseUrl = `${baseURL}${endPoint}`;
+    console.log(sseUrl);
     const EventSource = EventSourcePolyfill || NativeEventSource;
     const eventSource = new EventSource(sseUrl, {
       headers: {
         'X-AUTH-TOKEN': token,
         'Content-Type': 'text/event-stream',
       },
+      heartbeatTimeout: 86400000, //sse 연결 시간 (토큰 유지 24시간)
+      // withCredentials: true,
     });
+    console.log(eventSource);
 
     eventSource.addEventListener('notice', (e) => {
+      console.log(e);
       console.log(e.data);
     });
 
