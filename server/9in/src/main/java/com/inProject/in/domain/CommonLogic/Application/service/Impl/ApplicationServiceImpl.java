@@ -175,6 +175,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
 
+    @Override
+    @Transactional
     public ApplicantBoardRelation rejectApplication(RequestApplicationDto requestApplicationDto){
 
         //return sseemiiter으로 바꿀 예정
@@ -193,6 +195,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         //delete()
         return applicantBoardRelation;
     }
+    @Override
+    @Transactional
     public ApplicantBoardRelation acceptApplication(RequestApplicationDto requestApplicationDto){
 
         Long board_id = requestApplicationDto.getBoard_id();
@@ -223,6 +227,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicantBoardRelation.setStatus(0);
         return applicantBoardRelation;
     }
+    @Override
     public ResponseSseDto ApplicationToSseResponse(RequestApplicationDto requestApplicationDto){
         String board_title = boardRepository.getById(requestApplicationDto.getBoard_id()).getTitle();
         String role_name = roleNeededRepository.findById(requestApplicationDto.getRole_id()).get().getName();
