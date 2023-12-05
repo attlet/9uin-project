@@ -42,7 +42,7 @@ jobs:
       - name: Build
         run: |
           cd ./front
-          yarn build:dev
+          yarn build:local
         env:
           CI: false
 
