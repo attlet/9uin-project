@@ -126,7 +126,10 @@ public class BoardServiceImpl implements BoardService {
                     .board(board)
                     .build();
 
-            roleBoardRelationList.add(roleBoardRelationRepository.save(roleBoardRelation));
+            RoleBoardRelation savedRoleBoardRelation = roleBoardRelationRepository.save(roleBoardRelation);
+            log.info("request want cnt : " + requestRoleNeededDto.getWant_cnt());
+            log.info("saved want cnt : " + savedRoleBoardRelation.getWant_cnt());
+            roleBoardRelationList.add(savedRoleBoardRelation);
         }
         return roleBoardRelationList;
     }
@@ -147,14 +150,14 @@ public class BoardServiceImpl implements BoardService {
                 viewCountRepository.setBoard(str_user, str_board);
 //            board.setView_cnt(board.getView_cnt() + 1);
                 int view = boardRepository.updateViewCnt(id);          //두 메서드 중 무엇을 쓸까. 한 번 테스트하기.
-                log.info("view cnt up : " + view);
+                log.info("view cnt up : " + view );
             }
         }
 
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.BOARD, HttpStatus.NOT_FOUND, id + "는 유효하지 않은 게시글 id입니다." ));
 
-
+        log.info("view cnt : " + board.getView_cnt());
         ResponseBoardDto responseBoardDto = new ResponseBoardDto(board);
 
         for(TagBoardRelation tagBoardRelation : board.getTagBoardRelationList()){
@@ -175,12 +178,13 @@ public class BoardServiceImpl implements BoardService {
 
         if(board.getApplicantBoardRelationList() != null){
             for(ApplicantBoardRelation applicantBoardRelation : board.getApplicantBoardRelationList()){
-                ResponseInfoInBoardDto responseInfoInBoardDto = new ResponseInfoInBoardDto(applicantBoardRelation);
+                if(applicantBoardRelation.getStatus() == 0) {    //게시글 참여 승낙이 된 사람만 출력.
+                    ResponseInfoInBoardDto responseInfoInBoardDto = new ResponseInfoInBoardDto(applicantBoardRelation);
 
-                responseBoardDto.getResponseInfoInBoardDtoList().add(responseInfoInBoardDto);
+                    responseBoardDto.getResponseInfoInBoardDtoList().add(responseInfoInBoardDto);
+                }
             }
         }
-
         return responseBoardDto;
     }
 
@@ -215,6 +219,8 @@ public class BoardServiceImpl implements BoardService {
             for(RoleBoardRelation roleBoardRelation : roleBoardRelationList){
                 log.info("Insert Role - Board relation ==> Board id :" + roleBoardRelation.getBoard().getId()
                         + " role id : " + roleBoardRelation.getRoleNeeded().getId());
+                log.info("pre cnt : " + roleBoardRelation.getPre_cnt());
+                log.info("want cnt : " + roleBoardRelation.getWant_cnt());
             }
 
             ResponseBoardDto responseBoardDto = new ResponseBoardDto(createBoard );
@@ -332,6 +338,7 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Override
+    @Transactional
     public ResponsePagingBoardDto getBoardList(Pageable pageable, RequestSearchBoardDto requestSearchBoardDto)  {  //Pageable pageable, String user_id, String title, String type, List<String> tags
 
         String username = requestSearchBoardDto.getUsername();

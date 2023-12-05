@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(callSuper = true)
-@Table(name = "user") //테이블과 매핑
+@Table(name = "users") //테이블과 매핑
 @SQLDelete(sql = "UPDATE user SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
 public class User extends BaseEntity implements UserDetails{

@@ -59,9 +59,9 @@ public class SignServiceImpl implements SignService {
         String mail = requestSignUpDto.getMail();
         String role = requestSignUpDto.getRole();
 
-//        if(userRepository.getByUsername(username).isPresent()){   //아이디 중복 확인
-//            throw new CustomException(ConstantsClass.ExceptionClass.SIGN, HttpStatus.CONFLICT, "아이디 중복");
-//        }
+        if(userRepository.getByUsername(username).isPresent()){   //아이디 중복 확인
+            throw new CustomException(ConstantsClass.ExceptionClass.SIGN, HttpStatus.CONFLICT, "아이디 중복");
+        }
 
         if(userRepository.getByMail(mail).isPresent()){
             throw new CustomException(ConstantsClass.ExceptionClass.SIGN, HttpStatus.CONFLICT, "메일 중복");

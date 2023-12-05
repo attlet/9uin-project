@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { createAxiosInstance } from './instance';
 import { updateTokens } from '../modules/auth';
+import config from '../common/config';
 
 export async function refreshTokenAndRetry(
   method,
@@ -9,6 +10,13 @@ export async function refreshTokenAndRetry(
   headers,
   dispatch
 ) {
+  const baseURL =
+    process.env.REACT_APP_NODE_ENV === 'development'
+      ? config.development.apiUrl
+      : process.env.REACT_APP_NODE_ENV === 'local'
+      ? config.local.apiUrl
+      : '';
+
   const axiosInstance = createAxiosInstance(
     localStorage.getItem('refreshToken')
   );
@@ -38,7 +46,7 @@ export async function refreshTokenAndRetry(
 
     const retryResponse = await axios({
       method: method,
-      url: url,
+      url: baseURL + url,
       data: data,
       headers: newHeaders,
     });

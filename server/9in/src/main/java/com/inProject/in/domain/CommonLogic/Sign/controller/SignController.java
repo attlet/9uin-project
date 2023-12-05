@@ -86,7 +86,7 @@ public class SignController {
     }
 
     @PostMapping("/sign-up/checkId")
-    @Operation(summary = "입력한 인증 코드 검증", description = "발송한 인증코드를 통해 검증합니다.",
+    @Operation(summary = "아이디 중복 확인", description = "아이디가 이미 존재하는지 확인",
             responses = {
                     @ApiResponse(responseCode = "200", description = "코드 확인 성공", content = {
                             @Content(mediaType = "application/json", schema =

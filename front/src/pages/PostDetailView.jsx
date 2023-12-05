@@ -19,6 +19,9 @@ export default function PostDetail() {
   const [authorName, setAuthorName] = useState('');
   const [applyStatus, setApplyStatus] = useState({});
 
+  // 댓글
+  const [comment, setComment] = useState('');
+
   useEffect(() => {
     const fetchBoard = async () => {
       try {
@@ -72,6 +75,12 @@ export default function PostDetail() {
     month: '2-digit',
     day: '2-digit',
   });
+
+  const finalDate = new Date(period);
+  const createDate = new Date(createAt);
+  const monthDifference =
+    (createDate.getFullYear() - finalDate.getFullYear()) * 12 +
+    (createDate.getMonth() - finalDate.getMonth());
 
   const handleAddClip = async () => {
     const clipInfo = {
@@ -158,6 +167,43 @@ export default function PostDetail() {
     }
   };
 
+  const handleChangeCmt = (e) => {
+    setComment(e.target.value);
+  };
+
+  const handleAddCmt = async (e) => {
+    e.preventDefault();
+
+    const cmtInfo = {
+      user_id,
+      board_id,
+      text: comment,
+    };
+    try {
+      const response = await axiosInstance.post('/comments', cmtInfo);
+      console.log(response);
+      alert('댓글이 작성되었습니다.');
+    } catch (error) {
+      console.error('Error post comment', error);
+      if (error.response.data.status === '401') {
+        try {
+          const retryResponse = await refreshTokenAndRetry(
+            'post',
+            `/comments`,
+            {
+              'X-AUTH-TOKEN': token,
+            }
+          );
+          console.log('댓글 작성 (재시도)');
+          console.log(retryResponse);
+          alert('댓글이 작성되었습니다.');
+        } catch (refreshError) {
+          console.error('새로운 액세스 토큰 얻기 실패', refreshError);
+        }
+      }
+    }
+  };
+
   return (
     <Container>
       <h1>{title}</h1>
@@ -195,7 +241,11 @@ export default function PostDetail() {
         </div>
         <div className="content_flex">
           <span>예상기간</span>
-          <span>6개월</span>
+          <span>
+            {monthDifference <= 0
+              ? '1개월 미만'
+              : `${monthDifference}개월 이상`}
+          </span>
         </div>
         <div>
           <ClipBtn onClick={handleAddClip}>즐겨찾기</ClipBtn>
@@ -218,7 +268,12 @@ export default function PostDetail() {
           </div>
           <div>
             <span>프로젝트 기간</span>
-            <p>2023.04.30 ~ 6개월</p>
+            <p>
+              {formattedCreateAt} ~{' '}
+              {monthDifference <= 0
+                ? '1개월 미만'
+                : `${monthDifference}개월 이상`}
+            </p>
           </div>
         </div>
         <div className="section2">
@@ -291,10 +346,12 @@ export default function PostDetail() {
       <Section3>
         <div className="section3_title">프로젝트 소개</div>
         <div className="section3_content"></div>
-        <form>
+        <form onSubmit={handleAddCmt}>
           <textarea
             className="section3_textarea"
             placeholder="간단한 궁금한 점을 물어보세요."
+            onChange={handleChangeCmt}
+            value={comment}
           />
           <button className="section3_btn">등록하기</button>
         </form>
@@ -614,9 +671,9 @@ const Section3 = styled.div`
       flex-shrink: 0;
       border-radius: 30px;
       border: 2px solid #d9d9d9;
+      padding: 20px;
 
       &::placeholder {
-        padding: 20px;
         color: #c2c2c2;
         font-size: 16px;
         font-style: normal;

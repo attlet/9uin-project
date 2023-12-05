@@ -26,6 +26,7 @@ import { Provider } from 'react-redux';
 import rootReducer from './modules';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
+import ProtectedRoute from './router/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -36,20 +37,69 @@ const router = createBrowserRouter([
       { index: true, path: '/', element: <HomeView /> },
       { path: '/project', element: <ProjectView /> },
       { path: '/study', element: <StudyView /> },
-      { path: '/Addpost', element: <AddPostView /> },
-      { path: '/modifyPost/:board_id', element: <ModifyPostView /> },
       { path: '/postDetail/:board_id', element: <PostDetailView /> },
-      { path: '/postDetail/assign/:post', element: <AssignView /> },
-      { path: '/mypage', element: <MyPageView /> },
-      { path: '/mypage/recruit', element: <RecruitStatusView /> },
-      { path: '/mypage/addPost', element: <AddPostView /> },
+      {
+        path: '/Addpost',
+        element: (
+          <ProtectedRoute>
+            <AddPostView />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/modifyPost/:board_id',
+        element: (
+          <ProtectedRoute>
+            <ModifyPostView />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/postDetail/assign/:post',
+        element: (
+          <ProtectedRoute>
+            <AssignView />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/mypage',
+        element: (
+          <ProtectedRoute>
+            <MyPageView />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/mypage/recruit',
+        element: (
+          <ProtectedRoute>
+            <RecruitStatusView />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/mypage/addPost',
+        element: (
+          <ProtectedRoute>
+            <AddPostView />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/mypage/clip',
+        element: (
+          <ProtectedRoute>
+            <ClipView />
+          </ProtectedRoute>
+        ),
+      },
       { path: '/user/login', element: <LoginView /> },
       { path: '/user/idFound', element: <IDfoundView /> },
       { path: '/user/pwFound', element: <PWfoundView /> },
       { path: '/user/pwChange', element: <PWChangeView /> },
       { path: '/join', element: <JoinView /> },
       { path: '/joinSuccess', element: <JoinSuccessView /> },
-      { path: '/mypage/clip', element: <ClipView /> },
     ],
   },
 ]);

@@ -50,9 +50,9 @@ public class ApplicationController {
             Long board_id = requestApplicationDto.getBoard_id();
 
             ResponseSseDto responseSseDto = applicationService.ApplicationToSseResponse(requestApplicationDto);
-            String message = responseSseDto.getTitle()+" 의"+responseSseDto.getRole()+" 신청이 1건 있습니다.";
+            String message = responseSseDto.getTitle()+" 의 "+ responseSseDto.getRole() +" 에 신청이 1건 있습니다.";
 
-            sseService.subscribe(requestApplicationDto.getUser_id(),message);
+            sseService.subscribe(requestApplicationDto.getAuthorName(), message);
             return ResponseEntity.status(HttpStatus.OK).body(responseApplicationDto);
         }catch (CustomException e){
             throw e;
@@ -78,7 +78,7 @@ public class ApplicationController {
             applicationService.rejectApplication(requestApplicationDto);
             ResponseSseDto responseSseDto = applicationService.ApplicationToSseResponse(requestApplicationDto);
             String message = "지원하신" + responseSseDto.getTitle()+"지원글에 참가하지 못하셨습니다.";
-            sseService.subscribe(requestApplicationDto.getUser_id(),message);
+            sseService.subscribe(requestApplicationDto.getAuthorName(),message);
             return ResponseEntity.status(HttpStatus.OK).body("거절완료");
         }catch (CustomException e){
             throw e;
@@ -93,7 +93,7 @@ public class ApplicationController {
             //~
             ResponseSseDto responseSseDto = applicationService.ApplicationToSseResponse(requestApplicationDto);
             String message = "지원하신" + responseSseDto.getTitle()+"의 팀에 참가하게 되었습니다.";
-            sseService.subscribe(requestApplicationDto.getUser_id(),message);
+            sseService.subscribe(requestApplicationDto.getAuthorName(),message);
             return ResponseEntity.status(HttpStatus.OK).body("수락완료");
         }catch (CustomException e){
             throw e;

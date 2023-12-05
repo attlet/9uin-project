@@ -94,22 +94,20 @@ public class ApplicationServiceImpl implements ApplicationService {
             RoleBoardRelation roleBoardRelation = roleBoardRelationRepository.findRelationById(board_id, role_id)
                     .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, role_id + "는 이 게시글에 등록되지 않음"));
 
-            int pre_cnt = roleBoardRelation.getPre_cnt();
-            int want_cnt = roleBoardRelation.getWant_cnt();
-
-            if(pre_cnt < want_cnt){
-                roleBoardRelation.setPre_cnt(pre_cnt + 1);
-                RoleBoardRelation updateRoleBoard = roleBoardRelationRepository.save(roleBoardRelation);
-                log.info("Update in insert role - post relation ==> role - post relation_id : " + updateRoleBoard.getId() +
-                        " relation pre_cnt : " + updateRoleBoard.getPre_cnt() + " relation want_cnt : " + updateRoleBoard.getWant_cnt());
-            }
-            else{
-                throw new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.CONFLICT, "최대 지원 수를 초과했습니다.");
-            }
+//            if(pre_cnt < want_cnt){
+//                roleBoardRelation.setPre_cnt(pre_cnt + 1);
+//                RoleBoardRelation updateRoleBoard = roleBoardRelationRepository.save(roleBoardRelation);
+//                log.info("Update in insert role - post relation ==> role - post relation_id : " + updateRoleBoard.getId() +
+//                        " relation pre_cnt : " + updateRoleBoard.getPre_cnt() + " relation want_cnt : " + updateRoleBoard.getWant_cnt());
+//            }
+//            else{
+//                throw new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.CONFLICT, "최대 지원 수를 초과했습니다.");
+//            }
 
             ApplicantBoardRelation createApplicantBoardRelation = applicantBoardRelationRepository.save(applicantBoardRelation);
             ApplicantRoleRelation createApplicantRoleRelation = applicantRoleRelationRepository.save(applicantRoleRelation);
 
+            board.getApplicantBoardRelationList().add(createApplicantBoardRelation);
 
             log.info("Insert application ==> user - post relation_id : " + createApplicantBoardRelation.getId() +
                     " user - role relation_id : " + createApplicantRoleRelation.getId());
@@ -207,17 +205,31 @@ public class ApplicationServiceImpl implements ApplicationService {
         Board board = boardRepository.findById(board_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, board_id + "는 applyToBoard 에서 유효하지 않은 board id"));
 
+        RoleBoardRelation roleBoardRelation = roleBoardRelationRepository.findRelationById(board_id, role_id)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.NOT_FOUND, board_id + "에 " + role_id + "간의 관계는 없습니다."));
+
+        int pre_cnt = roleBoardRelation.getPre_cnt();
+        int want_cnt = roleBoardRelation.getWant_cnt();
+
+        if(want_cnt > pre_cnt){
+            roleBoardRelation.setPre_cnt(roleBoardRelation.getPre_cnt() + 1);
+            RoleBoardRelation updateRoleBoardRelation = roleBoardRelationRepository.save(roleBoardRelation);
+        }
+        else{
+            throw new CustomException(ConstantsClass.ExceptionClass.APPLICATION, HttpStatus.CONFLICT, "최대 지원 수를 초과했습니다.");
+        }
+
         ApplicantBoardRelation applicantBoardRelation = applicantBoardRelationRepository.findApplicantBoard(user, board).get();
         applicantBoardRelation.setStatus(0);
         return applicantBoardRelation;
     }
     public ResponseSseDto ApplicationToSseResponse(RequestApplicationDto requestApplicationDto){
         String board_title = boardRepository.getById(requestApplicationDto.getBoard_id()).getTitle();
-        Long role = requestApplicationDto.getRole_id();
+        String role_name = roleNeededRepository.findById(requestApplicationDto.getRole_id()).get().getName();
         String user_name = userRepository.getById(requestApplicationDto.getUser_id()).getUsername();
         ResponseSseDto responseSseDto =  ResponseSseDto.builder().
                 title(board_title).
-                role(role).
+                role(role_name).
                 user_name(user_name).
                 build();
         return responseSseDto;
