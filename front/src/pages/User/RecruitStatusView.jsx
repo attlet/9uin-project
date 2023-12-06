@@ -38,14 +38,14 @@ export default function RecruitStatusView() {
     } catch (error) {
       console.error('글 삭제 실패', error);
       console.log(error.response.data);
-      if (error.response.data.msg == '인증이 실패했습니다.') {
+      if (error.response.data.status === '401') {
         console.log(error.response.data.msg);
 
         //TODO 리프레쉬토큰
         try {
           const retryResponse = await refreshTokenAndRetry(
             'delete',
-            `http://1.246.104.170:8080/boards/${board_id}`,
+            `/boards/${board_id}`,
             null,
             {
               'X-AUTH-TOKEN': localStorage.getItem('token'),

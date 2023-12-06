@@ -202,14 +202,14 @@ export default function ModifyPostView() {
     } catch (error) {
       console.error('글 수정 실패', error);
       console.log(error.response.data);
-      if (error.response.data.msg == '인증이 실패했습니다.') {
+      if (error.response.data.status === '401') {
         console.log(error.response.data.msg);
 
         try {
           // TODO 리프레쉬 토큰 리팩토링
           const retryResponse = await refreshTokenAndRetry(
             'put',
-            `http://1.246.104.170:8080/boards/${board_id}`,
+            `/${board_id}`,
             modifyData,
             {
               'X-AUTH-TOKEN': localStorage.getItem('token'),

@@ -22,34 +22,32 @@ export default function PostDetail() {
   // 댓글
   const [comment, setComment] = useState('');
 
-  useEffect(() => {
-    const fetchBoard = async () => {
-      try {
-        const response = await axiosInstance.get(`/boards/${board_id}`);
-        setBoardInfo(response.data);
-        console.log(response.data);
-        console.log(response.data.username);
-        setAuthorName(response.data.username);
-      } catch (error) {
-        console.error('Error fetching boarInfo', error);
-        if (error.response.data.status === '401') {
-          try {
-            const retryResponse = await refreshTokenAndRetry(
-              'get',
-              `http://1.246.104.170:8080/boards/${board_id}`,
-              {
-                'X-AUTH-TOKEN': token,
-              }
-            );
-            console.log('게시글 조회 성공 (재시도)');
-            console.log(retryResponse);
-          } catch (refreshError) {
-            console.error('새로운 액세스 토큰 얻기 실패', refreshError);
-          }
+  const fetchBoard = async () => {
+    try {
+      const response = await axiosInstance.get(`/boards/${board_id}`);
+      setBoardInfo(response.data);
+      setAuthorName(response.data.username);
+    } catch (error) {
+      console.error('Error fetching boarInfo', error);
+      if (error.response.data.status === '401') {
+        try {
+          const retryResponse = await refreshTokenAndRetry(
+            'get',
+            `/boards/${board_id}`,
+            {
+              'X-AUTH-TOKEN': token,
+            }
+          );
+          console.log('게시글 조회 성공 (재시도)');
+          console.log(retryResponse);
+        } catch (refreshError) {
+          console.error('새로운 액세스 토큰 얻기 실패', refreshError);
         }
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchBoard();
   }, [board_id]);
 
@@ -141,13 +139,13 @@ export default function PostDetail() {
           alert('이미 지원한 게시글입니다.');
           return;
         }
-        if (error.response.data.msg == '인증이 실패했습니다.') {
+        if (error.response.data.status === '401') {
           console.log(error.response.data.msg);
           //TODO 리프레쉬토큰 리팩토링
           try {
             const retryResponse = await refreshTokenAndRetry(
               'post',
-              `http://1.246.104.170:8080/applications`,
+              `/applications`,
               applyData,
               {
                 'X-AUTH-TOKEN': token,
@@ -184,6 +182,7 @@ export default function PostDetail() {
     try {
       const response = await axiosInstance.post('/comments', cmtInfo);
       console.log(response);
+      fetchBoard();
       alert('댓글이 작성되었습니다.');
     } catch (error) {
       console.error('Error post comment', error);
