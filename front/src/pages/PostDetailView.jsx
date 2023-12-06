@@ -62,7 +62,9 @@ export default function PostDetail() {
     tags,
     createAt,
     view_cnt,
+    commentList,
   } = boardInfo || {};
+  console.warn([0]);
 
   const formattedPeriod = new Date(period).toLocaleDateString('ko-KR', {
     year: 'numeric',
@@ -345,7 +347,19 @@ export default function PostDetail() {
       </Section2>
       <Section3>
         <div className="section3_title">프로젝트 소개</div>
-        <div className="section3_content"></div>
+        <ul className="section3_content">
+          {commentList &&
+            commentList.map((comment) => (
+              <li key={comment.user_id}>
+                <img src="/profile/profile.png" alt="프로필 사진" />
+                <div>
+                  <p className="comment_user">{comment.username}</p>
+                  <p className="comment_text">{comment.text}</p>
+                </div>
+              </li>
+            ))}
+        </ul>
+
         <form onSubmit={handleAddCmt}>
           <textarea
             className="section3_textarea"
@@ -658,6 +672,27 @@ const Section3 = styled.div`
 
   .section3_content {
     height: 10rem;
+    padding: 0;
+
+    li {
+      display: flex;
+      margin: 0.3rem;
+      margin-left: 0;
+      align-items: center;
+
+      img {
+        width: 2rem;
+        height: 2rem;
+      }
+      div {
+        margin-left: 0.4rem;
+
+        .comment_user {
+          font-weight: 600;
+          margin-bottom: 0.2rem;
+        }
+      }
+    }
   }
   form {
     display: flex;

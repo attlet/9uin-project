@@ -43,3 +43,7 @@
   min-height: 100%;
   padding-bottom: 7rem;
 }
+
+li {
+  list-style: none;
+}
