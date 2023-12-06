@@ -202,7 +202,7 @@ export default function ModifyPostView() {
     } catch (error) {
       console.error('글 수정 실패', error);
       console.log(error.response.data);
-      if (error.response.data.msg == '인증이 실패했습니다.') {
+      if (error.response.data.status === '401') {
         console.log(error.response.data.msg);
 
         try {

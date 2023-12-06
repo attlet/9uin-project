@@ -139,7 +139,7 @@ export default function PostDetail() {
           alert('이미 지원한 게시글입니다.');
           return;
         }
-        if (error.response.data.msg == '인증이 실패했습니다.') {
+        if (error.response.data.status === '401') {
           console.log(error.response.data.msg);
           //TODO 리프레쉬토큰 리팩토링
           try {
