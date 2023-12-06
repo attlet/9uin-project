@@ -36,7 +36,7 @@ export default function PostDetail() {
           try {
             const retryResponse = await refreshTokenAndRetry(
               'get',
-              `http://1.246.104.170:8080/boards/${board_id}`,
+              `/boards/${board_id}`,
               {
                 'X-AUTH-TOKEN': token,
               }
@@ -147,7 +147,7 @@ export default function PostDetail() {
           try {
             const retryResponse = await refreshTokenAndRetry(
               'post',
-              `http://1.246.104.170:8080/applications`,
+              `/applications`,
               applyData,
               {
                 'X-AUTH-TOKEN': token,

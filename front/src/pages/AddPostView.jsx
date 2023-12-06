@@ -153,7 +153,7 @@ export default function AddPost() {
           // TODO refresh token 코드 리팩토링
           const retryResponse = await refreshTokenAndRetry(
             'post',
-            'http://1.246.104.170:8080/boards',
+            '/boards',
             postData,
             {
               'X-AUTH-TOKEN': localStorage.getItem('token'),

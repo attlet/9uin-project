@@ -45,7 +45,7 @@ export default function RecruitStatusView() {
         try {
           const retryResponse = await refreshTokenAndRetry(
             'delete',
-            `http://1.246.104.170:8080/boards/${board_id}`,
+            `/boards/${board_id}`,
             null,
             {
               'X-AUTH-TOKEN': localStorage.getItem('token'),

@@ -209,7 +209,7 @@ export default function ModifyPostView() {
           // TODO 리프레쉬 토큰 리팩토링
           const retryResponse = await refreshTokenAndRetry(
             'put',
-            `http://1.246.104.170:8080/boards/${board_id}`,
+            `/${board_id}`,
             modifyData,
             {
               'X-AUTH-TOKEN': localStorage.getItem('token'),
