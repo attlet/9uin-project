@@ -27,6 +27,9 @@ import rootReducer from './modules';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import ProtectedRoute from './router/ProtectedRoute';
+import { persistStore, persistReducer } from 'redux-persist';
+import storageSession from 'redux-persist/lib/storage/session';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const router = createBrowserRouter([
   {
@@ -104,21 +107,32 @@ const router = createBrowserRouter([
   },
 ]);
 
+const persistConfig = {
+  key: 'root',
+  storage: storageSession,
+};
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+// const store = createStore(
+//   rootReducer,
+//   composeWithDevTools(applyMiddleware(thunk))
+// );
+
 const store = createStore(
-  rootReducer,
+  persistedReducer,
   composeWithDevTools(applyMiddleware(thunk))
 );
+const persistor = persistStore(store);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router} />
+      <PersistGate loading={null} persistor={persistor}>
+        <RouterProvider router={router} />
+      </PersistGate>
     </Provider>
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
