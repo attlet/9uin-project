@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Tag from '../../ components/tag/Tag';
-import axios from 'axios';
 import Post from '../../ components/Post';
-import useFetchData from '../../ components/hooks/getPostList';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { createAxiosInstance } from '../../api/instance';
@@ -16,6 +14,8 @@ export default function ProjectView() {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
+
+  const [searchTitle, setSearchTitle] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,14 +41,40 @@ export default function ProjectView() {
 
   const pages = Array.from({ length: totalPage }, (_, index) => index + 1);
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    const boardInfo = {
+      type: '프로젝트',
+    };
+
+    try {
+      const axiosInstance = createAxiosInstance(null, page, searchTitle);
+      const response = await axiosInstance.get('/boards', {
+        params: boardInfo,
+      });
+      console.log(response);
+      setProjectList(response.data.content);
+      setLoading(false);
+      setTotalPage(response.data.totalPage);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
   if (error) return <p>{error}</p>;
 
   return (
     <section>
       <Header>
-        <InputContainer>
+        <InputContainer onSubmit={handleSearch}>
           <Icon></Icon>
-          <SearchInput type="text" placeholder="제목, 게시글 검색" />
+          <SearchInput
+            onChange={(e) => setSearchTitle(e.target.value)}
+            type="text"
+            placeholder="제목, 게시글 검색"
+          />
         </InputContainer>
         <TagContainer>
           <TagIcon></TagIcon>
@@ -135,7 +161,7 @@ const Header = styled.div`
   border-radius: 15px;
 `;
 
-const InputContainer = styled.div`
+const InputContainer = styled.form`
   display: flex;
   padding: 0.5rem;
 `;
@@ -150,6 +176,9 @@ const Icon = styled.div`
 
 const SearchInput = styled.input`
   border: none;
+  padding: 0.2rem 0.5rem;
+  margin-left: 0.2rem;
+  width: 50%;
 `;
 
 const TagContainer = styled.div`

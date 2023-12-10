@@ -17,6 +17,8 @@ export default function StudyView() {
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
 
+  const [searchTitle, setSearchTitle] = useState('');
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -41,14 +43,40 @@ export default function StudyView() {
 
   const pages = Array.from({ length: totalPage }, (_, index) => index + 1);
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    const boardInfo = {
+      type: '스터디',
+    };
+
+    try {
+      const axiosInstance = createAxiosInstance(null, page, searchTitle);
+      const response = await axiosInstance.get('/boards', {
+        params: boardInfo,
+      });
+      console.log(response);
+      setStudyList(response.data.content);
+      setLoading(false);
+      setTotalPage(response.data.totalPage);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
   if (error) return <p>{error}</p>;
 
   return (
     <section>
       <Header>
-        <InputContainer>
+        <InputContainer onSubmit={handleSearch}>
           <Icon></Icon>
-          <SearchInput type="text" placeholder="제목, 게시글 검색" />
+          <SearchInput
+            onChange={(e) => setSearchTitle(e.target.value)}
+            type="text"
+            placeholder="제목, 게시글 검색"
+          />
         </InputContainer>
         <TagContainer>
           <TagIcon></TagIcon>
@@ -135,7 +163,7 @@ const Header = styled.div`
   border-radius: 15px;
 `;
 
-const InputContainer = styled.div`
+const InputContainer = styled.form`
   display: flex;
   padding: 0.5rem;
 `;
@@ -150,6 +178,9 @@ const Icon = styled.div`
 
 const SearchInput = styled.input`
   border: none;
+  padding: 0.2rem 0.5rem;
+  margin-left: 0.2rem;
+  width: 50%;
 `;
 
 const TagContainer = styled.div`
