@@ -310,7 +310,7 @@ const ProjectGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 0.2rem;
-  margin: 3rem 6rem;
+  margin: 1rem 1.4rem;
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);

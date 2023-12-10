@@ -184,6 +184,7 @@ export default function PostDetail() {
       console.log(response);
       fetchBoard();
       alert('댓글이 작성되었습니다.');
+      setComment('');
     } catch (error) {
       console.error('Error post comment', error);
       if (error.response.data.status === '401') {
@@ -398,13 +399,13 @@ const Content = styled.div`
     justify-content = center;
     gap: 25px;
     color: #000;
-    font-size: 20px;
+    font-size: 1.2rem;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
     span:first-child {
       color: #000;
-      font-size: 20px;
+      font-size: 1.2rem;
       font-style: normal;
       font-weight: 700;
       line-height: normal;
@@ -672,7 +673,7 @@ const Section3 = styled.div`
   .section3_content {
     height: 10rem;
     padding: 0;
-
+    overflowy: 'scroll';
     li {
       display: flex;
       margin: 0.3rem;
