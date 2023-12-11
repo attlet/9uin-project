@@ -8,6 +8,8 @@ import com.inProject.in.config.security.JwtTokenProvider;
 import com.inProject.in.domain.CommonLogic.Application.Dto.RequestApplicationDto;
 import com.inProject.in.domain.CommonLogic.Sse.repository.SseRepository;
 import com.inProject.in.domain.CommonLogic.Sse.service.SseService;
+import com.inProject.in.domain.Notification.entity.Notification;
+import com.inProject.in.domain.Notification.repository.NotificationRepository;
 import com.inProject.in.domain.User.entity.User;
 import com.inProject.in.domain.User.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,13 +32,20 @@ public class SseServiceImpl implements SseService {
     private JwtTokenProvider jwtTokenProvider;
     private  SseRepository sseRepository;
     private ApplicationEventPublisher applicationEventPublisher;
+    private NotificationRepository notificationRepository;
+
     private final Logger log = LoggerFactory.getLogger(SseServiceImpl.class);
     @Autowired
-    SseServiceImpl(SseRepository sseRepository , JwtTokenProvider jwtTokenProvider, UserRepository userRepository, ApplicationEventPublisher applicationEventPublisher){
+    SseServiceImpl(SseRepository sseRepository,
+                   JwtTokenProvider jwtTokenProvider,
+                   UserRepository userRepository,
+                   ApplicationEventPublisher applicationEventPublisher,
+                   NotificationRepository notificationRepository){
         this.userRepository = userRepository;
         this.sseRepository = sseRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.applicationEventPublisher = applicationEventPublisher;
+        this.notificationRepository = notificationRepository;
     }
 
 
@@ -71,7 +80,21 @@ public class SseServiceImpl implements SseService {
                         .id(username)
                         .name("notice")  //프론트에서 eventsource.addEventListener("sse" ...) 이 부분
                         .data(data));
-                log.info("data 전송 완료 : message => " + data);
+
+                User user = userRepository.getByUsername(username)
+                        .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.USER, HttpStatus.NOT_FOUND, username + " 을 sseService에서 찾지 못했습니다."));
+
+                Notification notification = Notification.builder()
+                        .message(data)
+                        .receiver(user)
+                        .isChecked(false)
+                        .alarm_type("message")
+                        .build();
+
+                Notification savedNotification = notificationRepository.save(notification);
+
+                log.info("data 전송 완료 : message ==> " + data);
+                log.info("알림 저장 ==> 수신자 : " + savedNotification.getReceiver() + " 내용 : " + savedNotification.getMessage());
             } catch (IOException exception) {
                 sseRepository.deleteById(username);
                 emitter.completeWithError(exception);
@@ -81,8 +104,6 @@ public class SseServiceImpl implements SseService {
             log.info("sseEmitter is null");
         }
     }
-
-
 
     public SseEmitter createEmitter(HttpServletRequest request) {
         String token = jwtTokenProvider.resolveToken(request);
@@ -114,7 +135,7 @@ public class SseServiceImpl implements SseService {
 
         // Emitter가 타임아웃 되었을 때(지정된 시간동안 어떠한 이벤트도 전송되지 않았을 때) Emitter를 삭제한다.
         emitter.onTimeout(() -> sseRepository.deleteById(username));
-
+        emitter.onError((e) -> sseRepository.deleteById(username));
         return emitter;
     }
 
