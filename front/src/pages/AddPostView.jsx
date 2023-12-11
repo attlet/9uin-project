@@ -416,6 +416,7 @@ const Section = styled.section`
   span {
     display: inline-block;
     width: 90px;
+    max-width: 100%;
     margin-right: 10px;
   }
 
