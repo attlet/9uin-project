@@ -8,12 +8,14 @@ import { refreshTokenAndRetry } from '../api/user';
 
 export default function PostDetail() {
   const token = useSelector((state) => state.auth.token);
+  const username = useSelector((state) => state.auth.username);
+  const user_id = useSelector((state) => state.auth.userId);
+
   const axiosInstance = createAxiosInstance(token);
   const eventData = useSSE('/sse/connect');
   console.log(eventData);
 
   const { board_id } = useParams();
-  const user_id = useSelector((state) => state.auth.userId);
   const [boardInfo, setBoardInfo] = useState(null);
 
   const [authorName, setAuthorName] = useState('');
@@ -106,6 +108,10 @@ export default function PostDetail() {
   const handleApply = async (role_id, pre_cnt, want_cnt) => {
     if (!token) {
       alert('로그인 후 이용하세요.');
+    }
+
+    if (authorName === username) {
+      alert('작성자는 지원할 수 없습니다.');
     }
 
     if (pre_cnt >= want_cnt) {
@@ -584,6 +590,7 @@ const Section2 = styled.div`
     gap: 15px;
     justify-content: start;
     padding: 0;
+
     li {
       list-style: none;
       width: 300.168px;
@@ -673,7 +680,7 @@ const Section3 = styled.div`
   .section3_content {
     height: 10rem;
     padding: 0;
-    overflowy: 'scroll';
+    overflow-y: scroll;
     li {
       display: flex;
       margin: 0.3rem;
