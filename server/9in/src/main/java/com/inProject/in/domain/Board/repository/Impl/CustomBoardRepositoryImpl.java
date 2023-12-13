@@ -121,7 +121,7 @@ public class CustomBoardRepositoryImpl implements CustomBoardRepository {
     private BooleanExpression UserIdEq(String username){ return username.isBlank() != true ? qBoard.author.username.eq(username) : null; }
 
     private BooleanExpression TitleEq(String title){
-        return title.isBlank() != true ? qBoard.title.eq(title) : null;
+        return title.isBlank() != true ? qBoard.title.contains(title) : null;
     }
 
     private BooleanExpression TypeEq(String type){

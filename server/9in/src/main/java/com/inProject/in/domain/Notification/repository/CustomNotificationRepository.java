@@ -6,5 +6,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CustomNotificationRepository {
-    Optional<List<Notification>> getNotifications(Long user_id);
+    Optional<List<Notification>> getByUserIdAndIsCheck(Long user_id);
 }

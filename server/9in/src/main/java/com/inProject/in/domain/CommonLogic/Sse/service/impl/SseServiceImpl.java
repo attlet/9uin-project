@@ -47,15 +47,7 @@ public class SseServiceImpl implements SseService {
         this.applicationEventPublisher = applicationEventPublisher;
         this.notificationRepository = notificationRepository;
     }
-
-
-    /**
-     * 클라이언트가 구독을 위해 호출하는 메서드.
-     *
-     *  username - 구독하는 클라이언트의 사용자 아이디.
-     * SseEmitter - 서버에서 보낸 이벤트 Emitter
-     */
-    //SseEmitter inputEmitter
+    @Override
     public SseEmitter subscribe(String username, String data) {
 
         SseEmitter emitter = sseRepository.get(username);
@@ -63,15 +55,7 @@ public class SseServiceImpl implements SseService {
 
         return emitter;
     }
-
-
-    /**
-     * 클라이언트에게 데이터를 전송
-     *
-     *  id   - 데이터를 받을 사용자의 아이디.
-     * @param data - 전송할 데이터.
-     */
-
+    @Override
     public void sendToClient(String username, String data) {
         SseEmitter emitter = sseRepository.get(username);
         if (emitter != null) {
@@ -104,7 +88,7 @@ public class SseServiceImpl implements SseService {
             log.info("sseEmitter is null");
         }
     }
-
+    @Override
     public SseEmitter createEmitter(HttpServletRequest request) {
         String token = jwtTokenProvider.resolveToken(request);
         User user;
@@ -140,6 +124,7 @@ public class SseServiceImpl implements SseService {
     }
 
     //로그아웃 시 호출
+    @Override
     public void closeEmitter(String username){
         sseRepository.deleteById(username);
     }

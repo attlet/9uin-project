@@ -16,11 +16,11 @@ public class CustomNotificationRepositoryImpl implements CustomNotificationRepos
     QNotification qNotification = QNotification.notification;
 
     @Override
-    public Optional<List<Notification>> getNotifications(Long user_id) {
+    public Optional<List<Notification>> getByUserIdAndIsCheck(Long user_id) {
 
         List<Notification> query = jpaQueryFactory
                 .selectFrom(qNotification)
-                .where(qNotification.receiver.id.eq(user_id))
+                .where(qNotification.receiver.id.eq(user_id), qNotification.isChecked.eq(false))
                 .orderBy(qNotification.id.desc())
                 .fetch();
 

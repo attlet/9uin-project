@@ -54,7 +54,6 @@ public class BoardController {
             }),
             @ApiResponse(responseCode = "400", description = "게시글 조회 실패")
     })
-
     public ResponseEntity<ResponseBoardDto> getBoard(@PathVariable(name = "board_id") Long board_id, HttpServletRequest request) throws CustomException {
         try{
             ResponseBoardDto responseBoardDto = boardService.getBoard(board_id, request);

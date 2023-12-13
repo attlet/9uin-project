@@ -24,7 +24,7 @@ public class NotificationService {
 
     public List<ResponseNotificationDto> getNotificationList(Long user_id){
 
-        List<Notification> notificationList = notificationRepository.getNotifications(user_id)
+        List<Notification> notificationList = notificationRepository.getByUserIdAndIsCheck(user_id)
                 .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.NOTIFICATION, HttpStatus.NOT_FOUND, "NotificationService에서 " + user_id + " 은 찾지 못함"));
 
         List<ResponseNotificationDto> responseNotificationDtoList = new ArrayList<>();
@@ -35,6 +35,18 @@ public class NotificationService {
         }
 
         return responseNotificationDtoList;
+    }
+
+    public ResponseNotificationDto updateToCheckNotification(Long notification_id){
+        Notification notification = notificationRepository.findById(notification_id)
+                .orElseThrow(() -> new CustomException(ConstantsClass.ExceptionClass.NOTIFICATION, HttpStatus.NOT_FOUND, notification_id + " 를 찾을 수 없습니다."));
+
+        notification.setChecked(true);
+        Notification updatedNotification = notificationRepository.save(notification);
+
+        ResponseNotificationDto responseNotificationDto = new ResponseNotificationDto(updatedNotification);
+
+        return responseNotificationDto;
     }
 
     public void deleteNotification(Long id){
