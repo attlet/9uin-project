@@ -78,32 +78,33 @@ export default function RecruitStatusView() {
             <span>프로젝트</span>
             <TitleCount>1</TitleCount>
           </Title>
-          {postList
-            .filter((post) => post.type === '프로젝트')
-            .map((post) => (
-              <ContentContainer>
-                <Truncate
-                  onClick={() => navigate(`/postDetail/${post.board_id}`)}
-                >
-                  {post.title}
-                </Truncate>
-                <Options>
-                  <OptionItem
-                    onClick={() => navigate(`/modifyPost/${post.board_id}`)}
+          {postList &&
+            postList
+              .filter((post) => post.type === '프로젝트')
+              .map((post) => (
+                <ContentContainer>
+                  <Truncate
+                    onClick={() => navigate(`/postDetail/${post.board_id}`)}
                   >
-                    수정
-                  </OptionItem>
-                  <OptionItem
-                    onClick={() => {
-                      setPostToDelete(post.board_id);
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    삭제
-                  </OptionItem>
-                </Options>
-              </ContentContainer>
-            ))}
+                    {post.title}
+                  </Truncate>
+                  <Options>
+                    <OptionItem
+                      onClick={() => navigate(`/modifyPost/${post.board_id}`)}
+                    >
+                      수정
+                    </OptionItem>
+                    <OptionItem
+                      onClick={() => {
+                        setPostToDelete(post.board_id);
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      삭제
+                    </OptionItem>
+                  </Options>
+                </ContentContainer>
+              ))}
           <ContentContainer></ContentContainer>
         </MyRecruit>
         <MyRecruit>
@@ -112,32 +113,33 @@ export default function RecruitStatusView() {
             <span>스터디</span>
             <TitleCount>1</TitleCount>
           </Title>
-          {postList
-            .filter((post) => post.type === '스터디')
-            .map((post) => (
-              <ContentContainer>
-                <Truncate
-                  onClick={() => navigate(`/postDetail/${post.board_id}`)}
-                >
-                  {post.title}
-                </Truncate>
-                <Options>
-                  <OptionItem
-                    onClick={() => navigate(`/modifyPost/${post.board_id}`)}
+          {postList &&
+            postList
+              .filter((post) => post.type === '스터디')
+              .map((post) => (
+                <ContentContainer>
+                  <Truncate
+                    onClick={() => navigate(`/postDetail/${post.board_id}`)}
                   >
-                    수정
-                  </OptionItem>
-                  <OptionItem
-                    onClick={() => {
-                      setPostToDelete(post.board_id);
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    삭제
-                  </OptionItem>
-                </Options>
-              </ContentContainer>
-            ))}
+                    {post.title}
+                  </Truncate>
+                  <Options>
+                    <OptionItem
+                      onClick={() => navigate(`/modifyPost/${post.board_id}`)}
+                    >
+                      수정
+                    </OptionItem>
+                    <OptionItem
+                      onClick={() => {
+                        setPostToDelete(post.board_id);
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      삭제
+                    </OptionItem>
+                  </Options>
+                </ContentContainer>
+              ))}
         </MyRecruit>
       </MyBox>
       <MainTitle>신청 알림</MainTitle>

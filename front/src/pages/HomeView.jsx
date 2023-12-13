@@ -27,7 +27,10 @@ export default function HomeView() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const axiosInstance = createAxiosInstance(null, page);
+        const params = {
+          page,
+        };
+        const axiosInstance = createAxiosInstance(null, params);
         const response = await axiosInstance.get('/boards');
         setPostList(response.data.content);
         setLoading(false);

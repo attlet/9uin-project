@@ -180,6 +180,10 @@ export default function PostDetail() {
   const handleAddCmt = async (e) => {
     e.preventDefault();
 
+    if (!token) {
+      alert('로그인 후 이용하세요.');
+    }
+
     const cmtInfo = {
       user_id,
       board_id,

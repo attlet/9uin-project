@@ -20,7 +20,8 @@ export default function ProjectView() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const axiosInstance = createAxiosInstance(null, page);
+        const params = { page };
+        const axiosInstance = createAxiosInstance(null, params);
         const boardInfo = {
           type: '프로젝트',
         };
@@ -49,7 +50,11 @@ export default function ProjectView() {
     };
 
     try {
-      const axiosInstance = createAxiosInstance(null, page, searchTitle);
+      const params = {
+        page,
+        title: searchTitle,
+      };
+      const axiosInstance = createAxiosInstance(null, params);
       const response = await axiosInstance.get('/boards', {
         params: boardInfo,
       });
