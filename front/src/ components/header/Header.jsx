@@ -48,7 +48,7 @@ const Header = (props) => {
               </button>
             )}
             {token && (
-              <button onClick={() => handleNavigation('/user/login')}>
+              <button onClick={() => handleNavigation('/mypage/recruit')}>
                 <img src="/icons/vector.png" alt="알람 이미지" />
               </button>
             )}

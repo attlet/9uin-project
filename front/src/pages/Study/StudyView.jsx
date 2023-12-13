@@ -22,7 +22,8 @@ export default function StudyView() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const axiosInstance = createAxiosInstance(null, page);
+        const params = { page };
+        const axiosInstance = createAxiosInstance(null, params);
         const boardInfo = {
           type: '스터디',
         };
@@ -51,7 +52,8 @@ export default function StudyView() {
     };
 
     try {
-      const axiosInstance = createAxiosInstance(null, page, searchTitle);
+      const pararms = { page, title: searchTitle };
+      const axiosInstance = createAxiosInstance(null, pararms);
       const response = await axiosInstance.get('/boards', {
         params: boardInfo,
       });

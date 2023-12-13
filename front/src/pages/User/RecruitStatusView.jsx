@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import useFetchData from '../../ components/hooks/getPostList';
@@ -6,11 +6,30 @@ import axios from 'axios';
 import Modal from '../../ components/Mypage/MypageModal';
 import { refreshTokenAndRetry } from '../../api/user';
 import { createAxiosInstance } from '../../api/instance';
+import { useSelector } from 'react-redux';
 
 export default function RecruitStatusView() {
-  const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+  const username = useSelector((state) => state.auth.username);
 
-  const { data: postList, Loading, error } = useFetchData('/boards');
+  const [postList, setPostList] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const params = {
+          username,
+        };
+        const axiosInstance = createAxiosInstance(null, params);
+        const response = await axiosInstance.get('/boards');
+        setPostList(response.data.content);
+      } catch (error) {
+        console.error('게시글 리스트 Get 실패');
+      }
+    };
+
+    fetchData();
+  }, [postList]);
+
   const navigate = useNavigate();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -21,6 +40,8 @@ export default function RecruitStatusView() {
   };
 
   const handleDelete = async (board_id) => {
+    const axiosInstance = createAxiosInstance(localStorage.getItem('token'));
+
     try {
       const response = await axiosInstance.delete(`/boards/${board_id}`);
       // const response = await axios.delete(
@@ -78,32 +99,33 @@ export default function RecruitStatusView() {
             <span>프로젝트</span>
             <TitleCount>1</TitleCount>
           </Title>
-          {postList
-            .filter((post) => post.type === '프로젝트')
-            .map((post) => (
-              <ContentContainer>
-                <Truncate
-                  onClick={() => navigate(`/postDetail/${post.board_id}`)}
-                >
-                  {post.title}
-                </Truncate>
-                <Options>
-                  <OptionItem
-                    onClick={() => navigate(`/modifyPost/${post.board_id}`)}
+          {postList &&
+            postList
+              .filter((post) => post.type === '프로젝트')
+              .map((post) => (
+                <ContentContainer>
+                  <Truncate
+                    onClick={() => navigate(`/postDetail/${post.board_id}`)}
                   >
-                    수정
-                  </OptionItem>
-                  <OptionItem
-                    onClick={() => {
-                      setPostToDelete(post.board_id);
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    삭제
-                  </OptionItem>
-                </Options>
-              </ContentContainer>
-            ))}
+                    {post.title}
+                  </Truncate>
+                  <Options>
+                    <OptionItem
+                      onClick={() => navigate(`/modifyPost/${post.board_id}`)}
+                    >
+                      수정
+                    </OptionItem>
+                    <OptionItem
+                      onClick={() => {
+                        setPostToDelete(post.board_id);
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      삭제
+                    </OptionItem>
+                  </Options>
+                </ContentContainer>
+              ))}
           <ContentContainer></ContentContainer>
         </MyRecruit>
         <MyRecruit>
@@ -112,32 +134,33 @@ export default function RecruitStatusView() {
             <span>스터디</span>
             <TitleCount>1</TitleCount>
           </Title>
-          {postList
-            .filter((post) => post.type === '스터디')
-            .map((post) => (
-              <ContentContainer>
-                <Truncate
-                  onClick={() => navigate(`/postDetail/${post.board_id}`)}
-                >
-                  {post.title}
-                </Truncate>
-                <Options>
-                  <OptionItem
-                    onClick={() => navigate(`/modifyPost/${post.board_id}`)}
+          {postList &&
+            postList
+              .filter((post) => post.type === '스터디')
+              .map((post) => (
+                <ContentContainer>
+                  <Truncate
+                    onClick={() => navigate(`/postDetail/${post.board_id}`)}
                   >
-                    수정
-                  </OptionItem>
-                  <OptionItem
-                    onClick={() => {
-                      setPostToDelete(post.board_id);
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    삭제
-                  </OptionItem>
-                </Options>
-              </ContentContainer>
-            ))}
+                    {post.title}
+                  </Truncate>
+                  <Options>
+                    <OptionItem
+                      onClick={() => navigate(`/modifyPost/${post.board_id}`)}
+                    >
+                      수정
+                    </OptionItem>
+                    <OptionItem
+                      onClick={() => {
+                        setPostToDelete(post.board_id);
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      삭제
+                    </OptionItem>
+                  </Options>
+                </ContentContainer>
+              ))}
         </MyRecruit>
       </MyBox>
       <MainTitle>신청 알림</MainTitle>
@@ -168,11 +191,13 @@ const Container = styled.section`
 const MainTitle = styled.span`
   font-size: 0.8rem;
   margin-left: 2.5rem;
+  font-weight: 600;
 `;
 
 const MyBox = styled.div`
   display: flex;
   justify-content: center;
+  margin-bottom: 1rem;
 `;
 
 const MyRecruit = styled.div`
@@ -206,6 +231,10 @@ const Truncate = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 70%;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Options = styled.div`
@@ -220,6 +249,10 @@ const OptionItem = styled.span`
     content: ' | ';
     margin-left: 0.5rem;
   }
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const NewBox = styled.div`
@@ -228,6 +261,7 @@ const NewBox = styled.div`
   justify-content: space-between;
   width: 93%;
   margin: auto;
+  margin-top: 0.8rem;
 `;
 
 const LeftBox = styled.div`
