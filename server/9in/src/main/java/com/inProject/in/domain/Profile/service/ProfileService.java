@@ -52,10 +52,14 @@ public class ProfileService {
         for(TagMyInfoRelation tagMyInfoRelation : myInfo.getTagMyInfoRelationList()){
             responseMyInfoDto.getResponseSkillTagDtoList().add(new ResponseSkillTagDto(tagMyInfoRelation.getSkillTag()));
         }
+//
+//        Long clipedCount = boardRepository.CountsClipedBoards(user);
+//        Long projectCount = boardRepository.CountsUserBoards(user, "프로젝트");
+//        Long studyCount = boardRepository.CountsUserBoards(user, "스터디");
+        Long clipedCount = boardRepository.getClipedCount(user, "", "", List.of()).fetchOne();
+        Long projectCount = boardRepository.getCount(username, "", "프로젝트", List.of()).fetchOne();
+        Long studyCount = boardRepository.getCount(username, "", "스터디", List.of()).fetchOne();
 
-        Long clipedCount = boardRepository.CountsClipedBoards(user);
-        Long projectCount = boardRepository.CountsUserBoards(user, "project");
-        Long studyCount = boardRepository.CountsUserBoards(user, "study");
 
         ResponseProfileDto responseProfileDto = ResponseProfileDto.builder()
                 .certificateDtoList(responseCertificateDtoList)
