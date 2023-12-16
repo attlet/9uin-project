@@ -11,11 +11,11 @@ export default function ProjectView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
 
   const [searchTitle, setSearchTitle] = useState('');
+  const [searchTagList, setSearchTagList] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -132,7 +132,7 @@ export default function ProjectView() {
         ) : (
           projectList.length > 0 &&
           projectList.map((post) => (
-            <div onClick={() => navigate(`/postDetail/${post.board_id}`)}>
+            <PostBox onClick={() => navigate(`/postDetail/${post.board_id}`)}>
               <Post
                 key={post.board_id}
                 title={post.title}
@@ -145,7 +145,7 @@ export default function ProjectView() {
                 createAt={post.createAt}
                 view_cnt={post.view_cnt}
               />
-            </div>
+            </PostBox>
           ))
         )}
       </ProjectGrid>
@@ -171,12 +171,17 @@ const InputContainer = styled.form`
   padding: 0.5rem;
 `;
 
-const Icon = styled.div`
+const Icon = styled.button`
   background: url('/icons/search.png');
   background-size: cover;
   width: 1rem;
   height: 1rem;
   margin: 0.5rem;
+
+  border: none;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -265,7 +270,7 @@ const Select = styled.select`
 const ToggleBox = styled.label`
   display: flex;
   align-items: center;
-  margin-right: 0.5rem;
+  margin-right: 1rem;
 `;
 
 const ToggleText = styled.span`
@@ -337,6 +342,10 @@ const PageIndex = styled.li`
     transform: scale(1.2);
     transition: all 100ms ease-in-out;
   }
+`;
+
+const PostBox = styled.div`
+  margin: auto;
 `;
 
 // ProjectGrid Styles
