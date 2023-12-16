@@ -84,7 +84,7 @@ export default function ProjectView() {
         <TagContainer>
           <TagIcon></TagIcon>
           <TagBox>
-            <Tag skill="JavaScript" />
+            <Tag skill="Javascript" />
             <Tag skill="TypeScript" />
             <Tag skill="React" />
             <Tag skill="Vue" />
@@ -96,7 +96,7 @@ export default function ProjectView() {
             <Tag skill="Spring" />
             <Tag skill="Nest.js" />
             <Tag skill="Figma" />
-            <Tag skill="XD" />
+            <Tag skill="Xd" />
           </TagBox>
         </TagContainer>
         <Part>
