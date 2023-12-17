@@ -270,7 +270,7 @@ const Select = styled.select`
 const ToggleBox = styled.label`
   display: flex;
   align-items: center;
-  margin-right: 1rem;
+  margin-right: 1.5rem;
 `;
 
 const ToggleText = styled.span`

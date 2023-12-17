@@ -12,8 +12,8 @@ export default function PostDetail() {
   const user_id = useSelector((state) => state.auth.userId);
 
   const axiosInstance = createAxiosInstance(token);
-  const eventData = useSSE('/sse/connect');
-  console.log(eventData);
+  // const eventData = useSSE('/sse/connect');
+  // console.log(eventData);
 
   const { board_id } = useParams();
   const [boardInfo, setBoardInfo] = useState(null);
