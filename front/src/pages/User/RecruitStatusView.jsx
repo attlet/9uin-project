@@ -13,6 +13,14 @@ export default function RecruitStatusView() {
 
   const [postList, setPostList] = useState([]);
 
+  const navigate = useNavigate();
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
+
+  const alarmList = useSelector((state) => state.alarm.alarmList);
+  console.log(alarmList);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,12 +36,7 @@ export default function RecruitStatusView() {
     };
 
     fetchData();
-  }, [postList]);
-
-  const navigate = useNavigate();
-
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [postToDelete, setPostToDelete] = useState(null);
+  }, []);
 
   const closeModal = () => {
     setShowDeleteModal(false);
@@ -44,14 +47,6 @@ export default function RecruitStatusView() {
 
     try {
       const response = await axiosInstance.delete(`/boards/${board_id}`);
-      // const response = await axios.delete(
-      //   `http://1.246.104.170:8080/boards/${board_id}`,
-      //   {
-      //     headers: {
-      //       'X-AUTH-TOKEN': localStorage.getItem('token'),
-      //     },
-      //   }
-      // );
       console.log('글 삭제 성공');
       alert('게시글이 삭제되었습니다');
       navigate('/mypage');
@@ -164,22 +159,23 @@ export default function RecruitStatusView() {
         </MyRecruit>
       </MyBox>
       <MainTitle>신청 알림</MainTitle>
-      <NewBox>
-        <LeftBox>
-          <Icon />
-          <TextContainer>
-            <Line1>
-              [프로젝트] 해커톤 모집합니다. (UXUI/프론트엔드/기획자/백엔드)
-              열심히 하실분만...의 디자이너 신청이 1건 있습니다.
-            </Line1>
-            <Line2>신청자: 공대생23</Line2>
-          </TextContainer>
-        </LeftBox>
-        <RightBox>
-          <Button1>프로필 자세히</Button1>
-          <Button2>승낙하기</Button2>
-        </RightBox>
-      </NewBox>
+      {alarmList &&
+        alarmList.map((alarm) => (
+          <NewBox key={alarm.id}>
+            <LeftBox>
+              <Icon />
+
+              <TextContainer>
+                <Line1>{alarm.message}</Line1>
+                <Line2>신청자: 공대생123</Line2>
+              </TextContainer>
+            </LeftBox>
+            <RightBox>
+              <Button1>프로필 자세히</Button1>
+              <Button2>승낙하기</Button2>
+            </RightBox>
+          </NewBox>
+        ))}
     </Container>
   );
 }

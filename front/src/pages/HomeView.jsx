@@ -60,7 +60,7 @@ export default function HomeView() {
       <div className={styles.projectGrid}>
         {postList.length > 0 &&
           postList.map((post) => (
-            <div onClick={() => handleClick(post.board_id)}>
+            <PostBox onClick={() => handleClick(post.board_id)}>
               <Post
                 key={post.board_id}
                 title={post.title}
@@ -74,7 +74,7 @@ export default function HomeView() {
                 view_cnt={post.view_cnt}
                 createAt={post.createAt}
               />
-            </div>
+            </PostBox>
           ))}
       </div>
       <PageBox>
@@ -87,6 +87,10 @@ export default function HomeView() {
     </>
   );
 }
+
+const PostBox = styled.div`
+  margin: auto;
+`;
 
 const PageBox = styled.ul`
   list-style: none;

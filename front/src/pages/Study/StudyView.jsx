@@ -13,7 +13,6 @@ export default function StudyView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
 
@@ -131,7 +130,7 @@ export default function StudyView() {
         ) : (
           studyList.length > 0 &&
           studyList.map((post) => (
-            <div onClick={() => navigate(`/postDetail/${post.board_id}`)}>
+            <PostBox onClick={() => navigate(`/postDetail/${post.board_id}`)}>
               <Post
                 key={post.board_id}
                 title={post.title}
@@ -144,7 +143,7 @@ export default function StudyView() {
                 createAt={post.createAt}
                 view_cnt={post.view_cnt}
               />
-            </div>
+            </PostBox>
           ))
         )}
       </ProjectGrid>
@@ -264,7 +263,7 @@ const Select = styled.select`
 const ToggleBox = styled.label`
   display: flex;
   align-items: center;
-  margin-right: 0.5rem;
+  margin-right: 1.5rem;
 `;
 
 const ToggleText = styled.span`
@@ -336,6 +335,10 @@ const PageIndex = styled.li`
     transform: scale(1.2);
     transition: all 100ms ease-in-out;
   }
+`;
+
+const PostBox = styled.div`
+  margin: auto;
 `;
 
 // ProjectGrid Styles

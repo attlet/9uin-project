@@ -30,6 +30,7 @@ const useSSE = (endPoint) => {
     eventSource.addEventListener('notice', (e) => {
       console.log(e);
       console.log(e.data);
+      console.log(e.target.onmessage);
     });
 
     eventSource.onmessage = (event) => {
