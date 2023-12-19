@@ -166,8 +166,10 @@ export default function RecruitStatusView() {
               <Icon />
 
               <TextContainer>
-                <Line1>{alarm.message}</Line1>
-                <Line2>신청자: 공대생123</Line2>
+                <Line1>
+                  [{alarm.board_type}] {alarm.message}
+                </Line1>
+                <Line2>신청자: {alarm.senderName}</Line2>
               </TextContainer>
             </LeftBox>
             <RightBox>
