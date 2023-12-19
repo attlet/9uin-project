@@ -105,7 +105,7 @@ export default function PostDetail() {
   // 만약에 applyStatus[role_id]가 '신청중'인데 한 번 더 클릭하게 되면 지원취소 API 호출
   // applyStatus는 다른화면에 들어가면 초기화됨 -> 전역상태관리 필요성 (redux)
 
-  const handleApply = async (role_id, pre_cnt, want_cnt) => {
+  const handleApply = async (role_id, pre_cnt, want_cnt, role_name) => {
     if (!token) {
       alert('로그인 후 이용하세요.');
     }
@@ -135,6 +135,24 @@ export default function PostDetail() {
           ...applyStatus,
           [role_id]: '신청중',
         });
+
+        try {
+          const notifyData = {
+            receiverName: authorName,
+            senderName: username,
+            board_id,
+            message: `${title} 의 ${role_name} 에 신청이 1건 있습니다.`,
+            alarm_type: 'message',
+            checked: true,
+          };
+          const notifyResponse = await axiosInstance.post(
+            '/notify',
+            notifyData
+          );
+          console.log(notifyData);
+        } catch (error) {
+          console.error('notify post 실패', error);
+        }
       } catch (error) {
         console.error('게시글 지원 실패', error);
         console.log(error.response.data);
@@ -298,7 +316,12 @@ export default function PostDetail() {
                   <p>{`${role.pre_cnt}/${role.want_cnt}`}</p>
                   <button
                     onClick={() =>
-                      handleApply(role.role_id, role.pre_cnt, role.want_cnt)
+                      handleApply(
+                        role.role_id,
+                        role.pre_cnt,
+                        role.want_cnt,
+                        role.name
+                      )
                     }
                     className={`${
                       role.pre_cnt >= role.want_cnt ? 'complete' : ''
