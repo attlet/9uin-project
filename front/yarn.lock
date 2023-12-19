@@ -9350,6 +9350,7 @@ __metadata:
     react-scripts: 5.0.1
     redux: ^4.2.1
     redux-devtools-extension: ^2.13.9
+    redux-persist: ^6.0.0
     redux-thunk: ^2.4.2
     styled-components: ^6.0.0-rc.3
     swiper: ^10.3.1
@@ -11317,6 +11318,15 @@ __metadata:
   peerDependencies:
     redux: ^3.1.0 || ^4.0.0
   checksum: 603d48fd6acf3922ef373b251ab3fdbb990035e90284191047b29d25b06ea18122bc4ef01e0704ccae495acb27ab5e47b560937e98213605dd88299470025db9
+  languageName: node
+  linkType: hard
+
+"redux-persist@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "redux-persist@npm:6.0.0"
+  peerDependencies:
+    redux: ">4.0.0"
+  checksum: edaf10dbf17351ce8058d0802357adae8665b3a1ff39371834e37838ddbe1a79cccbc717b8ba54acb5307651ccf51d0f7dc1cbc8dbae0726ff952d11ef61c6b8
   languageName: node
   linkType: hard
 

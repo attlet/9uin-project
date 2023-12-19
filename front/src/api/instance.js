@@ -1,9 +1,8 @@
 import axios from 'axios';
 import config from '../common/config';
 
-const createAxiosInstance = (token, page) => {
+const createAxiosInstance = (token, params) => {
   const headers = token ? { 'X-AUTH-TOKEN': token } : {};
-  const params = page !== undefined ? { page } : {};
 
   return axios.create({
     baseURL:

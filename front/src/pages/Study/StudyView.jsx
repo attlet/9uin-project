@@ -13,14 +13,16 @@ export default function StudyView() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
+
+  const [searchTitle, setSearchTitle] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const axiosInstance = createAxiosInstance(null, page);
+        const params = { page };
+        const axiosInstance = createAxiosInstance(null, params);
         const boardInfo = {
           type: '스터디',
         };
@@ -41,19 +43,46 @@ export default function StudyView() {
 
   const pages = Array.from({ length: totalPage }, (_, index) => index + 1);
 
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    const boardInfo = {
+      type: '스터디',
+    };
+
+    try {
+      const pararms = { page, title: searchTitle };
+      const axiosInstance = createAxiosInstance(null, pararms);
+      const response = await axiosInstance.get('/boards', {
+        params: boardInfo,
+      });
+      console.log(response);
+      setStudyList(response.data.content);
+      setLoading(false);
+      setTotalPage(response.data.totalPage);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
+    }
+  };
+
   if (error) return <p>{error}</p>;
 
   return (
     <section>
       <Header>
-        <InputContainer>
+        <InputContainer onSubmit={handleSearch}>
           <Icon></Icon>
-          <SearchInput type="text" placeholder="제목, 게시글 검색" />
+          <SearchInput
+            onChange={(e) => setSearchTitle(e.target.value)}
+            type="text"
+            placeholder="제목, 게시글 검색"
+          />
         </InputContainer>
         <TagContainer>
           <TagIcon></TagIcon>
           <TagBox>
-            <Tag skill="JavaScript" />
+            <Tag skill="Javascript" />
             <Tag skill="TypeScript" />
             <Tag skill="React" />
             <Tag skill="Vue" />
@@ -65,7 +94,7 @@ export default function StudyView() {
             <Tag skill="Spring" />
             <Tag skill="Nest.js" />
             <Tag skill="Figma" />
-            <Tag skill="XD" />
+            <Tag skill="Xd" />
           </TagBox>
         </TagContainer>
         <Part>
@@ -101,7 +130,7 @@ export default function StudyView() {
         ) : (
           studyList.length > 0 &&
           studyList.map((post) => (
-            <div onClick={() => navigate(`/postDetail/${post.board_id}`)}>
+            <PostBox onClick={() => navigate(`/postDetail/${post.board_id}`)}>
               <Post
                 key={post.board_id}
                 title={post.title}
@@ -114,7 +143,7 @@ export default function StudyView() {
                 createAt={post.createAt}
                 view_cnt={post.view_cnt}
               />
-            </div>
+            </PostBox>
           ))
         )}
       </ProjectGrid>
@@ -135,7 +164,7 @@ const Header = styled.div`
   border-radius: 15px;
 `;
 
-const InputContainer = styled.div`
+const InputContainer = styled.form`
   display: flex;
   padding: 0.5rem;
 `;
@@ -150,6 +179,9 @@ const Icon = styled.div`
 
 const SearchInput = styled.input`
   border: none;
+  padding: 0.2rem 0.5rem;
+  margin-left: 0.2rem;
+  width: 50%;
 `;
 
 const TagContainer = styled.div`
@@ -231,7 +263,7 @@ const Select = styled.select`
 const ToggleBox = styled.label`
   display: flex;
   align-items: center;
-  margin-right: 0.5rem;
+  margin-right: 1.5rem;
 `;
 
 const ToggleText = styled.span`
@@ -305,12 +337,16 @@ const PageIndex = styled.li`
   }
 `;
 
+const PostBox = styled.div`
+  margin: auto;
+`;
+
 // ProjectGrid Styles
 const ProjectGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   grid-gap: 0.2rem;
-  margin: 3rem 6rem;
+  margin: 1rem 1.4rem;
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);

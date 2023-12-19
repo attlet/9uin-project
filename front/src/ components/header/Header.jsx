@@ -11,6 +11,8 @@ const Header = (props) => {
   const token = useSelector((state) => state.auth.token);
   console.log(token);
 
+  const alarmList = useSelector((state) => state.alarm.alarmList);
+
   const handleNavigation = (path) => {
     navigate(path);
   };
@@ -48,8 +50,13 @@ const Header = (props) => {
               </button>
             )}
             {token && (
-              <button onClick={() => handleNavigation('/user/login')}>
+              <button onClick={() => handleNavigation('/mypage/recruit')}>
                 <img src="/icons/vector.png" alt="알람 이미지" />
+                {alarmList && alarmList.length > 0 ? (
+                  <ActiveAlarm></ActiveAlarm>
+                ) : (
+                  ''
+                )}
               </button>
             )}
             <div onClick={handleLogin} className="logout">
@@ -160,12 +167,25 @@ const LogButtons = styled.div`
       width: 20px;
       height: 20px;
     }
+
+    position: relative;
   }
 
   .logout {
     font-size: 18px;
     cursor: pointer;
   }
+`;
+
+const ActiveAlarm = styled.div`
+  width: 10px;
+  height: 10px;
+  background-color: #eb3e63;
+  border-radius: 100%;
+  z-index: 1;
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
 `;
 
 export default Header;

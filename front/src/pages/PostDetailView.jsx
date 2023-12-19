@@ -8,12 +8,14 @@ import { refreshTokenAndRetry } from '../api/user';
 
 export default function PostDetail() {
   const token = useSelector((state) => state.auth.token);
+  const username = useSelector((state) => state.auth.username);
+  const user_id = useSelector((state) => state.auth.userId);
+
   const axiosInstance = createAxiosInstance(token);
-  const eventData = useSSE('/sse/connect');
-  console.log(eventData);
+  // const eventData = useSSE('/sse/connect');
+  // console.log(eventData);
 
   const { board_id } = useParams();
-  const user_id = useSelector((state) => state.auth.userId);
   const [boardInfo, setBoardInfo] = useState(null);
 
   const [authorName, setAuthorName] = useState('');
@@ -22,34 +24,32 @@ export default function PostDetail() {
   // 댓글
   const [comment, setComment] = useState('');
 
-  useEffect(() => {
-    const fetchBoard = async () => {
-      try {
-        const response = await axiosInstance.get(`/boards/${board_id}`);
-        setBoardInfo(response.data);
-        console.log(response.data);
-        console.log(response.data.username);
-        setAuthorName(response.data.username);
-      } catch (error) {
-        console.error('Error fetching boarInfo', error);
-        if (error.response.data.status === '401') {
-          try {
-            const retryResponse = await refreshTokenAndRetry(
-              'get',
-              `http://1.246.104.170:8080/boards/${board_id}`,
-              {
-                'X-AUTH-TOKEN': token,
-              }
-            );
-            console.log('게시글 조회 성공 (재시도)');
-            console.log(retryResponse);
-          } catch (refreshError) {
-            console.error('새로운 액세스 토큰 얻기 실패', refreshError);
-          }
+  const fetchBoard = async () => {
+    try {
+      const response = await axiosInstance.get(`/boards/${board_id}`);
+      setBoardInfo(response.data);
+      setAuthorName(response.data.username);
+    } catch (error) {
+      console.error('Error fetching boarInfo', error);
+      if (error.response.data.status === '401') {
+        try {
+          const retryResponse = await refreshTokenAndRetry(
+            'get',
+            `/boards/${board_id}`,
+            {
+              'X-AUTH-TOKEN': token,
+            }
+          );
+          console.log('게시글 조회 성공 (재시도)');
+          console.log(retryResponse);
+        } catch (refreshError) {
+          console.error('새로운 액세스 토큰 얻기 실패', refreshError);
         }
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchBoard();
   }, [board_id]);
 
@@ -62,7 +62,9 @@ export default function PostDetail() {
     tags,
     createAt,
     view_cnt,
+    commentList,
   } = boardInfo || {};
+  console.warn([0]);
 
   const formattedPeriod = new Date(period).toLocaleDateString('ko-KR', {
     year: 'numeric',
@@ -103,9 +105,13 @@ export default function PostDetail() {
   // 만약에 applyStatus[role_id]가 '신청중'인데 한 번 더 클릭하게 되면 지원취소 API 호출
   // applyStatus는 다른화면에 들어가면 초기화됨 -> 전역상태관리 필요성 (redux)
 
-  const handleApply = async (role_id, pre_cnt, want_cnt) => {
+  const handleApply = async (role_id, pre_cnt, want_cnt, role_name) => {
     if (!token) {
       alert('로그인 후 이용하세요.');
+    }
+
+    if (authorName === username) {
+      alert('작성자는 지원할 수 없습니다.');
     }
 
     if (pre_cnt >= want_cnt) {
@@ -129,6 +135,24 @@ export default function PostDetail() {
           ...applyStatus,
           [role_id]: '신청중',
         });
+
+        try {
+          const notifyData = {
+            receiverName: authorName,
+            senderName: username,
+            board_id,
+            message: `${title} 의 ${role_name} 에 신청이 1건 있습니다.`,
+            alarm_type: 'message',
+            checked: true,
+          };
+          const notifyResponse = await axiosInstance.post(
+            '/notify',
+            notifyData
+          );
+          console.log(notifyData);
+        } catch (error) {
+          console.error('notify post 실패', error);
+        }
       } catch (error) {
         console.error('게시글 지원 실패', error);
         console.log(error.response.data);
@@ -139,13 +163,13 @@ export default function PostDetail() {
           alert('이미 지원한 게시글입니다.');
           return;
         }
-        if (error.response.data.msg == '인증이 실패했습니다.') {
+        if (error.response.data.status === '401') {
           console.log(error.response.data.msg);
           //TODO 리프레쉬토큰 리팩토링
           try {
             const retryResponse = await refreshTokenAndRetry(
               'post',
-              `http://1.246.104.170:8080/applications`,
+              `/applications`,
               applyData,
               {
                 'X-AUTH-TOKEN': token,
@@ -174,6 +198,10 @@ export default function PostDetail() {
   const handleAddCmt = async (e) => {
     e.preventDefault();
 
+    if (!token) {
+      alert('로그인 후 이용하세요.');
+    }
+
     const cmtInfo = {
       user_id,
       board_id,
@@ -182,7 +210,9 @@ export default function PostDetail() {
     try {
       const response = await axiosInstance.post('/comments', cmtInfo);
       console.log(response);
+      fetchBoard();
       alert('댓글이 작성되었습니다.');
+      setComment('');
     } catch (error) {
       console.error('Error post comment', error);
       if (error.response.data.status === '401') {
@@ -286,7 +316,12 @@ export default function PostDetail() {
                   <p>{`${role.pre_cnt}/${role.want_cnt}`}</p>
                   <button
                     onClick={() =>
-                      handleApply(role.role_id, role.pre_cnt, role.want_cnt)
+                      handleApply(
+                        role.role_id,
+                        role.pre_cnt,
+                        role.want_cnt,
+                        role.name
+                      )
                     }
                     className={`${
                       role.pre_cnt >= role.want_cnt ? 'complete' : ''
@@ -345,7 +380,19 @@ export default function PostDetail() {
       </Section2>
       <Section3>
         <div className="section3_title">프로젝트 소개</div>
-        <div className="section3_content"></div>
+        <ul className="section3_content">
+          {commentList &&
+            commentList.map((comment) => (
+              <li key={comment.user_id}>
+                <img src="/profile/profile.png" alt="프로필 사진" />
+                <div>
+                  <p className="comment_user">{comment.username}</p>
+                  <p className="comment_text">{comment.text}</p>
+                </div>
+              </li>
+            ))}
+        </ul>
+
         <form onSubmit={handleAddCmt}>
           <textarea
             className="section3_textarea"
@@ -385,13 +432,13 @@ const Content = styled.div`
     justify-content = center;
     gap: 25px;
     color: #000;
-    font-size: 20px;
+    font-size: 1.2rem;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
     span:first-child {
       color: #000;
-      font-size: 20px;
+      font-size: 1.2rem;
       font-style: normal;
       font-weight: 700;
       line-height: normal;
@@ -570,6 +617,7 @@ const Section2 = styled.div`
     gap: 15px;
     justify-content: start;
     padding: 0;
+
     li {
       list-style: none;
       width: 300.168px;
@@ -658,6 +706,27 @@ const Section3 = styled.div`
 
   .section3_content {
     height: 10rem;
+    padding: 0;
+    overflow-y: scroll;
+    li {
+      display: flex;
+      margin: 0.3rem;
+      margin-left: 0;
+      align-items: center;
+
+      img {
+        width: 2rem;
+        height: 2rem;
+      }
+      div {
+        margin-left: 0.4rem;
+
+        .comment_user {
+          font-weight: 600;
+          margin-bottom: 0.2rem;
+        }
+      }
+    }
   }
   form {
     display: flex;

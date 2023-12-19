@@ -146,14 +146,14 @@ export default function AddPost() {
     } catch (error) {
       console.error('글 작성 실패', error);
       console.log(error.response.data);
-      if (error.response.data.msg == '인증이 실패했습니다.') {
+      if (error.response.data.status === '401') {
         console.log(error.response.data.msg);
 
         try {
           // TODO refresh token 코드 리팩토링
           const retryResponse = await refreshTokenAndRetry(
             'post',
-            'http://1.246.104.170:8080/boards',
+            '/boards',
             postData,
             {
               'X-AUTH-TOKEN': localStorage.getItem('token'),
@@ -416,6 +416,7 @@ const Section = styled.section`
   span {
     display: inline-block;
     width: 90px;
+    max-width: 100%;
     margin-right: 10px;
   }
 

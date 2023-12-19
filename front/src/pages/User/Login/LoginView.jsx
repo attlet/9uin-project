@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../../../modules/auth';
 import { createAxiosInstance } from '../../../api/instance';
+import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill';
+import config from '../../../common/config';
+import { getAlarmList } from '../../../modules/alarm';
 
 export default function LoginView() {
   const [username, setUsername] = useState('');
@@ -57,10 +60,41 @@ export default function LoginView() {
       localStorage.setItem('refreshToken', refreshToken);
 
       // connect 서버 소켓통신
-      // console.log('connect 전');
-      // const loginAxios = createAxiosInstance(token);
-      // const connect = await loginAxios.get('/sse/connect');
-      // console.log(connect);
+      console.log('connect 전');
+      const EventSource = EventSourcePolyfill || NativeEventSource;
+      const baseURL =
+        process.env.REACT_APP_NODE_ENV === 'development'
+          ? config.development.apiUrl
+          : process.env.REACT_APP_NODE_ENV === 'local'
+          ? config.local.apiUrl
+          : '';
+      const sseUrl = `${baseURL}/sse/connect`;
+      const eventSource = new EventSource(sseUrl, {
+        headers: {
+          'X-AUTH-TOKEN': token,
+          'Content-Type': 'text/event-stream',
+        },
+        heartbeatTimeout: 86400000, //sse 연결 시간 (토큰 유지 24시간)
+        // withCredentials: true,
+      });
+      console.log(eventSource);
+
+      eventSource.addEventListener('notice', async (e) => {
+        console.log(e);
+        console.log(e.data);
+        if (e.data === 'connect request') {
+          console.log('notice 진입');
+          try {
+            const params = { user_id };
+            const sseAxios = createAxiosInstance(token, params);
+            const response = await sseAxios.get('notify');
+            console.log(response);
+            dispatch(getAlarmList(response.data));
+          } catch (error) {
+            console.error('알림 리스트 조회에러', error);
+          }
+        }
+      });
 
       navigate('/');
     } catch (error) {
