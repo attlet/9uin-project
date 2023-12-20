@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,10 +43,10 @@ public class ApplicationController {
                     })
             })
     @Parameter(name = "X-AUTH-TOKEN", description = "토큰을 전송합니다.", in = ParameterIn.HEADER)
-    public ResponseEntity<ResponseApplicationDto> createApplication(@RequestBody RequestApplicationDto requestApplicationDto){
+    public ResponseEntity<ResponseApplicationDto> createApplication(@RequestBody RequestApplicationDto requestApplicationDto, HttpServletRequest request){
 
         try{
-            ResponseApplicationDto responseApplicationDto = applicationService.createApplication(requestApplicationDto);
+            ResponseApplicationDto responseApplicationDto = applicationService.createApplication(requestApplicationDto, request);
             //sseEvent 게시자의 id 로 바꿔야됨.
             Long board_id = requestApplicationDto.getBoard_id();
 
@@ -62,9 +63,9 @@ public class ApplicationController {
     @DeleteMapping()
     @Operation(summary = "지원 취소", description = "게시글에 지원한 걸 취소합니다.")
     @Parameter(name = "X-AUTH-TOKEN", description = "토큰을 전송합니다.", in = ParameterIn.HEADER)
-    public ResponseEntity<String> deleteApplication(RequestApplicationDto requestApplicationDto){
+    public ResponseEntity<String> deleteApplication(RequestApplicationDto requestApplicationDto, HttpServletRequest request){
         try{
-            applicationService.deleteApplication(requestApplicationDto);
+            applicationService.deleteApplication(requestApplicationDto, request);
             return ResponseEntity.status(HttpStatus.OK).body("삭제 완료");
         }catch (CustomException e){
             throw e;
@@ -73,9 +74,9 @@ public class ApplicationController {
 
     @PostMapping("reject")
     @Operation(summary = "지원 거절", description = "게시글에 지원한 걸 거절합니다.")
-    public ResponseEntity<String> rejectApplication(RequestApplicationDto requestApplicationDto){
+    public ResponseEntity<String> rejectApplication(RequestApplicationDto requestApplicationDto, HttpServletRequest request){
         try{
-            applicationService.rejectApplication(requestApplicationDto);
+            applicationService.rejectApplication(requestApplicationDto, request);
             ResponseSseDto responseSseDto = applicationService.ApplicationToSseResponse(requestApplicationDto);
             String message = "지원하신" + responseSseDto.getTitle()+"지원글에 참가하지 못하셨습니다.";
             sseService.subscribe(requestApplicationDto.getAuthorName(),message);
@@ -87,9 +88,9 @@ public class ApplicationController {
 
     @PostMapping("accept")
     @Operation(summary = "지원 수락", description = "게시글에 지원한 걸 수락합니다.")
-    public ResponseEntity<String> acceptApplication(RequestApplicationDto requestApplicationDto){
+    public ResponseEntity<String> acceptApplication(RequestApplicationDto requestApplicationDto, HttpServletRequest request){
         try{
-            applicationService.acceptApplication(requestApplicationDto);
+            applicationService.acceptApplication(requestApplicationDto, request);
             //~
             ResponseSseDto responseSseDto = applicationService.ApplicationToSseResponse(requestApplicationDto);
             String message = "지원하신" + responseSseDto.getTitle()+"의 팀에 참가하게 되었습니다.";
